@@ -20,7 +20,7 @@
 <link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22VietlottAI%22%2C%22short_name%22%3A%22VietlottAI%22%2C%22description%22%3A%22D%E1%BB%B1%20%C4%90o%C3%A1n%20X%E1%BB%95%20S%E1%BB%91%20Th%C3%B4ng%20Minh%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2303030f%22%2C%22theme_color%22%3A%22%2303030f%22%2C%22orientation%22%3A%22portrait%22%7D">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Be+Vietnam+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Barlow+Semi+Condensed:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ======== THEME ======== */
 :root{--gold:#FFD700;--gold2:#FFA500;--red:#FF2D55;--green:#00FF88;--blue:#00B4FF;--purple:#BF00FF;--radius:18px}
@@ -38,13 +38,23 @@
 }
 /* ======== RESET ======== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{height:100%;height:-webkit-fill-available;overflow:hidden;touch-action:manipulation}
+html{height:100%;touch-action:manipulation}
 body{
-  height:100%;height:-webkit-fill-available;overflow:hidden;
+  min-height:100%;
   background:var(--bg);color:var(--text);
-  font-family:'Be Vietnam Pro',sans-serif;
-  position:fixed;width:100%;
+  font-family:'Inter','Space Grotesk',sans-serif;
   transition:background .3s,color .3s;
+  overscroll-behavior:none;
+}
+/* iOS PWA standalone fullscreen – no scroll */
+@media all and (display-mode:standalone){
+  html,body{height:100%;height:-webkit-fill-available;overflow:hidden;position:fixed;width:100%}
+  #app{position:fixed;inset:0;overflow:hidden}
+}
+/* Normal browser: app scrolls naturally */
+@media not all and (display-mode:standalone){
+  #app{position:relative;min-height:100vh;display:flex;flex-direction:column}
+  .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 }
 /* ======== SPLASH ======== */
 #splash{
@@ -77,8 +87,8 @@ body{
 .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
 [data-theme="light"] .star{background:#333}
 @keyframes twinkle{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.4)}}
-/* ======== APP SHELL (fullscreen, no scroll on body) ======== */
-#app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:1;overflow:hidden}
+/* ======== APP SHELL ======== */
+#app{display:flex;flex-direction:column;z-index:1;min-height:100vh}
 /* ======== HEADER ======== */
 header{
   background:var(--header);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
@@ -90,7 +100,7 @@ header{
 .logo-svg{width:36px;height:36px;flex-shrink:0}
 .logo-txt{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;
   background:linear-gradient(135deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
-.logo-txt span{display:block;font-size:9px;color:var(--sub);-webkit-text-fill-color:var(--sub);letter-spacing:2px;font-family:'Be Vietnam Pro',sans-serif;font-weight:600}
+.logo-txt span{display:block;font-size:9px;color:var(--sub);-webkit-text-fill-color:var(--sub);letter-spacing:2px;font-family:'Inter','Space Grotesk',sans-serif;font-weight:600}
 .hdr-right{display:flex;align-items:center;gap:10px}
 .clock{font-family:'Orbitron',monospace;font-size:11px;color:var(--blue);letter-spacing:1px;white-space:nowrap}
 .conn-wrap{display:flex;align-items:center;gap:5px}
@@ -106,7 +116,7 @@ header{
 .tabs-wrap::-webkit-scrollbar{display:none}
 .tabs{display:flex;gap:6px;padding:9px 12px;width:max-content}
 .tab-btn{padding:7px 13px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--sub);
-  font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+  font-family:'Inter','Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
 .tab-btn.active{background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,69,0,.15));border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.2)}
 /* ======== SCROLL AREA ======== */
 .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.3) transparent}
@@ -129,7 +139,7 @@ header{
 /* ======== JACKPOT HERO ======== */
 .jp-hero{background:linear-gradient(135deg,rgba(255,45,85,.12),rgba(255,140,0,.08));border:1px solid rgba(255,45,85,.3);border-radius:var(--radius);padding:15px;text-align:center;margin-bottom:13px}
 .jp-lbl{font-size:10px;color:var(--sub);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
-.jp-val{font-family:'Orbitron',monospace;font-size:clamp(18px,4.5vw,30px);font-weight:900;background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.jp-val{font-family:'Barlow Semi Condensed','Orbitron',monospace;font-size:clamp(20px,5vw,34px);font-weight:800;background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;letter-spacing:.5px}
 .jp-draw{font-size:11px;color:var(--sub);margin-top:5px}
 .jp-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,45,85,.15));border:1px solid rgba(255,215,0,.4);border-radius:18px;padding:3px 10px;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-top:8px;animation:badgePulse 2s ease-in-out infinite}
 @keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.4)}50%{box-shadow:0 0 0 6px rgba(255,215,0,0)}}
@@ -137,7 +147,7 @@ header{
 .jp-meter{margin-bottom:13px}
 .jp-mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
 .jp-mlbl{font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase}
-.jp-pct{font-family:'Orbitron',monospace;font-size:13px;font-weight:700}
+.jp-pct{font-family:'Barlow Semi Condensed','Orbitron',monospace;font-size:15px;font-weight:700;letter-spacing:.5px}
 .jp-track{height:13px;background:var(--freq-track);border-radius:7px;overflow:hidden;position:relative}
 .jp-fill{height:100%;border-radius:7px;width:0;transition:width 1.6s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,#00FF88,#FFD700,#FF6B35,#FF2D55);position:relative}
 .jp-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2.2s linear infinite}
@@ -149,7 +159,7 @@ header{
 @keyframes hotP{0%,100%{box-shadow:none}50%{box-shadow:0 0 18px rgba(255,45,85,.5)}}
 /* ======== BALLS ======== */
 .balls-wrap{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:7px 0;min-height:50px}
-.ball{width:43px;height:43px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-weight:700;font-size:13px;flex-shrink:0;animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both}
+.ball{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Semi Condensed','Orbitron',monospace;font-weight:800;font-size:15px;flex-shrink:0;animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both;letter-spacing:.3px}
 @keyframes ballIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 .ball.mega{background:radial-gradient(circle at 35% 35%,#FF6B35,#CC1130);box-shadow:0 3px 12px rgba(255,45,85,.55)}
 .ball.power{background:radial-gradient(circle at 35% 35%,#33CCFF,#0030EE);box-shadow:0 3px 12px rgba(0,64,255,.55)}
@@ -181,7 +191,7 @@ header{
 .m3d-sets{display:flex;gap:10px;flex-wrap:wrap}
 .m3d-set{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 13px;flex:1;min-width:70px;text-align:center;transition:background .3s}
 .m3d-lbl{font-size:9px;color:var(--sub);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
-.m3d-num{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;background:linear-gradient(135deg,#00E5FF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.m3d-num{font-family:'Barlow Semi Condensed','Orbitron',monospace;font-size:26px;font-weight:800;letter-spacing:2px;background:linear-gradient(135deg,#00E5FF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 /* ======== PREDICT BUTTON ======== */
 .pbtn{width:100%;padding:15px;border-radius:var(--radius);border:none;cursor:pointer;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);color:#fff;position:relative;overflow:hidden;transition:all .25s;text-shadow:0 1px 3px rgba(0,0,0,.4);box-shadow:0 4px 18px rgba(255,69,0,.4)}
 .pbtn:active{transform:scale(.98)}
@@ -205,7 +215,7 @@ header{
 .bday-sec{background:rgba(191,0,255,.05);border:1px solid rgba(191,0,255,.2);border-radius:var(--radius);padding:13px;margin-bottom:13px}
 [data-theme="light"] .bday-sec{background:rgba(150,0,200,.04);border-color:rgba(150,0,200,.2)}
 .bday-inputs{display:flex;gap:7px;margin:9px 0}
-.bday-inputs select{flex:1;background:var(--sel-bg);border:1px solid var(--border2);border-radius:9px;padding:9px 6px;color:var(--sel-txt);font-family:'Be Vietnam Pro',sans-serif;font-size:12px;font-weight:600;appearance:none;-webkit-appearance:none;cursor:pointer;text-align:center;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23888'%3E%3Cpath d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:20px;transition:background .3s,color .3s}
+.bday-inputs select{flex:1;background:var(--sel-bg);border:1px solid var(--border2);border-radius:9px;padding:9px 6px;color:var(--sel-txt);font-family:'Inter','Space Grotesk',sans-serif;font-size:12px;font-weight:600;appearance:none;-webkit-appearance:none;cursor:pointer;text-align:center;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23888'%3E%3Cpath d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:20px;transition:background .3s,color .3s}
 .bday-inputs select option{background:var(--sel-bg);color:var(--sel-txt)}
 .bday-btn{width:100%;padding:11px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,#BF00FF,#7700CC);color:#fff;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:1px;transition:all .25s;box-shadow:0 3px 12px rgba(150,0,255,.3)}
 .bday-btn:active{transform:scale(.98)}
@@ -255,7 +265,7 @@ header{
 .disclaimer{background:rgba(255,45,85,.05);border:1px solid rgba(255,45,85,.2);border-radius:12px;padding:12px;font-size:11px;color:var(--sub);line-height:1.65;text-align:center}
 /* ======== BOTTOM NAV ======== */
 .bottom-nav{background:var(--header);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);transition:background .3s,border-color .3s}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 8px;color:var(--sub);font-size:9px;cursor:pointer;transition:color .2s;border:none;background:none;font-family:'Be Vietnam Pro',sans-serif;font-weight:600;flex:1;letter-spacing:.5px}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 8px;color:var(--sub);font-size:9px;cursor:pointer;transition:color .2s;border:none;background:none;font-family:'Inter','Space Grotesk',sans-serif;font-weight:600;flex:1;letter-spacing:.5px}
 .nav-btn.active{color:var(--gold)}
 .nav-icon{font-size:19px;line-height:1}
 /* ======== FIREWORKS ======== */
@@ -675,161 +685,186 @@ const ICO_CELL = `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentC
 
 const ICO_NONET = `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><path d="M2 2L18 18M10 1C5 1 1 5 1 10s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
 
-// ── Network type detection ───────────────────────
-function getNetType(){
+// ── Network detection: robust WiFi vs Cellular ───
+let _connState = 'connecting';
+let _netInfoCache = {type:'wifi', label:'WiFi', ts:0};
+
+function probeNetInfo(){
+  // Step 1: NetworkInformation API (Chrome/Android/Firefox)
   try{
-    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if(!c) return 'online'; // connected but type unknown
-    const t = (c.type||'').toLowerCase();
-    const et = (c.effectiveType||'').toLowerCase();
-    if(t==='wifi'||t==='ethernet') return 'wifi';
-    if(t==='cellular'||t==='wimax'||t==='bluetooth'||
-       et==='4g'||et==='3g'||et==='2g'||et==='slow-2g') return 'cellular';
-    return 'online';
-  }catch(e){ return 'online'; }
+    const nc = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+    if(nc){
+      const t  = (nc.type||'').toLowerCase();
+      const et = (nc.effectiveType||'').toLowerCase();
+      const rtt = nc.rtt || 0;
+      if(t==='wifi'||t==='ethernet') return {type:'wifi', label:'WiFi'};
+      if(t==='cellular'||t==='wimax'){
+        const lbl = et==='4g'?'LTE':et==='3g'?'3G':(et==='2g'||et==='slow-2g')?'2G':'4G';
+        return {type:'cellular', label:lbl};
+      }
+      // Android Chrome: no .type but has .effectiveType
+      if(et==='4g') return {type:'cellular', label:'LTE'};
+      if(et==='3g') return {type:'cellular', label:'3G'};
+      if(et==='2g'||et==='slow-2g') return {type:'cellular', label:'2G'};
+      // Has API but ambiguous type – use RTT heuristic
+      if(rtt > 0){
+        // WiFi typically <30ms RTT; cellular >50ms
+        return rtt < 40 ? {type:'wifi',label:'WiFi'} : {type:'cellular',label:'4G'};
+      }
+    }
+  }catch(e){}
+
+  // Step 2: iOS / Safari fallback – no NetworkInformation API
+  // Use connection.saveData or downlink as hints if available
+  try{
+    const nc = navigator.connection;
+    if(nc && nc.downlink){
+      // downlink > 5 Mbps → likely WiFi; <2 → cellular
+      return nc.downlink >= 5
+        ? {type:'wifi', label:'WiFi'}
+        : {type:'cellular', label: nc.downlink>=1 ? '4G' : '3G'};
+    }
+  }catch(e){}
+
+  // Step 3: timing heuristic – measure a tiny fetch latency
+  // (cached from last probe, updated async)
+  return _netInfoCache;
 }
 
-function getNetLabel(){
-  // Try to figure out cellular generation
+// Async latency probe for iOS (runs once on connect, updates cache)
+async function probeLatencyAsync(){
+  if(!navigator.onLine) return;
   try{
-    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if(!c) return '4G';
-    const et = (c.effectiveType||'').toLowerCase();
-    if(et==='4g') return '4G/LTE';
-    if(et==='3g') return '3G';
-    if(et==='2g'||et==='slow-2g') return '2G';
-    const t = (c.type||'').toLowerCase();
-    if(t==='cellular') return '4G';
-    return '4G';
-  }catch(e){ return '4G'; }
+    const t0 = performance.now();
+    await fetch('https://www.google.com/generate_204',{mode:'no-cors',cache:'no-store'});
+    const rtt = performance.now() - t0;
+    // <80ms → WiFi, 80-300ms → LTE, >300ms → 3G/2G
+    if(rtt < 80)       _netInfoCache = {type:'wifi',    label:'WiFi', ts:Date.now()};
+    else if(rtt < 300) _netInfoCache = {type:'cellular', label:'LTE', ts:Date.now()};
+    else               _netInfoCache = {type:'cellular', label:'3G',  ts:Date.now()};
+    if(_connState==='connected') renderConnIcon(_netInfoCache);
+  }catch(e){
+    _netInfoCache = {type:'wifi', label:'WiFi', ts:Date.now()};
+  }
+}
+
+function renderConnIcon(ni){
+  const led = document.getElementById('led');
+  const lbl = document.getElementById('conn-lbl');
+  if(!led||!lbl) return;
+  if(ni.type==='cellular'){
+    led.className='led connected cellular';
+    lbl.innerHTML = ICO_CELL+'<span>'+ni.label+'</span>';
+  } else {
+    led.className='led connected';
+    lbl.innerHTML = ICO_WIFI+'<span>'+ni.label+'</span>';
+  }
 }
 
 // ── UI update ────────────────────────────────────
 function updateConnUI(state){
+  _connState = state;
   const led = document.getElementById('led');
   const lbl = document.getElementById('conn-lbl');
   if(!led||!lbl) return;
-
   if(state==='connecting'){
     led.className='led connecting';
-    lbl.innerHTML = '&thinsp;Kết nối...';
+    lbl.innerHTML='<span style="opacity:.6">Kết nối...</span>';
     return;
   }
   if(state==='error'){
     led.className='led error';
-    lbl.innerHTML = ICO_NONET + 'Offline';
+    lbl.innerHTML=ICO_NONET+'<span>Offline</span>';
     return;
   }
-  // state === 'connected'
-  const nt = getNetType();
-  led.className = 'led connected' + (nt==='cellular' ? ' cellular' : '');
-  if(nt==='wifi'){
-    lbl.innerHTML = ICO_WIFI + 'WiFi';
-  } else if(nt==='cellular'){
-    lbl.innerHTML = ICO_CELL + getNetLabel();
-  } else {
-    lbl.innerHTML = ICO_WIFI + 'Online'; // fallback: show wifi icon
-  }
+  // connected: show network type immediately from cache, probe async
+  const ni = probeNetInfo();
+  renderConnIcon(ni);
+  // If cache is stale (>30s) or first connect → probe async
+  if(Date.now()-_netInfoCache.ts > 30000) probeLatencyAsync();
 }
 
-// ── Network event listeners ───────────────────────
-window.addEventListener('online',  ()=>{ updateConnUI('connecting'); checkConnection(); });
+// Poll every 5s to refresh network icon
+setInterval(()=>{ if(_connState==='connected') updateConnUI('connected'); }, 5000);
+
+// ── Network events ────────────────────────────────
+window.addEventListener('online',  ()=>{ _netInfoCache.ts=0; updateConnUI('connecting'); checkConnection(); });
 window.addEventListener('offline', ()=>{ connected=false; updateConnUI('error'); });
-if(navigator.connection){
-  navigator.connection.addEventListener('change', ()=>{
-    if(connected) updateConnUI('connected');
-    else checkConnection();
+try{
+  const nc=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(nc) nc.addEventListener('change',()=>{
+    _netInfoCache.ts=0; // invalidate cache
+    if(_connState==='connected') updateConnUI('connected');
+    else if(navigator.onLine) checkConnection();
   });
-}
+}catch(e){}
 
 // ═══════════════════════════════════════════════
-// JACKPOT DATA (defaults – overwritten when fetched)
+// JACKPOT DATA
 // ═══════════════════════════════════════════════
 const JP = {
   mega:  {value:'Đang tải...', draw:'--', pct:65, ts:0},
   power: {value:'Đang tải...', draw:'--', pct:78, ts:0},
 };
+const FALLBACK_JP = {mega:'45.678.901.000 đ', power:'102.345.678.000 đ'};
 
-// ── Parse vietlott HTML for jackpot values ───────
-function parseJackpotFromHtml(html){
-  const result = {};
-  try{
-    // Common patterns in vietlott.vn HTML
-    // Pattern 1: "jackpot" followed by number
-    const pat1 = /jackpot[^<]{0,120}?([\d]{1,3}(?:[.,\s]\d{3})+)/gi;
-    // Pattern 2: prize value in VND
-    const pat2 = /([\d]{2,3}(?:[.,]\d{3}){2,})\s*(?:đồng|VND|VNĐ|đ\b)/gi;
-    // Pattern 3: mega/power followed by big number
-    const megaPat = /mega[^<]{0,200}?([\d]{2,3}(?:[.,]\d{3}){2,})/i;
-    const powerPat = /power[^<]{0,200}?([\d]{2,3}(?:[.,]\d{3}){2,})/i;
-
-    const mm = html.match(megaPat);
-    const pm = html.match(powerPat);
-
-    if(mm && mm[1]){
-      const n = parseInt(mm[1].replace(/[.,\s]/g,''));
-      if(n > 1000000000) result.mega = n.toLocaleString('vi-VN') + ' đ';
-    }
-    if(pm && pm[1]){
-      const n = parseInt(pm[1].replace(/[.,\s]/g,''));
-      if(n > 1000000000) result.power = n.toLocaleString('vi-VN') + ' đ';
-    }
-
-    // Fallback: grab all large numbers and use biggest 2
-    if(!result.mega || !result.power){
-      const nums = [];
-      let m; const re = /([\d]{2,3}(?:[.,]\d{3}){2,})/g;
-      while((m=re.exec(html))!==null){
-        const n = parseInt(m[1].replace(/[.,\s]/g,''));
-        if(n > 5000000000) nums.push(n);
-      }
-      nums.sort((a,b)=>b-a);
-      if(nums[0] && !result.mega)  result.mega  = nums[0].toLocaleString('vi-VN') + ' đ';
-      if(nums[1] && !result.power) result.power = nums[1].toLocaleString('vi-VN') + ' đ';
-    }
-  }catch(e){}
-  return result;
+function applyFallback(){
+  if(JP.mega.value  ==='Đang tải...') JP.mega.value  = FALLBACK_JP.mega;
+  if(JP.power.value ==='Đang tải...') JP.power.value = FALLBACK_JP.power;
 }
 
-// ── Fetch jackpot data from proxy response ───────
-async function fetchJackpotData(proxyResp){
-  try{
-    const raw = await proxyResp.text();
-    // allorigins wraps in JSON {contents:'...'}
-    let html = raw;
-    try{
-      const j = JSON.parse(raw);
-      html = j.contents || j.response || j.data || raw;
-    }catch(e){ /* plain HTML */ }
-
-    const parsed = parseJackpotFromHtml(html);
-    const now = Date.now();
-    if(parsed.mega)  { JP.mega.value  = parsed.mega;  JP.mega.ts  = now; }
-    if(parsed.power) { JP.power.value = parsed.power; JP.power.ts = now; }
-
-    // Estimate jackpot heat from value magnitude
-    function estimatePct(valStr){
-      const n = parseInt((valStr||'').replace(/[^\d]/g,''));
-      if(isNaN(n)) return 65;
-      if(n > 200000000000) return 92; // >200B
-      if(n > 100000000000) return 82; // >100B
-      if(n > 50000000000)  return 72; // >50B
-      if(n > 20000000000)  return 58; // >20B
-      return 48;
-    }
-    JP.mega.pct  = estimatePct(JP.mega.value);
-    JP.power.pct = estimatePct(JP.power.value);
-  }catch(e){
-    // If parse fails, use realistic fallback values
-    JP.mega.value  = JP.mega.value  === 'Đang tải...' ? '45.678.901.000 đ' : JP.mega.value;
-    JP.power.value = JP.power.value === 'Đang tải...' ? '102.345.678.000 đ': JP.power.value;
-  }
-  renderJP('mega');
-  renderJP('power');
-  showToast('✅ Dữ liệu Vietlott đã cập nhật', '', 2500);
+// Extract largest VND number from a text blob (handles Vietnamese dot-format)
+function extractBigVND(txt){
+  const found = [];
+  let m;
+  // Pattern A: Vietnamese dot-thousands: 45.678.901.000
+  const reA = /\b(\d{1,3}(?:\.\d{3}){3,})\b/g;
+  while((m=reA.exec(txt))!==null){ const n=parseInt(m[1].replace(/\./g,'')); if(n>=1e9&&n<9e12) found.push(n); }
+  // Pattern B: comma-thousands: 45,678,901,000
+  const reB = /\b(\d{1,3}(?:,\d{3}){3,})\b/g;
+  while((m=reB.exec(txt))!==null){ const n=parseInt(m[1].replace(/,/g,'')); if(n>=1e9&&n<9e12) found.push(n); }
+  // Pattern C: plain large digits
+  const reC = /\b(\d{10,13})\b/g;
+  while((m=reC.exec(txt))!==null){ const n=parseInt(m[1]); if(n>=1e9&&n<9e12) found.push(n); }
+  if(!found.length) return null;
+  found.sort((a,b)=>b-a);
+  return found[0];
 }
 
-// ── CORS Proxy list (ordered by reliability) ─────
+function fmtVND(n){ return n.toLocaleString('vi-VN')+' đ'; }
+
+function estimatePct(v){
+  const n=parseInt((v||'').replace(/\D/g,''));
+  if(!n||n<=0) return 65;
+  if(n>200e9) return 92; if(n>100e9) return 85;
+  if(n>50e9)  return 74; if(n>20e9)  return 62;
+  if(n>10e9)  return 55; return 48;
+}
+
+async function fetchJackpotData(resp, game){
+  try{
+    const raw = await resp.text();
+    let body = raw;
+    try{ const j=JSON.parse(raw); body=j.contents||j.response||j.data||j.body||raw; }catch(_){}
+    // Strip scripts/styles/tags
+    const txt = body
+      .replace(/<script[\s\S]*?<\/script>/gi,'')
+      .replace(/<style[\s\S]*?<\/style>/gi,'')
+      .replace(/<[^>]+>/g,' ')
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&')
+      .replace(/\s+/g,' ');
+    const val = extractBigVND(txt);
+    if(val){ JP[game].value=fmtVND(val); JP[game].ts=Date.now(); }
+    else { applyFallback(); }
+  }catch(e){ applyFallback(); }
+  JP.mega.pct  = estimatePct(JP.mega.value);
+  JP.power.pct = estimatePct(JP.power.value);
+  renderJP('mega'); renderJP('power');
+  const updated = JP.mega.value!==FALLBACK_JP.mega || JP.power.value!==FALLBACK_JP.power;
+  if(updated) showToast('✅ Jackpot cập nhật từ Vietlott','',2200);
+}
+
+// ── CORS Proxy list ───────────────────────────────
 const PROXIES = [
   u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}&t=${Date.now()}`,
   u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
@@ -837,59 +872,51 @@ const PROXIES = [
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}&t=${Date.now()}`,
   u => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`,
 ];
-const VL_URL  = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/mega645';
-const VL_URL2 = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/655';
+const VL_MEGA  = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/mega645';
+const VL_POWER = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/655';
 let connected = false, retryN = 0, retryTid = null;
 
-async function fetchWithTimeout(url, timeout=10000){
+async function fetchWithTimeout(url, ms=10000){
   const ctrl = new AbortController();
-  const tid = setTimeout(()=>ctrl.abort(), timeout);
+  const tid = setTimeout(()=>ctrl.abort(), ms);
   try{
-    const r = await fetch(url, {signal:ctrl.signal, cache:'no-store'});
-    clearTimeout(tid); return r;
+    const r = await fetch(url,{signal:ctrl.signal,cache:'no-store'});
+    clearTimeout(tid);
+    return (r.status>=200&&r.status<400) ? r : null;
   }catch(e){ clearTimeout(tid); return null; }
+}
+
+async function tryProxies(targetUrl, game){
+  for(let i=0;i<PROXIES.length;i++){
+    const r = await fetchWithTimeout(PROXIES[i](targetUrl), i===0?10000:8000);
+    if(r){ fetchJackpotData(r,game); return true; }
+  }
+  return false;
 }
 
 async function checkConnection(){
   if(retryTid){ clearTimeout(retryTid); retryTid=null; }
   updateConnUI('connecting');
-
-  // Offline guard
   if(!navigator.onLine){
     connected=false; retryN++;
     updateConnUI('error');
-    JP.mega.value  = JP.mega.value  === 'Đang tải...' ? '45.678.901.000 đ' : JP.mega.value;
-    JP.power.value = JP.power.value === 'Đang tải...' ? '102.345.678.000 đ': JP.power.value;
-    renderJP('mega'); renderJP('power');
-    retryTid = setTimeout(checkConnection, 30000);
+    applyFallback(); renderJP('mega'); renderJP('power');
+    retryTid=setTimeout(checkConnection,30000); return;
+  }
+  const ok = await tryProxies(VL_MEGA,'mega');
+  if(ok){
+    connected=true; retryN=0;
+    updateConnUI('connected');
+    setTimeout(()=>tryProxies(VL_POWER,'power').catch(()=>{}), 500);
+    if(S.autorefresh) retryTid=setTimeout(checkConnection,3*60*1000);
     return;
   }
-
-  // Try each proxy
-  for(let i=0; i<PROXIES.length; i++){
-    const url = PROXIES[i](i%2===0 ? VL_URL : VL_URL2);
-    const r = await fetchWithTimeout(url, i===0 ? 10000 : 8000);
-    if(r && (r.status===200 || r.status===304)){
-      connected=true; retryN=0;
-      updateConnUI('connected');
-      fetchJackpotData(r); // non-blocking parse
-      // Schedule next refresh
-      if(S.autorefresh) retryTid = setTimeout(checkConnection, 3*60*1000); // every 3 min
-      return;
-    }
-  }
-
-  // All proxies failed
   connected=false; retryN++;
   updateConnUI('error');
-  JP.mega.value  = JP.mega.value  === 'Đang tải...' ? '45.678.901.000 đ' : JP.mega.value;
-  JP.power.value = JP.power.value === 'Đang tải...' ? '102.345.678.000 đ': JP.power.value;
-  renderJP('mega'); renderJP('power');
-  if(retryN===1) showToast('📡 Ngoại tuyến – Đang dùng dữ liệu gần nhất');
-  const wait = Math.min(30000 + retryN*20000, 180000);
-  retryTid = setTimeout(checkConnection, wait);
+  applyFallback(); renderJP('mega'); renderJP('power');
+  if(retryN===1) showToast('📡 Dùng số ước tính – Đang thử lại');
+  retryTid=setTimeout(checkConnection,Math.min(20000+retryN*15000,120000));
 }
-
 
 function renderJP(g){
   const d = JP[g];
@@ -1266,14 +1293,17 @@ window.addEventListener('load',()=>{
   }, 4000);
 });
 
-// Prevent body bounce (iOS)
-document.addEventListener('touchmove', e=>{
-  if(!e.target.closest('.scroll-area,.tabs-wrap,.keno-grid,.freq-list')) e.preventDefault();
-},{passive:false});
-// Prevent double-tap zoom
+// Only lock body scroll in PWA standalone mode
+const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode:standalone)').matches;
+if(isStandalone){
+  document.addEventListener('touchmove', e=>{
+    if(!e.target.closest('.scroll-area,.tabs-wrap,.keno-grid,.freq-list')) e.preventDefault();
+  },{passive:false});
+}
+// Prevent double-tap zoom everywhere
 let lastTap=0;
 document.addEventListener('touchend', e=>{
-  const now=Date.now(); if(now-lastTap<300) e.preventDefault(); lastTap=now;
+  const now=Date.now(); if(now-lastTap<280) e.preventDefault(); lastTap=now;
 },{passive:false});
 </script>
 
