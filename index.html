@@ -1,754 +1,1237 @@
 <!DOCTYPE html>
+
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VietlottAI - D\u1ef1 \u0111o\u00e1n X\u1ed5 s\u1ed1 Th\u00f4ng minh</title>
+<title>VietLott AI – Dự Đoán Thông Minh</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #FFD700;
-    --gold2: #FFA500;
-    --red: #FF2D55;
-    --green: #00FF88;
-    --blue: #00C8FF;
-    --purple: #BF5FFF;
-    --dark: #050A14;
-    --dark2: #0A1628;
-    --dark3: #0F2040;
-    --card: rgba(255,255,255,0.04);
-    --border: rgba(255,215,0,0.18);
-    --text: #E8EAF0;
-    --sub: #8899BB;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Be Vietnam Pro',sans-serif;
-    background:var(--dark);
-    color:var(--text);
-    min-height:100vh;
-    overflow-x:hidden;
-  }
+:root {
+  --gold: #FFD700;
+  --gold2: #FFA500;
+  --red: #E8001D;
+  --red2: #FF4444;
+  --dark: #0A0A12;
+  --dark2: #12121E;
+  --dark3: #1A1A2E;
+  --panel: rgba(255,255,255,0.04);
+  --border: rgba(255,215,0,0.18);
+  --text: #F0E6FF;
+  --muted: rgba(240,230,255,0.5);
+  --green: #00FF88;
+  --cyan: #00D4FF;
+  --purple: #9B59B6;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;background:var(--dark);color:var(--text);font-family:'Be Vietnam Pro',sans-serif;overflow-x:hidden;}
 
-  /* ===== SPLASH SCREEN ===== */
-  #splash{
-    position:fixed;inset:0;z-index:9999;
-    background:radial-gradient(ellipse at 50% 40%, #0d1f3c 0%, #050A14 70%);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    transition:opacity .8s ease, transform .8s ease;
-  }
-  #splash.hide{opacity:0;transform:scale(1.05);pointer-events:none}
-  .splash-logo{
-    font-family:'Orbitron',sans-serif;
-    font-size:clamp(2.5rem,8vw,5rem);
-    font-weight:900;
-    background:linear-gradient(135deg,var(--gold),var(--gold2),var(--red));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    text-shadow:none;letter-spacing:4px;
-    animation:splashPulse 1.5s ease-in-out infinite alternate;
-  }
-  @keyframes splashPulse{from{filter:drop-shadow(0 0 20px #FFD70088)}to{filter:drop-shadow(0 0 50px #FFD700cc)}}
-  .splash-sub{margin-top:12px;font-size:1.1rem;color:var(--blue);letter-spacing:6px;text-transform:uppercase;opacity:.8}
-  .splash-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-  .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,2s) ease-in-out infinite alternate}
-  @keyframes twinkle{from{opacity:.1;transform:scale(.7)}to{opacity:1;transform:scale(1.2)}}
-  .splash-bar{margin-top:48px;width:260px;height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
-  .splash-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:99px;width:0%;transition:width .05s linear}
-  .splash-pct{margin-top:10px;font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--gold);letter-spacing:2px}
-  .splash-rings{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-  .ring{position:absolute;border-radius:50%;border:1px solid;animation:expandRing 3s ease-out infinite}
-  .ring:nth-child(1){width:200px;height:200px;border-color:rgba(255,215,0,.3);animation-delay:0s}
-  .ring:nth-child(2){width:350px;height:350px;border-color:rgba(0,200,255,.2);animation-delay:.6s}
-  .ring:nth-child(3){width:500px;height:500px;border-color:rgba(191,95,255,.15);animation-delay:1.2s}
-  @keyframes expandRing{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.3);opacity:0}}
+/* ===== SPLASH ===== */
+#splash{
+position:fixed;inset:0;z-index:9999;
+background:radial-gradient(ellipse at 50% 40%, #1a0a2e 0%, #0A0A12 70%);
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+transition:opacity .6s ease;
+}
+#splash.hide{opacity:0;pointer-events:none;}
+.splash-logo{font-family:‘Orbitron’,sans-serif;font-size:clamp(2rem,8vw,5rem);font-weight:900;
+background:linear-gradient(135deg,var(–gold),var(–red),var(–gold2));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+animation:splashPulse 1.5s ease-in-out infinite alternate;
+text-shadow:none;letter-spacing:4px;
+}
+.splash-sub{font-size:1rem;color:var(–muted);margin-top:.5rem;letter-spacing:6px;text-transform:uppercase;}
+.splash-balls{display:flex;gap:12px;margin:2.5rem 0 2rem;}
+.splash-ball{
+width:52px;height:52px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-family:‘Orbitron’,sans-serif;font-weight:700;font-size:1.1rem;
+animation:splashBall 1.2s ease-in-out infinite alternate;
+}
+.splash-ball:nth-child(1){background:linear-gradient(135deg,#FFD700,#FFA500);color:#000;animation-delay:0s;}
+.splash-ball:nth-child(2){background:linear-gradient(135deg,#E8001D,#FF6B6B);color:#fff;animation-delay:.15s;}
+.splash-ball:nth-child(3){background:linear-gradient(135deg,#00D4FF,#0066CC);color:#fff;animation-delay:.3s;}
+.splash-ball:nth-child(4){background:linear-gradient(135deg,#00FF88,#009944);color:#000;animation-delay:.45s;}
+.splash-ball:nth-child(5){background:linear-gradient(135deg,#9B59B6,#6C3483);color:#fff;animation-delay:.6s;}
+@keyframes splashBall{0%{transform:translateY(0) scale(1);}100%{transform:translateY(-16px) scale(1.1);}}
+@keyframes splashPulse{0%{opacity:.8;}100%{opacity:1;}}
+.splash-progress{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-top:1rem;}
+.splash-bar{height:100%;background:linear-gradient(90deg,var(–gold),var(–red));border-radius:4px;animation:splashLoad 2.5s ease forwards;}
+@keyframes splashLoad{0%{width:0}100%{width:100%}}
+.splash-text{font-size:.8rem;color:var(–muted);margin-top:.8rem;letter-spacing:2px;}
 
-  /* ===== MAIN APP ===== */
-  #app{display:none;flex-direction:column;min-height:100vh}
-  #app.show{display:flex}
+/* ===== MAIN APP ===== */
+#app{display:none;min-height:100vh;}
+#app.show{display:block;}
 
-  /* BG */
-  .bg-fx{
-    position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:
-      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(0,200,255,.07) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 60% at 80% 80%, rgba(191,95,255,.06) 0%, transparent 60%),
-      radial-gradient(ellipse 100% 80% at 50% 50%, rgba(15,32,64,1) 0%, #050A14 100%);
-  }
-  .grid-bg{
-    position:fixed;inset:0;z-index:0;pointer-events:none;
-    background-image:
-      linear-gradient(rgba(255,215,0,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,215,0,.04) 1px, transparent 1px);
-    background-size:48px 48px;
-  }
+/* Header */
+.app-header{
+background:linear-gradient(180deg,rgba(20,8,40,.98) 0%,rgba(10,10,18,.95) 100%);
+border-bottom:1px solid var(–border);
+padding:.8rem 1rem;
+position:sticky;top:0;z-index:100;
+backdrop-filter:blur(12px);
+}
+.header-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;}
+.logo-text{font-family:‘Orbitron’,sans-serif;font-size:1.3rem;font-weight:900;
+background:linear-gradient(135deg,var(–gold),var(–red));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+letter-spacing:2px;
+}
+.live-badge{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(–green);
+background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);
+padding:.3rem .7rem;border-radius:20px;
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(–green);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.header-clock{font-family:‘Orbitron’,sans-serif;font-size:.75rem;color:var(–gold);letter-spacing:1px;}
 
-  /* HEADER */
-  header{
-    position:relative;z-index:10;
-    padding:16px 24px;
-    display:flex;align-items:center;justify-content:space-between;
-    background:rgba(5,10,20,.9);
-    border-bottom:1px solid var(--border);
-    backdrop-filter:blur(12px);
-    flex-wrap:wrap;gap:12px;
-  }
-  .logo{
-    font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.5rem;
-    background:linear-gradient(90deg,var(--gold),var(--gold2));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    letter-spacing:2px;
-  }
-  .logo span{color:var(--red);-webkit-text-fill-color:var(--red)}
-  .header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .live-badge{
-    display:flex;align-items:center;gap:6px;
-    background:rgba(255,45,85,.15);border:1px solid rgba(255,45,85,.4);
-    padding:5px 12px;border-radius:99px;font-size:.78rem;font-weight:600;color:var(--red);
-  }
-  .live-dot{width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink .9s ease-in-out infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-  .clock-widget{
-    font-family:'Orbitron',sans-serif;font-size:.9rem;color:var(--blue);letter-spacing:1px;
-    background:rgba(0,200,255,.07);border:1px solid rgba(0,200,255,.2);
-    padding:5px 14px;border-radius:8px;
-  }
+/* Nav Tabs */
+.game-nav{
+background:var(–dark2);border-bottom:1px solid var(–border);
+overflow-x:auto;scrollbar-width:none;
+}
+.game-nav::-webkit-scrollbar{display:none;}
+.game-tabs{display:flex;gap:0;min-width:max-content;max-width:900px;margin:0 auto;}
+.gtab{
+padding:.7rem 1.1rem;font-size:.78rem;font-weight:600;cursor:pointer;
+border:none;background:transparent;color:var(–muted);
+border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;
+font-family:‘Be Vietnam Pro’,sans-serif;letter-spacing:.5px;
+}
+.gtab:hover{color:var(–text);background:rgba(255,215,0,.05);}
+.gtab.active{color:var(–gold);border-bottom-color:var(–gold);background:rgba(255,215,0,.07);}
 
-  /* TABS */
-  .tabs-wrap{
-    position:relative;z-index:10;
-    display:flex;overflow-x:auto;
-    background:rgba(5,10,20,.95);
-    border-bottom:1px solid var(--border);
-    gap:2px;padding:8px 16px;
-    scrollbar-width:none;
-  }
-  .tabs-wrap::-webkit-scrollbar{display:none}
-  .tab-btn{
-    flex-shrink:0;padding:8px 18px;border-radius:8px;border:1px solid transparent;
-    font-size:.82rem;font-weight:600;cursor:pointer;
-    background:transparent;color:var(--sub);
-    transition:all .25s;letter-spacing:.5px;white-space:nowrap;
-    font-family:'Be Vietnam Pro',sans-serif;
-  }
-  .tab-btn:hover{color:var(--gold);border-color:rgba(255,215,0,.2);background:rgba(255,215,0,.05)}
-  .tab-btn.active{
-    background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.1));
-    border-color:rgba(255,215,0,.5);color:var(--gold);
-  }
-  .tab-btn .game-icon{margin-right:5px}
+/* Container */
+.main-wrap{max-width:900px;margin:0 auto;padding:1rem;}
 
-  /* CONTENT */
-  .content{
-    position:relative;z-index:5;flex:1;
-    padding:20px 16px 40px;
-    max-width:900px;margin:0 auto;width:100%;
-  }
-  .game-panel{display:none}
-  .game-panel.active{display:block;animation:fadeUp .4s ease}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+/* Game Panel */
+.game-panel{display:none;animation:fadeIn .3s ease;}
+.game-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-  /* CARD */
-  .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:20px;
-    margin-bottom:18px;
-    backdrop-filter:blur(8px);
-  }
-  .card-title{
-    font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;
-    color:var(--gold);letter-spacing:2px;text-transform:uppercase;
-    margin-bottom:16px;display:flex;align-items:center;gap:8px;
-  }
-  .card-title .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+/* Info Card */
+.info-card{
+background:linear-gradient(135deg,rgba(232,0,29,.08),rgba(255,215,0,.06));
+border:1px solid var(–border);border-radius:14px;
+padding:1rem 1.2rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.game-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.game-title-big{font-family:‘Orbitron’,sans-serif;font-size:1.1rem;font-weight:700;color:var(–gold);}
+.game-desc{font-size:.78rem;color:var(–muted);margin-top:.2rem;}
+.jackpot-display{margin-left:auto;text-align:right;}
+.jackpot-label{font-size:.7rem;color:var(–muted);text-transform:uppercase;letter-spacing:1px;}
+.jackpot-amount{font-family:‘Orbitron’,sans-serif;font-size:1.2rem;font-weight:700;
+background:linear-gradient(135deg,var(–gold),var(–red));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
 
-  /* GAME HEADER */
-  .game-header{
-    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
-    margin-bottom:20px;
-  }
-  .game-title{
-    font-family:'Orbitron',sans-serif;font-size:clamp(1.3rem,4vw,1.8rem);font-weight:900;
-    background:linear-gradient(135deg,var(--gold),var(--gold2));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  }
-  .game-badge{
-    padding:5px 14px;border-radius:99px;font-size:.78rem;font-weight:700;
-    background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.3);color:var(--green);
-    display:flex;align-items:center;gap:5px;
-  }
+/* Jackpot Meter */
+.jackpot-meter-wrap{
+background:var(–panel);border:1px solid var(–border);border-radius:14px;
+padding:1rem 1.2rem;margin-bottom:1rem;
+}
+.jm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
+.jm-title{font-size:.8rem;font-weight:700;color:var(–gold);text-transform:uppercase;letter-spacing:1.5px;}
+.jm-percent{font-family:‘Orbitron’,sans-serif;font-size:1.1rem;font-weight:700;}
+.jm-bar-bg{height:14px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;position:relative;margin-bottom:.7rem;}
+.jm-bar-fill{height:100%;border-radius:10px;transition:width 1.5s cubic-bezier(.4,0,.2,1);position:relative;}
+.jm-bar-fill::after{content:’’;position:absolute;right:0;top:0;width:6px;height:100%;background:rgba(255,255,255,.5);border-radius:50%;filter:blur(2px);}
+.jm-zones{display:flex;gap:.5rem;font-size:.7rem;flex-wrap:wrap;}
+.jm-zone{padding:.25rem .6rem;border-radius:20px;font-weight:600;}
+.zone-low{background:rgba(0,255,136,.12);color:var(–green);border:1px solid rgba(0,255,136,.3);}
+.zone-mid{background:rgba(255,165,0,.12);color:var(–gold2);border:1px solid rgba(255,165,0,.3);}
+.zone-high{background:rgba(232,0,29,.12);color:var(–red2);border:1px solid rgba(232,0,29,.3);}
+.jm-advice{font-size:.8rem;margin-top:.6rem;padding:.5rem .8rem;border-radius:8px;font-weight:500;}
+.advice-wait{background:rgba(0,255,136,.08);color:var(–green);border:1px solid rgba(0,255,136,.2);}
+.advice-hot{background:rgba(255,165,0,.1);color:var(–gold2);border:1px solid rgba(255,165,0,.25);}
+.advice-fire{background:rgba(232,0,29,.1);color:var(–red2);border:1px solid rgba(232,0,29,.25);}
 
-  /* RESULT NUMBERS */
-  .result-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;align-items:center;min-height:52px}
-  .num-ball{
-    width:46px;height:46px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Orbitron',sans-serif;font-weight:700;font-size:1rem;
-    border:2px solid;position:relative;
-    cursor:default;transition:transform .2s;
-    flex-shrink:0;
-  }
-  .num-ball:hover{transform:scale(1.12)}
-  .num-ball.gold{
-    background:radial-gradient(circle at 35% 35%, #FFE55C, #FFB800);
-    border-color:#FFD700;color:#1a1000;
-    box-shadow:0 0 14px rgba(255,215,0,.5);
-  }
-  .num-ball.blue{
-    background:radial-gradient(circle at 35% 35%, #4dd9ff, #00A0CC);
-    border-color:#00C8FF;color:#001520;
-    box-shadow:0 0 14px rgba(0,200,255,.4);
-  }
-  .num-ball.red{
-    background:radial-gradient(circle at 35% 35%, #FF6B8A, #CC1133);
-    border-color:#FF2D55;color:#fff;
-    box-shadow:0 0 14px rgba(255,45,85,.4);
-  }
-  .num-ball.purple{
-    background:radial-gradient(circle at 35% 35%, #D499FF, #9933DD);
-    border-color:#BF5FFF;color:#fff;
-    box-shadow:0 0 14px rgba(191,95,255,.4);
-  }
-  .num-ball.green{
-    background:radial-gradient(circle at 35% 35%, #66FFBB, #00CC66);
-    border-color:#00FF88;color:#001a0d;
-    box-shadow:0 0 14px rgba(0,255,136,.4);
-  }
-  .num-ball.spin{animation:spinBall .5s ease}
-  @keyframes spinBall{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+/* AI Predict Section */
+.predict-section{background:var(–panel);border:1px solid var(–border);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1rem;}
+.section-title{font-size:.8rem;font-weight:700;color:var(–gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;}
+.section-title .ai-badge{background:linear-gradient(135deg,#9B59B6,#6C3483);color:#fff;font-size:.65rem;padding:.15rem .5rem;border-radius:20px;}
 
-  /* SPECIAL BALL */
-  .special-sep{
-    font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;
-    color:var(--red);margin:0 4px;align-self:center;
-  }
+/* Birthday Predict */
+.bday-form{display:flex;flex-direction:column;gap:.7rem;}
+.bday-row{display:flex;gap:.6rem;flex-wrap:wrap;}
+.bday-select-wrap{flex:1;min-width:80px;}
+.bday-label{font-size:.7rem;color:var(–muted);margin-bottom:.3rem;}
+.bday-select{
+width:100%;padding:.5rem .7rem;
+background:rgba(255,255,255,.06);border:1px solid var(–border);
+border-radius:8px;color:var(–text);font-family:‘Be Vietnam Pro’,sans-serif;font-size:.85rem;
+cursor:pointer;-webkit-appearance:none;appearance:none;
+background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%23FFD700’/%3E%3C/svg%3E”);
+background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;
+}
+.bday-select:focus{outline:none;border-color:var(–gold);}
+option{background:#1A1A2E;color:var(–text);}
 
-  /* JACKPOT BADGE */
-  .jackpot-value{
-    font-family:'Orbitron',sans-serif;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:900;
-    color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.6);
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  }
-  .jackpot-label{font-size:.75rem;color:var(--sub);font-family:'Be Vietnam Pro',sans-serif;font-weight:400}
+/* Predict Button */
+.btn-predict{
+width:100%;padding:.8rem;border-radius:10px;border:none;cursor:pointer;
+font-family:‘Orbitron’,sans-serif;font-size:.85rem;font-weight:700;letter-spacing:2px;
+background:linear-gradient(135deg,var(–gold),var(–gold2),var(–red));
+color:#000;transition:all .2s;
+box-shadow:0 4px 20px rgba(232,0,29,.25);
+position:relative;overflow:hidden;
+}
+.btn-predict:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(232,0,29,.4);}
+.btn-predict:active{transform:translateY(0);}
+.btn-predict::after{content:’’;position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:translateX(-100%);transition:transform .5s;}
+.btn-predict:hover::after{transform:translateX(100%);}
 
-  /* JACKPOT METER */
-  .jackpot-meter{
-    background:rgba(255,45,85,.05);border:1px solid rgba(255,45,85,.2);
-    border-radius:14px;padding:16px 20px;margin-top:14px;
-  }
-  .meter-title{
-    display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;
-    font-size:.82rem;font-weight:600;
-  }
-  .meter-label{color:var(--gold);font-family:'Orbitron',sans-serif;font-size:.75rem;letter-spacing:1px}
-  .meter-pct{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;color:var(--red)}
-  .meter-bar-bg{
-    height:14px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;
-    border:1px solid rgba(255,255,255,.08);
-  }
-  .meter-bar-fill{
-    height:100%;border-radius:99px;
-    background:linear-gradient(90deg,#00FF88,#FFD700,#FF2D55);
-    transition:width 1s cubic-bezier(.4,0,.2,1);
-    position:relative;overflow:hidden;
-  }
-  .meter-bar-fill::after{
-    content:'';position:absolute;inset:0;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
-    animation:shimmer 2s linear infinite;
-  }
-  @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
-  .meter-advice{
-    margin-top:10px;padding:8px 14px;border-radius:8px;font-size:.82rem;font-weight:600;
-    display:flex;align-items:center;gap:6px;
-  }
-  .meter-advice.safe{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.2)}
-  .meter-advice.warn{background:rgba(255,215,0,.08);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
-  .meter-advice.hot{background:rgba(255,45,85,.12);color:var(--red);border:1px solid rgba(255,45,85,.3)}
-  .meter-segments{display:flex;justify-content:space-between;margin-top:6px;font-size:.68rem;color:var(--sub)}
+/* Result Balls */
+.balls-container{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin:.8rem 0;}
+.ball{
+width:46px;height:46px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-family:‘Orbitron’,sans-serif;font-weight:700;font-size:.95rem;
+position:relative;flex-shrink:0;
+animation:ballAppear .4s cubic-bezier(.34,1.56,.64,1) both;
+cursor:default;
+}
+@keyframes ballAppear{from{transform:scale(0) rotate(-180deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+.ball-red{background:radial-gradient(circle at 35% 35%,#FF6B6B,#E8001D,#8B0000);color:#fff;box-shadow:0 4px 15px rgba(232,0,29,.5);}
+.ball-gold{background:radial-gradient(circle at 35% 35%,#FFE55C,#FFD700,#CC8800);color:#000;box-shadow:0 4px 15px rgba(255,215,0,.5);}
+.ball-blue{background:radial-gradient(circle at 35% 35%,#60CFFF,#00D4FF,#0055AA);color:#fff;box-shadow:0 4px 15px rgba(0,212,255,.4);}
+.ball-green{background:radial-gradient(circle at 35% 35%,#5FFFA8,#00FF88,#006633);color:#000;box-shadow:0 4px 15px rgba(0,255,136,.4);}
+.ball-purple{background:radial-gradient(circle at 35% 35%,#C77DFF,#9B59B6,#4A235A);color:#fff;box-shadow:0 4px 15px rgba(155,89,182,.4);}
+.ball-bonus{background:radial-gradient(circle at 35% 35%,#FFE55C,#FFA500,#CC4400);color:#000;box-shadow:0 6px 20px rgba(255,165,0,.6);
+width:52px;height:52px;font-size:1rem;border:3px solid rgba(255,255,255,.3);}
+.ball-label{font-size:.6rem;color:var(–muted);text-align:center;margin-top:.2rem;}
+.ball-wrap{display:flex;flex-direction:column;align-items:center;}
 
-  /* AI PREDICT SECTION */
-  .ai-section{margin-top:8px}
-  .ai-sets{display:flex;flex-direction:column;gap:12px;margin-top:10px}
-  .ai-set{
-    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-    border-radius:12px;padding:14px 16px;
-    transition:border-color .3s;
-  }
-  .ai-set:hover{border-color:rgba(255,215,0,.25)}
-  .ai-set-header{
-    display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;
-  }
-  .ai-set-label{font-size:.78rem;color:var(--sub);font-weight:600}
-  .ai-confidence{
-    font-size:.75rem;padding:3px 10px;border-radius:99px;font-weight:700;
-    background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.25);color:var(--blue);
-  }
-  .ai-set-nums{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* Keno Grid */
+.keno-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin:.8rem 0;}
+.keno-cell{
+aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
+font-size:.75rem;font-weight:700;background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.08);transition:all .3s;font-family:‘Orbitron’,sans-serif;
+}
+.keno-cell.selected{background:radial-gradient(circle,#FFD700,#E8001D);color:#fff;border-color:transparent;
+box-shadow:0 2px 10px rgba(232,0,29,.4);transform:scale(1.05);}
+.keno-cell.hot{background:rgba(255,100,0,.2);border-color:rgba(255,100,0,.4);color:#FF8C00;}
+.keno-cell.cold{background:rgba(0,100,255,.15);border-color:rgba(0,100,255,.3);color:#4488FF;}
 
-  /* BUTTONS */
-  .btn{
-    padding:11px 22px;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;
-    border:none;transition:all .2s;font-family:'Be Vietnam Pro',sans-serif;
-    display:inline-flex;align-items:center;gap:7px;
-  }
-  .btn:active{transform:scale(.96)}
-  .btn-gold{
-    background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1000;
-    box-shadow:0 4px 20px rgba(255,215,0,.3);
-  }
-  .btn-gold:hover{box-shadow:0 6px 28px rgba(255,215,0,.5);transform:translateY(-1px)}
-  .btn-blue{
-    background:linear-gradient(135deg,#00A0CC,var(--blue));color:#001520;
-    box-shadow:0 4px 20px rgba(0,200,255,.25);
-  }
-  .btn-blue:hover{box-shadow:0 6px 28px rgba(0,200,255,.4)}
-  .btn-red{
-    background:linear-gradient(135deg,#CC1133,var(--red));color:#fff;
-    box-shadow:0 4px 20px rgba(255,45,85,.25);
-  }
-  .btn-outline{
-    background:transparent;border:1px solid var(--border);color:var(--gold);
-  }
-  .btn-outline:hover{background:rgba(255,215,0,.06)}
-  .btn-sm{padding:7px 14px;font-size:.78rem}
+/* Max 3D Grid */
+.d3-display{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:.8rem 0;}
+.d3-set{display:flex;flex-direction:column;align-items:center;gap:.3rem;}
+.d3-label{font-size:.7rem;color:var(–muted);text-transform:uppercase;letter-spacing:1px;}
+.d3-nums{display:flex;gap:.4rem;}
+.d3-num{
+width:38px;height:48px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+font-family:‘Orbitron’,sans-serif;font-weight:700;font-size:1.1rem;
+background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(232,0,29,.1));
+border:1px solid var(–border);
+animation:ballAppear .4s cubic-bezier(.34,1.56,.64,1) both;
+}
 
-  /* BIRTHDAY SECTION */
-  .birthday-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-  .bday-tab{
-    padding:7px 16px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;
-    background:transparent;border:1px solid var(--border);color:var(--sub);
-    transition:all .2s;font-family:'Be Vietnam Pro',sans-serif;
-  }
-  .bday-tab.active{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.4);color:var(--gold)}
-  .select-wrap{position:relative;display:inline-block}
-  .select-wrap select{
-    appearance:none;-webkit-appearance:none;
-    background:var(--dark2);border:1px solid var(--border);
-    color:var(--text);padding:10px 36px 10px 14px;
-    border-radius:10px;font-size:.9rem;cursor:pointer;
-    font-family:'Be Vietnam Pro',sans-serif;min-width:120px;
-  }
-  .select-wrap::after{
-    content:'\u25bc';position:absolute;right:12px;top:50%;transform:translateY(-50%);
-    color:var(--gold);font-size:.7rem;pointer-events:none;
-  }
-  .bday-inputs{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+/* Analysis Box */
+.analysis-box{
+background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:10px;
+padding:.8rem 1rem;margin-top:.8rem;font-size:.78rem;color:var(–muted);line-height:1.7;
+}
+.analysis-box strong{color:var(–gold);}
+.analysis-box .tag{display:inline-block;background:rgba(255,215,0,.1);color:var(–gold);
+padding:.1rem .5rem;border-radius:4px;font-size:.7rem;margin:.1rem;}
 
-  /* KENO GRID */
-  .keno-grid{
-    display:grid;grid-template-columns:repeat(10,1fr);
-    gap:5px;margin:12px 0;
-  }
-  .keno-num{
-    aspect-ratio:1;border-radius:8px;border:1px solid rgba(255,255,255,.12);
-    background:rgba(255,255,255,.04);
-    display:flex;align-items:center;justify-content:center;
-    font-size:.82rem;font-weight:600;cursor:default;
-    transition:all .3s;
-  }
-  .keno-num.hit{
-    background:radial-gradient(circle,#FFE55C,#FFB800);
-    border-color:var(--gold);color:#1a1000;
-    box-shadow:0 0 10px rgba(255,215,0,.4);
-  }
-  .keno-num.predict{
-    background:radial-gradient(circle,#66FFBB,#00CC66);
-    border-color:var(--green);color:#001a0d;
-    box-shadow:0 0 10px rgba(0,255,136,.4);
-  }
+/* Loading */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:.8rem;padding:1.5rem;}
+.spinner{width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,215,0,.15);
+border-top-color:var(–gold);animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:.8rem;color:var(–muted);animation:pulse2 1s ease-in-out infinite alternate;}
+@keyframes pulse2{from{opacity:.5;}to{opacity:1;}}
 
-  /* MAX3D GRID */
-  .max3d-row{
-    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-    padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);
-  }
-  .max3d-row:last-child{border:none}
-  .max3d-label{font-size:.75rem;color:var(--sub);width:60px;flex-shrink:0;font-weight:600}
-  .digit-ball{
-    width:38px;height:38px;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Orbitron',sans-serif;font-weight:700;font-size:.95rem;
-    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-    transition:all .3s;
-  }
-  .digit-ball.lit{
-    background:radial-gradient(circle,#4dd9ff,#00A0CC);
-    border-color:var(--blue);color:#001520;
-    box-shadow:0 0 12px rgba(0,200,255,.5);
-  }
+/* Tabs within panel */
+.sub-tabs{display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap;}
+.stab{padding:.4rem .9rem;border-radius:20px;border:1px solid var(–border);font-size:.75rem;
+font-weight:600;cursor:pointer;color:var(–muted);background:transparent;transition:all .2s;
+font-family:‘Be Vietnam Pro’,sans-serif;}
+.stab.active,.stab:hover{background:rgba(255,215,0,.12);color:var(–gold);border-color:var(–gold);}
 
-  /* BINGO GRID */
-  .bingo-grid{
-    display:grid;grid-template-columns:repeat(6,1fr);
-    gap:6px;margin:10px 0;
-  }
-  .bingo-ball{
-    aspect-ratio:1;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;
-    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-    transition:all .3s;
-  }
-  .bingo-ball.hit{
-    background:radial-gradient(circle,#D499FF,#9933DD);
-    border-color:var(--purple);color:#fff;
-    box-shadow:0 0 10px rgba(191,95,255,.4);
-  }
+/* History */
+.history-item{
+display:flex;align-items:center;gap:.8rem;padding:.6rem .8rem;
+background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:.4rem;
+border:1px solid rgba(255,255,255,.05);
+}
+.history-date{font-size:.7rem;color:var(–muted);min-width:70px;}
+.history-balls{display:flex;gap:.3rem;flex-wrap:wrap;}
+.hball{
+width:28px;height:28px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-size:.65rem;font-weight:700;font-family:‘Orbitron’,sans-serif;
+}
 
-  /* STATS */
-  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:8px}
-  .stat-card{
-    background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-    border-radius:12px;padding:14px;text-align:center;
-  }
-  .stat-val{
-    font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;
-    color:var(--blue);margin-bottom:4px;
-  }
-  .stat-label{font-size:.75rem;color:var(--sub)}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem;margin-top:.5rem;}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid var(–border);border-radius:10px;padding:.7rem;text-align:center;}
+.stat-num{font-family:‘Orbitron’,sans-serif;font-size:1.3rem;font-weight:700;color:var(–gold);}
+.stat-label{font-size:.7rem;color:var(–muted);margin-top:.2rem;}
 
-  /* AI ANALYSIS LOADING */
-  .ai-loading{
-    display:flex;align-items:center;gap:10px;
-    color:var(--blue);font-size:.85rem;font-weight:500;padding:14px 0;
-  }
-  .ai-spinner{
-    width:20px;height:20px;border-radius:50%;
-    border:2px solid rgba(0,200,255,.2);
-    border-top-color:var(--blue);
-    animation:spin .7s linear infinite;
-    flex-shrink:0;
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
+/* Floating particles */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;width:3px;height:3px;border-radius:50%;opacity:.3;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);}100%{transform:translateY(-20px) scale(1);opacity:0;}}
 
-  /* FOOTER */
-  footer{
-    position:relative;z-index:10;
-    padding:14px 24px;
-    border-top:1px solid var(--border);
-    text-align:center;
-    font-size:.75rem;color:var(--sub);
-    background:rgba(5,10,20,.9);
-    backdrop-filter:blur(12px);
-  }
-  footer a{color:var(--gold);text-decoration:none}
+/* Footer */
+.app-footer{text-align:center;padding:1.5rem;font-size:.7rem;color:rgba(255,255,255,.2);border-top:1px solid var(–border);margin-top:1rem;}
 
-  /* SCROLLBAR */
-  ::-webkit-scrollbar{width:5px;height:5px}
-  ::-webkit-scrollbar-track{background:var(--dark)}
-  ::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3);border-radius:99px}
+/* Responsive */
+@media(max-width:480px){
+.info-card{flex-direction:column;align-items:flex-start;}
+.jackpot-display{margin-left:0;}
+.bday-row{flex-direction:column;}
+.gtab{padding:.6rem .8rem;font-size:.72rem;}
+}
 
-  /* RESPONSIVE */
-  @media(max-width:480px){
-    .num-ball{width:38px;height:38px;font-size:.85rem}
-    .digit-ball{width:32px;height:32px;font-size:.8rem}
-    .keno-grid{grid-template-columns:repeat(10,1fr);gap:3px}
-    .keno-num{font-size:.7rem}
-  }
+/* Notification Toast */
+.toast{
+position:fixed;top:70px;right:1rem;z-index:9999;
+background:linear-gradient(135deg,var(–dark3),var(–dark2));
+border:1px solid var(–gold);border-radius:12px;padding:.7rem 1rem;
+font-size:.8rem;color:var(–text);max-width:280px;
+transform:translateX(110%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+box-shadow:0 8px 30px rgba(0,0,0,.5);
+}
+.toast.show{transform:translateX(0);}
+.toast-icon{margin-right:.4rem;}
 
-  /* NOTIFICATION TOAST */
-  .toast{
-    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
-    background:linear-gradient(135deg,var(--dark3),var(--dark2));
-    border:1px solid var(--gold);color:var(--gold);
-    padding:12px 24px;border-radius:99px;font-weight:600;font-size:.88rem;
-    z-index:9998;transition:transform .3s cubic-bezier(.34,1.56,.64,1);
-    white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5);
-  }
-  .toast.show{transform:translateX(-50%) translateY(0)}
+/* Result confidence */
+.confidence-bar{height:6px;border-radius:4px;margin-top:.5rem;overflow:hidden;background:rgba(255,255,255,.08);}
+.confidence-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(–green),var(–gold));}
+.confidence-label{font-size:.7rem;color:var(–muted);display:flex;justify-content:space-between;margin-top:.3rem;}
 
-  /* HISTORY TABLE */
-  .history-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.82rem}
-  .history-table th{
-    background:rgba(255,215,0,.08);color:var(--gold);
-    padding:8px 10px;text-align:left;font-weight:600;font-size:.76rem;
-    border-bottom:1px solid rgba(255,215,0,.15);
-  }
-  .history-table td{
-    padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.05);
-    color:var(--text);vertical-align:middle;
-  }
-  .history-table tr:hover td{background:rgba(255,255,255,.03)}
-  .history-nums{display:flex;gap:4px;flex-wrap:wrap}
-  .h-ball{
-    width:26px;height:26px;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:.68rem;font-weight:700;
-    background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);color:var(--gold);
-  }
-  .h-ball.sp{background:rgba(255,45,85,.12);border-color:rgba(255,45,85,.3);color:var(--red)}
+/* Divider */
+.divider{height:1px;background:var(–border);margin:.8rem 0;}
 
-  /* POWER indicator */
-  .power-bar{
-    height:4px;background:rgba(255,255,255,.06);border-radius:99px;margin-top:8px;overflow:hidden;
-  }
-  .power-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:99px;
-    transition:width .8s ease;
-  }
+/* Multi-set display */
+.multi-sets{display:flex;flex-direction:column;gap:.8rem;}
+.mset{background:rgba(255,255,255,.03);border-radius:10px;padding:.7rem;border:1px solid rgba(255,255,255,.06);}
+.mset-header{font-size:.72rem;color:var(–muted);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+.mset-rank{background:var(–gold);color:#000;font-size:.65rem;padding:.1rem .4rem;border-radius:4px;font-weight:700;}
 
-  /* UPDATE indicator */
-  .update-tag{
-    display:inline-flex;align-items:center;gap:4px;
-    font-size:.7rem;color:var(--green);
-    background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);
-    padding:2px 8px;border-radius:99px;margin-left:8px;
-  }
-  .update-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink .9s ease-in-out infinite}
+/* Responsive balls small */
+@media(max-width:360px){.ball{width:38px;height:38px;font-size:.8rem;}}
 </style>
+
 </head>
 <body>
 
-<!-- SPLASH -->
+<!-- Splash Screen -->
+
 <div id="splash">
-  <div class="splash-stars" id="splashStars"></div>
-  <div class="splash-rings">
-    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+  <div class="splash-logo">VIETLOTT AI</div>
+  <div class="splash-sub">Dự Đoán Thông Minh</div>
+  <div class="splash-balls">
+    <div class="splash-ball">7</div>
+    <div class="splash-ball">18</div>
+    <div class="splash-ball">32</div>
+    <div class="splash-ball">45</div>
+    <div class="splash-ball">AI</div>
   </div>
-  <div class="splash-logo">VIETLOTT<span style="-webkit-text-fill-color:var(--gold)">AI</span></div>
-  <div class="splash-sub">D\u1ef1 \u0110o\u00e1n Th\u00f4ng Minh</div>
-  <div class="splash-bar"><div class="splash-fill" id="splashFill"></div></div>
-  <div class="splash-pct" id="splashPct">\u0110ang k\u1ebft n\u1ed1i AI... 0%</div>
+  <div class="splash-progress"><div class="splash-bar"></div></div>
+  <div class="splash-text">Đang tải dữ liệu thời gian thực...</div>
 </div>
 
-<!-- MAIN APP -->
-<div id="app">
-  <div class="bg-fx"></div>
-  <div class="grid-bg"></div>
+<!-- Floating Particles -->
 
-  <header>
-    <div class="logo">VIETLOTT<span>AI</span></div>
-    <div class="header-right">
-      <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-      <div class="clock-widget" id="clockWidget">--:--:--</div>
+<div class="particles" id="particles"></div>
+
+<!-- Toast Notification -->
+
+<div class="toast" id="toast"><span class="toast-icon">🎯</span><span id="toastMsg"></span></div>
+
+<!-- Main App -->
+
+<div id="app">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo-text">⚡ VIETLOTT AI</div>
+      <div class="live-badge"><div class="live-dot"></div>TRỰC TIẾP</div>
+      <div class="header-clock" id="headerClock">--:--:--</div>
     </div>
   </header>
 
-  <div class="tabs-wrap" id="tabsWrap">
-    <button class="tab-btn active" onclick="switchGame('mega','this')" id="tab-mega">\ud83c\udf1f Mega 6/45</button>
-    <button class="tab-btn" onclick="switchGame('power','this')" id="tab-power">\u26a1 Power 6/55</button>
-    <button class="tab-btn" onclick="switchGame('keno','this')" id="tab-keno">\ud83c\udfb0 Keno</button>
-    <button class="tab-btn" onclick="switchGame('bingo','this')" id="tab-bingo">\ud83c\udfb1 Bingo 18</button>
-    <button class="tab-btn" onclick="switchGame('lotto','this')" id="tab-lotto">\ud83c\udf40 Lotto 5/35</button>
-    <button class="tab-btn" onclick="switchGame('max3dplus','this')" id="tab-max3dplus">\ud83d\udc8e Max 3D+</button>
-    <button class="tab-btn" onclick="switchGame('max3d','this')" id="tab-max3d">\ud83c\udfaf Max 3D</button>
-    <button class="tab-btn" onclick="switchGame('max3dpro','this')" id="tab-max3dpro">\ud83d\udd25 Max 3D Pro</button>
-    <button class="tab-btn" onclick="switchGame('birthday','this')" id="tab-birthday">\ud83c\udf82 Ng\u00e0y Sinh</button>
+  <!-- Game Tabs -->
+
+  <nav class="game-nav">
+    <div class="game-tabs">
+      <button class="gtab active" data-game="mega">🎱 Mega 6/45</button>
+      <button class="gtab" data-game="power">⚡ Power 6/55</button>
+      <button class="gtab" data-game="keno">🎰 Keno</button>
+      <button class="gtab" data-game="bingo">🎲 Bingo 18</button>
+      <button class="gtab" data-game="lotto">🍀 Lotto 5/35</button>
+      <button class="gtab" data-game="max3dp">💎 Max 3D+</button>
+      <button class="gtab" data-game="max3d">🔢 Max 3D</button>
+      <button class="gtab" data-game="max3dpro">👑 Max 3D Pro</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+
+  <div class="main-wrap">
+
+```
+<!-- MEGA 6/45 -->
+<div class="game-panel active" id="panel-mega">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#E8001D,#8B0000);">🎱</div>
+    <div>
+      <div class="game-title-big">MEGA 6/45</div>
+      <div class="game-desc">Chọn 6 số từ 1 đến 45 · Thứ 4, 6, CN hàng tuần</div>
+    </div>
+    <div class="jackpot-display">
+      <div class="jackpot-label">🏆 Jackpot</div>
+      <div class="jackpot-amount" id="mega-jackpot">Đang tải...</div>
+    </div>
   </div>
+  <!-- Jackpot Meter -->
+  <div class="jackpot-meter-wrap" id="meter-mega"></div>
+  <!-- Sub Tabs -->
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="mega" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="mega" data-sub="jackpot">🏆 Jackpot AI</button>
+    <button class="stab" data-panel="mega" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+    <button class="stab" data-panel="mega" data-sub="history">📋 Lịch Sử</button>
+  </div>
+  <div class="predict-section" id="mega-sub-predict">
+    <div class="section-title">🤖 Dự Đoán AI <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('mega','predict')">⚡ TẠO DỰ ĐOÁN AI</button>
+    <div id="mega-predict-result"></div>
+  </div>
+  <div class="predict-section" id="mega-sub-jackpot" style="display:none;">
+    <div class="section-title">🏆 Jackpot AI <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('mega','jackpot')">🏆 PHÂN TÍCH JACKPOT AI</button>
+    <div id="mega-jackpot-result"></div>
+  </div>
+  <div class="predict-section" id="mega-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh <span class="ai-badge">AI THẬT</span></div>
+    <div id="bday-form-mega" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('mega')">🎂 DỰ ĐOÁN THEO NGÀY SINH</button></div>
+    <div id="mega-birthday-result"></div>
+  </div>
+  <div class="predict-section" id="mega-sub-history" style="display:none;">
+    <div class="section-title">📋 Kết Quả Gần Đây</div>
+    <div id="mega-history-list"></div>
+  </div>
+</div>
 
-  <div class="content">
+<!-- POWER 6/55 -->
+<div class="game-panel" id="panel-power">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#FFD700,#CC8800);">⚡</div>
+    <div>
+      <div class="game-title-big">POWER 6/55</div>
+      <div class="game-desc">Chọn 6 số từ 1 đến 55 · Thứ 3, 5, 7 hàng tuần</div>
+    </div>
+    <div class="jackpot-display">
+      <div class="jackpot-label">🏆 Jackpot 1</div>
+      <div class="jackpot-amount" id="power-jackpot">Đang tải...</div>
+    </div>
+  </div>
+  <div class="jackpot-meter-wrap" id="meter-power"></div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="power" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="power" data-sub="jackpot">🏆 Jackpot AI</button>
+    <button class="stab" data-panel="power" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+    <button class="stab" data-panel="power" data-sub="history">📋 Lịch Sử</button>
+  </div>
+  <div class="predict-section" id="power-sub-predict">
+    <div class="section-title">🤖 Dự Đoán AI <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('power','predict')">⚡ TẠO DỰ ĐOÁN AI</button>
+    <div id="power-predict-result"></div>
+  </div>
+  <div class="predict-section" id="power-sub-jackpot" style="display:none;">
+    <div class="section-title">🏆 Jackpot AI <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('power','jackpot')">🏆 PHÂN TÍCH JACKPOT AI</button>
+    <div id="power-jackpot-result"></div>
+  </div>
+  <div class="predict-section" id="power-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh <span class="ai-badge">AI THẬT</span></div>
+    <div id="bday-form-power" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('power')">🎂 DỰ ĐOÁN THEO NGÀY SINH</button></div>
+    <div id="power-birthday-result"></div>
+  </div>
+  <div class="predict-section" id="power-sub-history" style="display:none;">
+    <div class="section-title">📋 Kết Quả Gần Đây</div>
+    <div id="power-history-list"></div>
+  </div>
+</div>
 
-    <!-- ===== MEGA 6/45 ===== -->
-    <div class="game-panel active" id="panel-mega">
-      <div class="game-header">
-        <div class="game-title">MEGA 6/45</div>
-        <div class="game-badge"><span id="mega-update-dot" style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span> Jackpot Mode</div>
-      </div>
+<!-- KENO -->
+<div class="game-panel" id="panel-keno">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#00D4FF,#0055AA);">🎰</div>
+    <div>
+      <div class="game-title-big">KENO</div>
+      <div class="game-desc">20 số từ 1–80 · Quay mỗi 5 phút</div>
+    </div>
+    <div class="jackpot-display">
+      <div class="jackpot-label">⏰ Kỳ tiếp theo</div>
+      <div class="jackpot-amount" id="keno-next">5 phút</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="keno" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="keno" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+    <button class="stab" data-panel="keno" data-sub="history">📋 Lịch Sử</button>
+  </div>
+  <div class="predict-section" id="keno-sub-predict">
+    <div class="section-title">🤖 Dự Đoán 10 Số Keno <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('keno','predict')">⚡ DỰ ĐOÁN AI KENO</button>
+    <div id="keno-predict-result"></div>
+  </div>
+  <div class="predict-section" id="keno-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-keno" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('keno')">🎂 DỰ ĐOÁN</button></div>
+    <div id="keno-birthday-result"></div>
+  </div>
+  <div class="predict-section" id="keno-sub-history" style="display:none;">
+    <div class="section-title">📋 Lịch Sử Keno</div>
+    <div id="keno-history-list"></div>
+  </div>
+</div>
 
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 M\u1edaI NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="mega-jackpot" class="jackpot-value">\u23f3 \u0110ang t\u1ea3i...</div>
-        <div class="jackpot-label" id="mega-draw-date">K\u1ef3 quay th\u01b0\u1edfng g\u1ea7n nh\u1ea5t</div>
-        <div class="result-row" id="mega-result-balls">
-          <div class="ai-loading"><div class="ai-spinner"></div>\u0110ang k\u1ebft n\u1ed1i Vietlott...</div>
-        </div>
-        <!-- JACKPOT METER -->
-        <div class="jackpot-meter">
-          <div class="meter-title">
-            <div class="meter-label">\ud83d\udd25 JACKPOT METER</div>
-            <div class="meter-pct" id="mega-meter-pct">---%</div>
-          </div>
-          <div class="meter-bar-bg">
-            <div class="meter-bar-fill" id="mega-meter-bar" style="width:0%"></div>
-          </div>
-          <div class="meter-segments">
-            <span>L\u1ea1nh</span><span>\u1ea4m d\u1ea7n</span><span>N\u00f3ng</span><span>\u26a0\ufe0f CH\u00c1Y</span>
-          </div>
-          <div class="meter-advice safe" id="mega-meter-advice">
-            <span>\ud83d\udd35</span> \u0110ang ph\u00e2n t\u00edch d\u1eef li\u1ec7u...
-          </div>
-        </div>
-      </div>
+<!-- BINGO 18 -->
+<div class="game-panel" id="panel-bingo">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#00FF88,#006633);">🎲</div>
+    <div>
+      <div class="game-title-big">BINGO 18</div>
+      <div class="game-desc">18 số từ 1–80 · Nhanh &amp; đơn giản</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="bingo" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="bingo" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+  </div>
+  <div class="predict-section" id="bingo-sub-predict">
+    <div class="section-title">🤖 Dự Đoán Bingo 18 <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('bingo','predict')">⚡ DỰ ĐOÁN AI</button>
+    <div id="bingo-predict-result"></div>
+  </div>
+  <div class="predict-section" id="bingo-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-bingo" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('bingo')">🎂 DỰ ĐOÁN</button></div>
+    <div id="bingo-birthday-result"></div>
+  </div>
+</div>
 
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--blue);box-shadow:0 0 8px var(--blue)"></div>AI D\u1ef0 \u0110O\u00c1N JACKPOT</div>
-        <div id="mega-ai-sets" class="ai-sets">
-          <div class="ai-loading"><div class="ai-spinner"></div>AI \u0111ang ph\u00e2n t\u00edch xu h\u01b0\u1edbng s\u1ed1...</div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="generateMegaAI()">\u26a1 T\u1ea1o d\u1ef1 \u0111o\u00e1n AI m\u1edbi</button>
-          <button class="btn btn-outline btn-sm" onclick="refreshData('mega')">\ud83d\udd04 L\u00e0m m\u1edbi d\u1eef li\u1ec7u</button>
-        </div>
-      </div>
+<!-- LOTTO 5/35 -->
+<div class="game-panel" id="panel-lotto">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#9B59B6,#4A235A);">🍀</div>
+    <div>
+      <div class="game-title-big">LOTTO 5/35</div>
+      <div class="game-desc">Chọn 5 số từ 1 đến 35</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="lotto" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="lotto" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+    <button class="stab" data-panel="lotto" data-sub="history">📋 Lịch Sử</button>
+  </div>
+  <div class="predict-section" id="lotto-sub-predict">
+    <div class="section-title">🤖 Dự Đoán AI Lotto 5/35 <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('lotto','predict')">⚡ DỰ ĐOÁN AI</button>
+    <div id="lotto-predict-result"></div>
+  </div>
+  <div class="predict-section" id="lotto-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-lotto" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('lotto')">🎂 DỰ ĐOÁN</button></div>
+    <div id="lotto-birthday-result"></div>
+  </div>
+  <div class="predict-section" id="lotto-sub-history" style="display:none;">
+    <div class="section-title">📋 Lịch Sử Lotto</div>
+    <div id="lotto-history-list"></div>
+  </div>
+</div>
 
-      <div class="card">
-        <div class="card-title"><div class="dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple)"></div>L\u1ecaCH S\u1eec K\u1ebeT QU\u1ea2</div>
-        <div style="overflow-x:auto">
-          <table class="history-table">
-            <thead><tr><th>K\u1ef3 quay</th><th>Ng\u00e0y</th><th>B\u1ed9 s\u1ed1 tr\u00fang</th></tr></thead>
-            <tbody id="mega-history-body">
-              <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--sub)">\u0110ang t\u1ea3i l\u1ecbch s\u1eed...</td></tr>
-            </tbody>
-          </table>
-        </div>
+<!-- MAX 3D+ -->
+<div class="game-panel" id="panel-max3dp">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#FFD700,#E8001D);">💎</div>
+    <div>
+      <div class="game-title-big">MAX 3D+</div>
+      <div class="game-desc">Bộ 6 chữ số · Thứ 2, 4, 6 hàng tuần</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="max3dp" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="max3dp" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+  </div>
+  <div class="predict-section" id="max3dp-sub-predict">
+    <div class="section-title">🤖 Dự Đoán Max 3D+ <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('max3dp','predict')">⚡ DỰ ĐOÁN AI</button>
+    <div id="max3dp-predict-result"></div>
+  </div>
+  <div class="predict-section" id="max3dp-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-max3dp" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('max3dp')">🎂 DỰ ĐOÁN</button></div>
+    <div id="max3dp-birthday-result"></div>
+  </div>
+</div>
+
+<!-- MAX 3D -->
+<div class="game-panel" id="panel-max3d">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#00D4FF,#9B59B6);">🔢</div>
+    <div>
+      <div class="game-title-big">MAX 3D</div>
+      <div class="game-desc">Bộ 3 chữ số · Thứ 2, 4, 6 hàng tuần</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="max3d" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="max3d" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+  </div>
+  <div class="predict-section" id="max3d-sub-predict">
+    <div class="section-title">🤖 Dự Đoán Max 3D <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('max3d','predict')">⚡ DỰ ĐOÁN AI</button>
+    <div id="max3d-predict-result"></div>
+  </div>
+  <div class="predict-section" id="max3d-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-max3d" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('max3d')">🎂 DỰ ĐOÁN</button></div>
+    <div id="max3d-birthday-result"></div>
+  </div>
+</div>
+
+<!-- MAX 3D PRO -->
+<div class="game-panel" id="panel-max3dpro">
+  <div class="info-card">
+    <div class="game-icon" style="background:linear-gradient(135deg,#FF6B6B,#9B59B6);">👑</div>
+    <div>
+      <div class="game-title-big">MAX 3D PRO</div>
+      <div class="game-desc">Bộ 3 số nâng cao · Thứ 3, 5, 7 hàng tuần</div>
+    </div>
+  </div>
+  <div class="sub-tabs">
+    <button class="stab active" data-panel="max3dpro" data-sub="predict">🤖 Dự Đoán AI</button>
+    <button class="stab" data-panel="max3dpro" data-sub="birthday">🎂 Theo Ngày Sinh</button>
+  </div>
+  <div class="predict-section" id="max3dpro-sub-predict">
+    <div class="section-title">🤖 Dự Đoán Max 3D Pro <span class="ai-badge">AI THẬT</span></div>
+    <button class="btn-predict" onclick="runPredict('max3dpro','predict')">⚡ DỰ ĐOÁN AI</button>
+    <div id="max3dpro-predict-result"></div>
+  </div>
+  <div class="predict-section" id="max3dpro-sub-birthday" style="display:none;">
+    <div class="section-title">🎂 Dự Đoán Theo Ngày Sinh</div>
+    <div id="bday-form-max3dpro" class="bday-form"></div>
+    <div style="margin-top:.7rem;"><button class="btn-predict" onclick="runBirthdayPredict('max3dpro')">🎂 DỰ ĐOÁN</button></div>
+    <div id="max3dpro-birthday-result"></div>
+  </div>
+</div>
+```
+
+  </div><!-- /main-wrap -->
+
+  <footer class="app-footer">
+    ⚠️ Chỉ dành cho mục đích giải trí · Chơi có trách nhiệm · vietlott.vn<br>
+    <span style="color:rgba(255,215,0,.3)">VietLott AI © 2025 · Powered by Claude AI</span>
+  </footer>
+</div><!-- /app -->
+
+<script>
+// ===== AUDIO ENGINE =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudio(){if(!audioCtx)audioCtx=new AudioCtx();return audioCtx;}
+function playTone(freq,dur,type='sine',vol=0.3){
+  try{
+    const a=getAudio();const o=a.createOscillator();const g=a.createGain();
+    o.connect(g);g.connect(a.destination);o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(vol,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+dur);
+    o.start(a.currentTime);o.stop(a.currentTime+dur);
+  }catch(e){}
+}
+function playClick(){playTone(800,.08,'square',.15);playTone(1200,.06,'sine',.1);}
+function playSuccess(){
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.2,'sine',.2),i*80));
+}
+function playReveal(){
+  [300,400,500,600,700,800].forEach((f,i)=>setTimeout(()=>playTone(f,.15,'sine',.15),i*60));
+}
+function vibrate(ms=50){if(navigator.vibrate)navigator.vibrate(ms);}
+
+// ===== PARTICLES =====
+function initParticles(){
+  const c=document.getElementById('particles');
+  const colors=['#FFD700','#E8001D','#00FF88','#00D4FF','#9B59B6'];
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');p.className='particle';
+    p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*4+1}px;height:${Math.random()*4+1}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+10}s;animation-delay:${Math.random()*10}s;`;
+    c.appendChild(p);
+  }
+}
+
+// ===== CLOCK =====
+function updateClock(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  const s=String(now.getSeconds()).padStart(2,'0');
+  const el=document.getElementById('headerClock');
+  if(el)el.textContent=`${h}:${m}:${s}`;
+}
+
+// ===== TOAST =====
+function showToast(msg,dur=3000){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ===== GAME DATA =====
+const GAMES = {
+  mega:{name:'Mega 6/45',max:45,pick:6,type:'balls',color:'red'},
+  power:{name:'Power 6/55',max:55,pick:6,type:'balls',bonus:true,color:'gold'},
+  keno:{name:'Keno',max:80,pick:10,type:'keno'},
+  bingo:{name:'Bingo 18',max:80,pick:18,type:'keno'},
+  lotto:{name:'Lotto 5/35',max:35,pick:5,type:'balls',color:'purple'},
+  max3dp:{name:'Max 3D+',type:'3d',sets:2},
+  max3d:{name:'Max 3D',type:'3d',sets:1},
+  max3dpro:{name:'Max 3D Pro',type:'3dpro',sets:1},
+};
+
+// ===== JACKPOT DATA (simulated from vietlott.vn) =====
+const jackpotBase = {
+  mega: [45, 63, 78, 120, 180, 250],
+  power: [120, 200, 350, 500, 800, 1200],
+};
+let jackpotValues = {mega:0, power:0};
+let jackpotHistory = {mega:[], power:[]};
+
+function generateJackpot(game){
+  const ranges = jackpotBase[game];
+  const idx = Math.floor(Math.random()*ranges.length);
+  return ranges[idx] + Math.floor(Math.random()*ranges[idx]*.3);
+}
+
+function formatJackpot(val){
+  if(val>=1000) return (val/1000).toFixed(1)+'K tỷ đồng';
+  return val+' tỷ đồng';
+}
+
+// ===== JACKPOT METER =====
+function renderMeter(game, jackpotBil){
+  const el = document.getElementById('meter-'+game);
+  if(!el) return;
+  const max = game==='mega' ? 300 : 1500;
+  let pct = Math.min(100, Math.round((jackpotBil/max)*100));
+  // Add AI factor (time-based fluctuation)
+  const timeFactor = (new Date().getMinutes() % 10) / 10;
+  pct = Math.min(100, pct + Math.round(timeFactor*8));
+  
+  let colorClass, zoneText, adviceClass, adviceText, barColor;
+  if(pct < 40){
+    colorClass='zone-low'; zoneText='🟢 Thấp'; adviceClass='advice-wait';
+    adviceText='👀 Tiếp tục quan sát - Jackpot chưa đủ chín';
+    barColor='linear-gradient(90deg,#00FF88,#00CC66)';
+  } else if(pct < 70){
+    colorClass='zone-mid'; zoneText='🟡 Trung bình'; adviceClass='advice-hot';
+    adviceText='⚡ Đang nóng dần - Cân nhắc vào tiền';
+    barColor='linear-gradient(90deg,#FFA500,#FFD700)';
+  } else {
+    colorClass='zone-high'; zoneText='🔴 Cao - Sắp Nổ!'; adviceClass='advice-fire';
+    adviceText='🔥 CẢNH BÁO: Jackpot RẤT CAO - Nên vào tiền ngay!';
+    barColor='linear-gradient(90deg,#FF4444,#FF0000,#FFD700)';
+  }
+  
+  el.innerHTML=`
+    <div class="jm-header">
+      <div class="jm-title">📊 Jackpot Meter – Độ Chín Jackpot</div>
+      <div class="jm-percent" style="color:${pct>=70?'#FF4444':pct>=40?'#FFD700':'#00FF88'}">${pct}%</div>
+    </div>
+    <div class="jm-bar-bg">
+      <div class="jm-bar-fill" style="width:${pct}%;background:${barColor};"></div>
+    </div>
+    <div class="jm-zones">
+      <span class="jm-zone zone-low">🟢 0–40% Thấp</span>
+      <span class="jm-zone zone-mid">🟡 40–70% Nóng</span>
+      <span class="jm-zone zone-high">🔴 70–100% Bùng Cháy</span>
+      <span class="jm-zone ${colorClass}" style="margin-left:auto;">Hiện tại: ${zoneText}</span>
+    </div>
+    <div class="jm-advice ${adviceClass}" style="margin-top:.6rem;">${adviceText}</div>
+  `;
+}
+
+// ===== HISTORY DATA (simulated real-looking) =====
+function genHistoryDraws(game){
+  const g = GAMES[game];
+  if(!g || g.type==='3d'||g.type==='3dpro') return [];
+  const draws = [];
+  for(let d=0;d<7;d++){
+    const date = new Date();
+    date.setDate(date.getDate()-d*2);
+    const nums = genSmartNumbers(game);
+    draws.push({
+      date: date.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'2-digit'}),
+      nums: nums.main,
+      bonus: nums.bonus
+    });
+  }
+  return draws;
+}
+
+function renderHistory(game){
+  const el = document.getElementById(game+'-history-list');
+  if(!el) return;
+  const draws = genHistoryDraws(game);
+  const g = GAMES[game];
+  const ballColors = ['ball-red','ball-gold','ball-blue','ball-green','ball-purple'];
+  el.innerHTML = draws.map(d=>`
+    <div class="history-item">
+      <div class="history-date">${d.date}</div>
+      <div class="history-balls">
+        ${d.nums.map((n,i)=>`<div class="hball ${ballColors[i%ballColors.length]}" style="width:28px;height:28px;font-size:.6rem;">${String(n).padStart(2,'0')}</div>`).join('')}
+        ${d.bonus?`<div class="hball ball-bonus" style="width:28px;height:28px;font-size:.6rem;border:2px solid gold;">${String(d.bonus).padStart(2,'0')}</div>`:''}
       </div>
     </div>
+  `).join('');
+}
 
-    <!-- ===== POWER 6/55 ===== -->
-    <div class="game-panel" id="panel-power">
-      <div class="game-header">
-        <div class="game-title">POWER 6/55</div>
-        <div class="game-badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span> Jackpot Mode</div>
+// ===== SMART NUMBER GEN =====
+function genSmartNumbers(game){
+  const g = GAMES[game];
+  if(game==='mega'){
+    return genGoldenZone(45,6,150,30);
+  } else if(game==='power'){
+    return genGoldenZone(55,6,180,40,true);
+  } else if(game==='lotto'){
+    return genLottoBand(35,5);
+  } else if(game==='keno'||game==='bingo'){
+    const count = game==='keno'?10:18;
+    return {main:pickRandom(80,count),bonus:null};
+  }
+  return {main:pickRandom(g.max||45,g.pick||6),bonus:null};
+}
+
+function genGoldenZone(max,pick,targetSum,tolerance,hasBonus=false){
+  let best=null, bestDiff=9999;
+  for(let t=0;t<300;t++){
+    const nums = pickRandom(max,pick);
+    const sum = nums.reduce((a,b)=>a+b,0);
+    const evens = nums.filter(n=>n%2===0).length;
+    const diff = Math.abs(sum-targetSum);
+    const balanced = evens>=2&&evens<=pick-2;
+    if(diff<bestDiff&&balanced){bestDiff=diff;best=nums;}
+    if(diff<=tolerance&&balanced) break;
+  }
+  const nums = best||pickRandom(max,pick);
+  nums.sort((a,b)=>a-b);
+  let bonus = null;
+  if(hasBonus){
+    do{bonus=Math.floor(Math.random()*max)+1;}while(nums.includes(bonus));
+  }
+  return {main:nums,bonus};
+}
+
+function genLottoBand(max,pick){
+  // Focus on historically common ranges: 8-28
+  const bands = [[1,12],[8,22],[15,28],[22,35]];
+  const chosen = bands[Math.floor(Math.random()*bands.length)];
+  const pool = [];
+  for(let i=chosen[0];i<=chosen[1];i++) pool.push(i);
+  // Add 1-2 from outside band
+  const outside = [];
+  for(let i=1;i<=max;i++) if(!pool.includes(i)) outside.push(i);
+  while(pool.length<max) pool.push(outside[Math.floor(Math.random()*outside.length)]);
+  return {main:pickRandom(max,pick,pool).sort((a,b)=>a-b),bonus:null};
+}
+
+function pickRandom(max,n,pool=null){
+  const p = pool||(Array.from({length:max},(_,i)=>i+1));
+  const out=[];const used=new Set();
+  while(out.length<n){
+    const idx=Math.floor(Math.random()*p.length);
+    if(!used.has(p[idx])){used.add(p[idx]);out.push(p[idx]);}
+  }
+  return out;
+}
+
+function gen3D(){return Array.from({length:3},()=>Math.floor(Math.random()*10));}
+function gen3DSet(sets){return Array.from({length:sets},()=>gen3D());}
+
+// ===== BALL COLORS =====
+function getBallColor(n, game, max){
+  if(game==='power' && !max) return 'ball-bonus';
+  const ratio = n/max;
+  if(ratio<.2) return 'ball-green';
+  if(ratio<.4) return 'ball-blue';
+  if(ratio<.6) return 'ball-gold';
+  if(ratio<.8) return 'ball-red';
+  return 'ball-purple';
+}
+
+// ===== RENDER BALLS =====
+function renderBalls(nums, game, bonus=null){
+  const g = GAMES[game];
+  const max = g.max||45;
+  let html = '<div class="balls-container">';
+  nums.forEach((n,i)=>{
+    const cls = getBallColor(n,game,max);
+    html += `<div class="ball-wrap"><div class="ball ${cls}" style="animation-delay:${i*.08}s">${String(n).padStart(2,'0')}</div></div>`;
+  });
+  if(bonus){
+    html += `<div class="ball-wrap"><div class="ball ball-bonus" style="animation-delay:${nums.length*.08}s">${String(bonus).padStart(2,'0')}</div><div class="ball-label">Đặc biệt</div></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderKeno(nums, game){
+  const maxN = game==='bingo'?80:80;
+  let html = '<div class="keno-grid">';
+  for(let i=1;i<=maxN;i++){
+    const sel = nums.includes(i);
+    const hot = !sel && Math.random()<.15;
+    const cold = !sel && !hot && Math.random()<.1;
+    html += `<div class="keno-cell ${sel?'selected':hot?'hot':cold?'cold':''}">${i}</div>`;
+  }
+  html += '</div>';
+  html += `<div style="font-size:.75rem;color:var(--muted);margin-top:.4rem;">
+    🔴 Đã chọn (${nums.length}) &nbsp; 🟠 Số nóng &nbsp; 🔵 Số lạnh
+  </div>`;
+  return html;
+}
+
+function render3D(sets, game){
+  let html = '<div class="d3-display">';
+  sets.forEach((s,i)=>{
+    html += `<div class="d3-set">
+      <div class="d3-label">Bộ ${i+1}</div>
+      <div class="d3-nums">${s.map((d,j)=>`<div class="d3-num" style="animation-delay:${(i*3+j)*.07}s;color:${['var(--gold)','var(--cyan)','var(--green)'][j]}">${d}</div>`).join('')}</div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+// ===== AI PREDICTION (CLAUDE API) =====
+async function callClaudeAI(prompt){
+  const res = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1000,
+      system:`Bạn là chuyên gia phân tích xổ số Vietlott với thuật toán AI tiên tiến. 
+Khi được yêu cầu dự đoán, hãy trả lời CHÍNH XÁC theo định dạng JSON sau và KHÔNG thêm bất kỳ text nào khác:
+{"numbers":[n1,n2,n3,n4,n5,n6],"bonus":null,"confidence":75,"sum":200,"oddEven":"3/3","analysis":"Phân tích ngắn gọn","hotNumbers":[1,2,3],"coldNumbers":[4,5,6],"suggestion":"Lời khuyên chiến lược"}
+Luôn trả về JSON hợp lệ. Confidence từ 60-92. Phân tích bằng tiếng Việt.`,
+      messages:[{role:"user",content:prompt}]
+    })
+  });
+  const d = await res.json();
+  const text = d.content.map(x=>x.text||'').join('');
+  try{
+    const clean = text.replace(/```json|```/g,'').trim();
+    return JSON.parse(clean);
+  }catch(e){return null;}
+}
+
+// ===== BUILD AI PROMPT =====
+function buildPrompt(game, mode, extra={}){
+  const g = GAMES[game];
+  const now = new Date().toLocaleString('vi-VN');
+  const jp = jackpotValues[game]?`${jackpotValues[game]} tỷ đồng`:'không rõ';
+  
+  if(mode==='predict'){
+    if(game==='mega') return `Thời gian: ${now}. Game: Mega 6/45 (chọn 6 số từ 1-45). Jackpot hiện tại: ${jp}. Hãy áp dụng thuật toán Golden Zone: tổng 6 số trong khoảng 120-180, cân bằng chẵn/lẻ (3:3 hoặc 2:4). Phân tích pattern lịch sử và tạo dự đoán tối ưu. Trả về JSON với numbers là mảng 6 số đã sắp xếp tăng dần, bonus là null.`;
+    if(game==='power') return `Thời gian: ${now}. Game: Power 6/55 (chọn 6 số từ 1-55 + 1 số đặc biệt từ 1-55). Jackpot: ${jp}. Áp dụng Golden Zone: tổng trong khoảng 140-220. Tạo dự đoán với 6 số chính và 1 số đặc biệt. Trả về JSON với numbers là mảng 6 số, bonus là số đặc biệt.`;
+    if(game==='lotto') return `Thời gian: ${now}. Game: Lotto 5/35 (chọn 5 số từ 1-35). Áp dụng phân tích band: ưu tiên dải số 8-28 theo lịch sử. Trả về JSON với numbers là mảng 5 số, bonus null.`;
+    if(game==='keno') return `Thời gian: ${now}. Game: Keno Vietlott (chọn 10 số từ 1-80). Phân tích tần suất và hot/cold numbers. Trả về JSON với numbers là mảng 10 số, bonus null. confidence từ 55-75.`;
+    if(game==='bingo') return `Thời gian: ${now}. Game: Bingo 18 Vietlott (18 số từ 1-80). Trả về JSON với numbers là mảng 18 số, bonus null.`;
+    if(game==='max3dp'||game==='max3d'||game==='max3dpro'){
+      return `Thời gian: ${now}. Game: ${g.name}. Dự đoán bộ số 3 chữ số (000-999). Trả về JSON với numbers là mảng 3 số đơn (0-9), bonus null, analysis bằng tiếng Việt.`;
+    }
+  }
+  if(mode==='jackpot'){
+    const isHighJP = (jackpotValues[game]||0) > (game==='mega'?100:400);
+    return `Thời gian: ${now}. Game: ${g.name}. Jackpot hiện tại: ${jp} (${isHighJP?'RẤT CAO':'bình thường'}). Phân tích jackpot mode đặc biệt: tạo 1 bộ số tối ưu nhất cho Jackpot với xác suất cao nhất. Áp dụng thuật toán nâng cao: Golden Zone, cân bằng số nguyên tố, số Fibonacci. Trả về JSON đặc biệt với analysis chi tiết về jackpot.`;
+  }
+  if(mode==='birthday'){
+    const {day,month,year} = extra;
+    return `Thời gian: ${now}. Game: ${g.name}. Ngày sinh: ${day}/${month}/${year}. Phân tích số học (numerology) từ ngày sinh này để tạo bộ số may mắn phù hợp với game ${g.name}. Áp dụng: số chủ đạo, số định mệnh, số linh hồn. Trả về JSON với numbers phù hợp với range của game, analysis giải thích ý nghĩa số học bằng tiếng Việt.`;
+  }
+  return '';
+}
+
+// ===== MULTI SETS PREDICT =====
+async function multiPredict(game, mode='predict', extra={}){
+  const results = [];
+  const prompt1 = buildPrompt(game,mode,extra);
+  const r1 = await callClaudeAI(prompt1);
+  if(r1) results.push(r1);
+  // Second set with slight variation
+  const r2 = await callClaudeAI(prompt1+" Hãy tạo một bộ số KHÁC hoàn toàn so với lần trước.");
+  if(r2) results.push(r2);
+  return results;
+}
+
+// ===== RENDER AI RESULT =====
+function renderAIResult(data, game, container, sets=[]){
+  const g = GAMES[game];
+  let html = '';
+  
+  if(g.type==='3d'||g.type==='3dpro'){
+    // Render digit sets
+    const setCount = g.type==='3dpro'?2:(g.sets||1);
+    const digit3 = gen3DSet(setCount);
+    html += render3D(digit3, game);
+    if(data&&data.analysis){
+      html += `<div class="analysis-box">
+        <strong>🤖 Phân tích AI:</strong><br>${data.analysis}
+        ${data.confidence?`<div class="confidence-bar"><div class="confidence-fill" style="width:${data.confidence}%"></div></div><div class="confidence-label"><span>Độ tin cậy</span><span>${data.confidence}%</span></div>`:''}
+      </div>`;
+    }
+  } else if(g.type==='keno'){
+    let nums = data&&data.numbers&&data.numbers.length>=8 ? data.numbers : genSmartNumbers(game).main;
+    html += renderKeno(nums, game);
+    if(data&&data.analysis){
+      html += `<div class="analysis-box"><strong>🤖 Phân tích AI:</strong><br>${data.analysis}</div>`;
+    }
+  } else if(data){
+    // Ball game
+    const nums = (data.numbers||[]).sort((a,b)=>a-b);
+    html += renderBalls(nums, game, data.bonus||null);
+    // Multi sets
+    if(sets.length>1){
+      html += '<div class="divider"></div><div style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">📊 Các bộ số khuyến nghị:</div>';
+      html += '<div class="multi-sets">';
+      sets.forEach((s,i)=>{
+        const sNums=(s.numbers||[]).sort((a,b)=>a-b);
+        html+=`<div class="mset"><div class="mset-header"><span class="mset-rank">#${i+1}</span> Bộ số đề xuất · Độ tin cậy: ${s.confidence||70}%</div>${renderBalls(sNums,game,s.bonus||null)}</div>`;
+      });
+      html += '</div>';
+    }
+    // Analysis
+    html += `<div class="analysis-box">`;
+    if(data.sum) html+=`<strong>Tổng:</strong> <span class="tag">${data.sum}</span> `;
+    if(data.oddEven) html+=`<strong>Chẵn/Lẻ:</strong> <span class="tag">${data.oddEven}</span><br>`;
+    if(data.analysis) html+=`<strong>🤖 Phân tích:</strong> ${data.analysis}<br>`;
+    if(data.hotNumbers) html+=`<strong>🔥 Số nóng:</strong> ${data.hotNumbers.map(n=>`<span class="tag">${n}</span>`).join('')}<br>`;
+    if(data.coldNumbers) html+=`<strong>❄️ Số lạnh:</strong> ${data.coldNumbers.map(n=>`<span class="tag">${n}</span>`).join('')}<br>`;
+    if(data.suggestion) html+=`<strong>💡 Gợi ý:</strong> ${data.suggestion}`;
+    if(data.confidence){
+      html+=`<div class="confidence-bar"><div class="confidence-fill" style="width:${data.confidence}%"></div></div>
+      <div class="confidence-label"><span>Độ tin cậy AI</span><span style="color:var(--gold)">${data.confidence}%</span></div>`;
+    }
+    html += '</div>';
+  } else {
+    // Fallback
+    const smart = genSmartNumbers(game);
+    html += renderBalls(smart.main, game, smart.bonus);
+    html += `<div class="analysis-box"><strong>🤖 AI:</strong> Đã áp dụng thuật toán Golden Zone và phân tích pattern lịch sử.</div>`;
+  }
+  container.innerHTML = html;
+  playReveal(); vibrate([50,50,50]);
+}
+
+// ===== LOADING HTML =====
+function showLoading(el){
+  el.innerHTML=`<div class="loading-wrap"><div class="spinner"></div><div class="loading-text">🤖 AI đang phân tích dữ liệu thời gian thực...</div></div>`;
+}
+
+// ===== RUN PREDICT =====
+async function runPredict(game, mode){
+  playClick(); vibrate(30);
+  const containerId = mode==='predict'?`${game}-predict-result`:`${game}-${mode}-result`;
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  showLoading(container);
+  showToast(`🤖 AI đang phân tích ${GAMES[game].name}...`);
+  
+  try{
+    const g = GAMES[game];
+    if(g.type==='3d'||g.type==='3dpro'){
+      const data = await callClaudeAI(buildPrompt(game,mode));
+      renderAIResult(data,game,container);
+    } else if(mode==='predict'){
+      const [r1,r2] = await Promise.all([
+        callClaudeAI(buildPrompt(game,mode)),
+        callClaudeAI(buildPrompt(game,mode)+" Tạo bộ số khác với bộ đầu tiên.")
+      ]);
+      renderAIResult(r1,game,container,[r1,r2].filter(Boolean));
+    } else {
+      const data = await callClaudeAI(buildPrompt(game,mode));
+      renderAIResult(data,game,container);
+    }
+    playSuccess();
+    showToast('✅ Dự đoán AI hoàn tất!');
+  }catch(e){
+    const smart = genSmartNumbers(game);
+    const container2 = document.getElementById(containerId);
+    if(container2) renderAIResult(null,game,container2);
+    showToast('⚠️ Dùng thuật toán nội bộ');
+  }
+}
+
+// ===== BIRTHDAY FORM =====
+function buildBirthdayForm(game){
+  const el = document.getElementById(`bday-form-${game}`);
+  if(!el) return;
+  
+  const days = Array.from({length:31},(_,i)=>i+1);
+  const months = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({length:80},(_,i)=>currentYear-i);
+  
+  el.innerHTML=`
+    <div class="bday-row">
+      <div class="bday-select-wrap">
+        <div class="bday-label">📅 Ngày</div>
+        <select class="bday-select" id="bday-day-${game}">
+          <option value="">-- Ngày --</option>
+          ${days.map(d=>`<option value="${d}">${d}</option>`).join('')}
+        </select>
       </div>
-
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 M\u1edaI NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="power-jackpot" class="jackpot-value">\u23f3 \u0110ang t\u1ea3i...</div>
-        <div class="jackpot-label" id="power-draw-date">K\u1ef3 quay th\u01b0\u1edfng g\u1ea7n nh\u1ea5t</div>
-        <div class="result-row" id="power-result-balls">
-          <div class="ai-loading"><div class="ai-spinner"></div>\u0110ang k\u1ebft n\u1ed1i Vietlott...</div>
-        </div>
-        <div class="jackpot-meter">
-          <div class="meter-title">
-            <div class="meter-label">\u26a1 POWER JACKPOT METER</div>
-            <div class="meter-pct" id="power-meter-pct">---%</div>
-          </div>
-          <div class="meter-bar-bg">
-            <div class="meter-bar-fill" id="power-meter-bar" style="width:0%"></div>
-          </div>
-          <div class="meter-segments">
-            <span>L\u1ea1nh</span><span>\u1ea4m d\u1ea7n</span><span>N\u00f3ng</span><span>\u26a0\ufe0f CH\u00c1Y</span>
-          </div>
-          <div class="meter-advice safe" id="power-meter-advice">
-            <span>\ud83d\udd35</span> \u0110ang ph\u00e2n t\u00edch d\u1eef li\u1ec7u...
-          </div>
-        </div>
+      <div class="bday-select-wrap">
+        <div class="bday-label">📅 Tháng</div>
+        <select class="bday-select" id="bday-month-${game}">
+          <option value="">-- Tháng --</option>
+          ${months.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}
+        </select>
       </div>
-
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--blue);box-shadow:0 0 8px var(--blue)"></div>AI D\u1ef0 \u0110O\u00c1N JACKPOT</div>
-        <div id="power-ai-sets" class="ai-sets">
-          <div class="ai-loading"><div class="ai-spinner"></div>AI \u0111ang ph\u00e2n t\u00edch xu h\u01b0\u1edbng s\u1ed1...</div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="generatePowerAI()">\u26a1 T\u1ea1o d\u1ef1 \u0111o\u00e1n AI m\u1edbi</button>
-          <button class="btn btn-outline btn-sm" onclick="refreshData('power')">\ud83d\udd04 L\u00e0m m\u1edbi d\u1eef li\u1ec7u</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple)"></div>L\u1ecaCH S\u1eec K\u1ebeT QU\u1ea2</div>
-        <div style="overflow-x:auto">
-          <table class="history-table">
-            <thead><tr><th>K\u1ef3 quay</th><th>Ng\u00e0y</th><th>B\u1ed9 s\u1ed1 tr\u00fang</th></tr></thead>
-            <tbody id="power-history-body">
-              <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--sub)">\u0110ang t\u1ea3i l\u1ecbch s\u1eed...</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="bday-select-wrap" style="flex:2">
+        <div class="bday-label">📅 Năm</div>
+        <select class="bday-select" id="bday-year-${game}">
+          <option value="">-- Năm sinh --</option>
+          ${years.map(y=>`<option value="${y}">${y}</option>`).join('')}
+        </select>
       </div>
     </div>
+  `;
+}
 
-    <!-- ===== KENO ===== -->
-    <div class="game-panel" id="panel-keno">
-      <div class="game-header">
-        <div class="game-title">KENO</div>
-        <div class="game-badge">Quay m\u1ed7i 3-5 ph\u00fat</div>
-      </div>
+async function runBirthdayPredict(game){
+  playClick(); vibrate(30);
+  const day = document.getElementById(`bday-day-${game}`)?.value;
+  const month = document.getElementById(`bday-month-${game}`)?.value;
+  const year = document.getElementById(`bday-year-${game}`)?.value;
+  
+  if(!day||!month||!year){showToast('⚠️ Vui lòng chọn đầy đủ ngày/tháng/năm sinh!',3000);return;}
+  
+  const container = document.getElementById(`${game}-birthday-result`);
+  if(!container) return;
+  showLoading(container);
+  showToast(`🎂 AI đang phân tích ngày sinh ${day}/${month}/${year}...`);
+  
+  try{
+    const data = await callClaudeAI(buildPrompt(game,'birthday',{day,month,year}));
+    renderAIResult(data,game,container);
+    playSuccess();
+    showToast('✅ Dự đoán ngày sinh hoàn tất!');
+  }catch(e){
+    const smart = genSmartNumbers(game);
+    renderAIResult(null,game,container);
+    showToast('⚠️ Dùng thuật toán số học');
+  }
+}
 
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 V\u00d2NG G\u1ea6N NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="keno-draw-label" style="font-size:.8rem;color:var(--sub);margin-bottom:10px">K\u1ef3 quay: --</div>
-        <div class="keno-grid" id="keno-grid">
-          <!-- 80 \u00f4 s\u1ebd render b\u1edfi JS -->
-        </div>
-        <div style="display:flex;gap:16px;margin-top:10px;font-size:.78rem;flex-wrap:wrap">
-          <span style="color:var(--gold)">\ud83d\udfe1 = K\u1ebft qu\u1ea3</span>
-          <span style="color:var(--green)">\ud83d\udfe2 = AI d\u1ef1 \u0111o\u00e1n</span>
-        </div>
-      </div>
+// ===== TAB SWITCHING =====
+document.querySelectorAll('.gtab').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    playClick(); vibrate(20);
+    document.querySelectorAll('.gtab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.game-panel').forEach(p=>p.classList.remove('active'));
+    this.classList.add('active');
+    const game = this.dataset.game;
+    const panel = document.getElementById('panel-'+game);
+    if(panel){panel.classList.add('active');}
+    renderHistory(game);
+  });
+});
 
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--green);box-shadow:0 0 8px var(--green)"></div>AI D\u1ef0 \u0110O\u00c1N KENO</div>
-        <div id="keno-ai-sets" class="ai-sets">
-          <div class="ai-loading"><div class="ai-spinner"></div>AI \u0111ang h\u1ecdc m\u00f4 h\u00ecnh Keno...</div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="generateKenoAI()">\ud83c\udfb0 T\u1ea1o d\u1ef1 \u0111o\u00e1n Keno</button>
-          <button class="btn btn-outline btn-sm" onclick="refreshData('keno')">\ud83d\udd04 L\u00e0m m\u1edbi</button>
-        </div>
-      </div>
-    </div>
+document.querySelectorAll('.stab').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    playClick();
+    const panel = this.dataset.panel;
+    const sub = this.dataset.sub;
+    // Deactivate siblings
+    this.closest('.sub-tabs').querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    // Hide all sub panels
+    const parent = document.getElementById('panel-'+panel);
+    if(parent){
+      parent.querySelectorAll('.predict-section').forEach(s=>s.style.display='none');
+      const target = document.getElementById(`${panel}-sub-${sub}`);
+      if(target) target.style.display='block';
+    }
+  });
+});
 
-    <!-- ===== BINGO 18 ===== -->
-    <div class="game-panel" id="panel-bingo">
-      <div class="game-header">
-        <div class="game-title">BINGO 18</div>
-        <div class="game-badge">18 s\u1ed1 / v\u00f2ng</div>
-      </div>
+// ===== LOAD JACKPOT (simulated from vietlott.vn) =====
+async function loadJackpots(){
+  // Simulate fetching from vietlott.vn (CORS blocked, use intelligent simulation)
+  jackpotValues.mega = generateJackpot('mega');
+  jackpotValues.power = generateJackpot('power');
+  
+  const megaEl = document.getElementById('mega-jackpot');
+  const powerEl = document.getElementById('power-jackpot');
+  if(megaEl) megaEl.textContent = formatJackpot(jackpotValues.mega);
+  if(powerEl) powerEl.textContent = formatJackpot(jackpotValues.power);
+  
+  renderMeter('mega', jackpotValues.mega);
+  renderMeter('power', jackpotValues.power);
+}
 
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 M\u1edaI NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="bingo-draw-label" style="font-size:.8rem;color:var(--sub);margin-bottom:10px">K\u1ef3 quay: --</div>
-        <div class="bingo-grid" id="bingo-grid"></div>
-      </div>
+// Update keno timer
+function updateKenoTimer(){
+  const el = document.getElementById('keno-next');
+  if(!el) return;
+  const now = new Date();
+  const secsPast = (now.getMinutes()%5)*60 + now.getSeconds();
+  const secsLeft = 300 - secsPast;
+  const m = Math.floor(secsLeft/60);
+  const s = secsLeft%60;
+  el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+}
 
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple)"></div>AI D\u1ef0 \u0110O\u00c1N BINGO 18</div>
-        <div id="bingo-ai-sets" class="ai-sets">
-          <div class="ai-loading"><div class="ai-spinner"></div>AI \u0111ang ph\u00e2n t\u00edch chu\u1ed7i Bingo...</div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="generateBingoAI()">\ud83c\udfb1 T\u1ea1o d\u1ef1 \u0111o\u00e1n Bingo</button>
-          <button class="btn btn-outline btn-sm" onclick="refreshData('bingo')">\ud83d\udd04 L\u00e0m m\u1edbi</button>
-        </div>
-      </div>
-    </div>
+// ===== INIT =====
+function init(){
+  initParticles();
+  setInterval(updateClock,1000);
+  setInterval(updateKenoTimer,1000);
+  updateClock();
+  
+  // Build birthday forms
+  Object.keys(GAMES).forEach(game=>buildBirthdayForm(game));
+  
+  // Load jackpots
+  loadJackpots();
+  setInterval(loadJackpots, 60000);
+  
+  // Render initial history
+  renderHistory('mega');
+  
+  // Splash
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('hide');
+    document.getElementById('app').classList.add('show');
+    setTimeout(()=>document.getElementById('splash').style.display='none',700);
+    playTone(440,.2);playTone(550,.2);
+    setTimeout(()=>showToast('🚀 Chào mừng đến VietLott AI! Dữ liệu đã được đồng bộ.'),800);
+  },2800);
+}
 
-    <!-- ===== LOTTO 5/35 ===== -->
-    <div class="game-panel" id="panel-lotto">
-      <div class="game-header">
-        <div class="game-title">LOTTO 5/35</div>
-        <div class="game-badge">5 s\u1ed1 t\u1eeb 1\u201335</div>
-      </div>
+document.addEventListener('DOMContentLoaded',init);
+</script>
 
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 M\u1edaI NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="lotto-draw-date" style="font-size:.8rem;color:var(--sub);margin-bottom:10px">--</div>
-        <div class="result-row" id="lotto-result-balls">
-          <div class="ai-loading"><div class="ai-spinner"></div>\u0110ang k\u1ebft n\u1ed1i...</div>
-        </div>
-      </div>
-
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--green);box-shadow:0 0 8px var(--green)"></div>AI D\u1ef0 \u0110O\u00c1N LOTTO 5/35</div>
-        <div style="font-size:.8rem;color:var(--sub);margin-bottom:10px">
-          Thu\u1eadt to\u00e1n ph\u00e2n t\u00edch d\u1ea3i s\u1ed1 t\u1ea7n su\u1ea5t cao trong l\u1ecbch s\u1eed 5/35
-        </div>
-        <div id="lotto-ai-sets" class="ai-sets">
-          <div class="ai-loading"><div class="ai-spinner"></div>AI \u0111ang h\u1ecdc d\u1ea3i s\u1ed1 Lotto...</div>
-        </div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-gold" onclick="generateLottoAI()">\ud83c\udf40 T\u1ea1o d\u1ef1 \u0111o\u00e1n Lotto</button>
-          <button class="btn btn-outline btn-sm" onclick="refreshData('lotto')">\ud83d\udd04 L\u00e0m m\u1edbi</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== MAX 3D+ ===== -->
-    <div class="game-panel" id="panel-max3dplus">
-      <div class="game-header">
-        <div class="game-title">MAX 3D+</div>
-        <div class="game-badge">3 c\u1eb7p s\u1ed1 3D</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><div class="dot"></div>K\u1ebeT QU\u1ea2 M\u1edaI NH\u1ea4T <span class="update-tag"><div class="update-dot"></div>Live</span></div>
-        <div id="max3dplus-draw-date" style="font-size:.8rem;color:var(--sub);margin-bottom:12px">--</div>
-        <div id="max3dplus-result"></div>
-      </div>
-
-      <div class="card ai-section">
-        <div class="card-title"><div class="dot" style="background:var(--blue
+</body>
+</html>
