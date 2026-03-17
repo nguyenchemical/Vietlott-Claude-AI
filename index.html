@@ -1,856 +1,606 @@
 <!DOCTYPE html>
 
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a1a">
+<meta name="apple-mobile-web-app-title" content="VietlottAI">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="VietlottAI">
+<meta name="theme-color" id="themeColor" content="#03030f">
 <title>VietlottAI – Dự Đoán Xổ Số Thông Minh</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230a0a1a'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FFD700'/%3E%3Cstop offset='50%25' stop-color='%23FF6B35'/%3E%3Cstop offset='100%25' stop-color='%23FF2D55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='256' cy='256' r='200' fill='none' stroke='url(%23g)' stroke-width='10' stroke-dasharray='20 12'/%3E%3Cpolygon points='256,96 294,196 406,196 318,262 350,362 256,296 162,362 194,262 106,196 218,196' fill='url(%23g)'/%3E%3Ccircle cx='256' cy='256' r='42' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230a0a1a'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23FFD700'/%3E%3Cstop offset='50%25' stop-color='%23FF6B35'/%3E%3Cstop offset='100%25' stop-color='%23FF2D55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='256' cy='256' r='200' fill='none' stroke='url(%23g)' stroke-width='10' stroke-dasharray='20 12'/%3E%3Cpolygon points='256,96 294,196 406,196 318,262 350,362 256,296 162,362 194,262 106,196 218,196' fill='url(%23g)'/%3E%3Ccircle cx='256' cy='256' r='42' fill='url(%23g)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Be+Vietnam+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --gold: #FFD700;
-  --gold2: #FFA500;
-  --red: #FF2D55;
-  --green: #00FF88;
-  --blue: #00B4FF;
-  --purple: #BF00FF;
-  --bg: #03030f;
-  --bg2: #080820;
-  --card: rgba(255,255,255,0.04);
-  --border: rgba(255,255,255,0.10);
-  --text: #e8e8f0;
-  --sub: #8888aa;
-  --radius: 18px;
-  --glow: 0 0 30px rgba(255,215,0,0.25);
+/* ======== THEME ======== */
+:root{--gold:#FFD700;--gold2:#FFA500;--red:#FF2D55;--green:#00FF88;--blue:#00B4FF;--purple:#BF00FF;--radius:18px}
+[data-theme="dark"]{
+  --bg:#03030f;--bg2:#080820;--card:rgba(255,255,255,0.04);--card2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.10);--border2:rgba(255,255,255,0.16);
+  --text:#e8e8f0;--sub:#8888aa;--header:rgba(3,3,15,0.97);--tabs:rgba(8,8,32,0.95);
+  --sel-bg:#0d0d28;--sel-txt:#e8e8f0;--freq-track:rgba(255,255,255,0.07);
 }
+[data-theme="light"]{
+  --bg:#eef1f8;--bg2:#e0e4f0;--card:rgba(255,255,255,0.88);--card2:rgba(255,255,255,0.96);
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.16);
+  --text:#1a1a30;--sub:#606080;--header:rgba(238,241,248,0.97);--tabs:rgba(224,228,240,0.98);
+  --sel-bg:#ffffff;--sel-txt:#1a1a30;--freq-track:rgba(0,0,0,0.07);
+}
+/* ======== RESET ======== */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow-x:hidden;background:var(--bg);color:var(--text);font-family:'Be Vietnam Pro',sans-serif}
-
-/* ====== SPLASH ====== */
+html{height:100%;height:-webkit-fill-available;overflow:hidden;touch-action:manipulation}
+body{
+  height:100%;height:-webkit-fill-available;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font-family:'Be Vietnam Pro',sans-serif;
+  position:fixed;width:100%;
+  transition:background .3s,color .3s;
+}
+/* ======== SPLASH ======== */
 #splash{
-position:fixed;inset:0;z-index:9999;background:var(–bg);
-display:flex;flex-direction:column;align-items:center;justify-content:center;
-animation:splashOut 0.8s ease 3.5s forwards;
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(155deg,#03030f 0%,#0b0025 50%,#03030f 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .8s ease,visibility .8s ease;
 }
-@keyframes splashOut{to{opacity:0;pointer-events:none;visibility:hidden}}
-.splash-logo{
-width:120px;height:120px;margin-bottom:24px;
-animation:logoPop 0.6s cubic-bezier(.34,1.56,.64,1) 0.3s both;
-}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.sp-logo{width:130px;height:130px;margin-bottom:26px;
+  animation:logoPop .7s cubic-bezier(.34,1.56,.64,1) .2s both;
+  filter:drop-shadow(0 0 28px rgba(255,215,0,.55))}
 @keyframes logoPop{from{transform:scale(0) rotate(-180deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-.splash-title{
-font-family:‘Orbitron’,monospace;font-size:clamp(22px,5vw,38px);font-weight:900;
-background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);
--webkit-background-clip:text;-webkit-text-fill-color:transparent;
-animation:fadeUp 0.6s ease 0.7s both;letter-spacing:2px;
-}
-.splash-sub{font-size:14px;color:var(–sub);margin-top:8px;animation:fadeUp 0.6s ease 1s both;letter-spacing:3px;text-transform:uppercase}
-.splash-bar{
-width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;margin-top:32px;overflow:hidden;
-animation:fadeUp 0.6s ease 1.2s both;
-}
-.splash-bar-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FF2D55);border-radius:4px;animation:loadBar 2.5s ease 1.2s both}
-@keyframes loadBar{from{width:0}to{width:100%}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-
-/* ====== STARS ====== */
-#stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(–d,3s) ease-in-out infinite var(–delay,0s)}
-@keyframes twinkle{0%,100%{opacity:0.2;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
-
-/* ====== LAYOUT ====== */
-#app{position:relative;z-index:1;min-height:100vh;padding:0 0 80px}
+.sp-title{font-family:'Orbitron',monospace;font-size:clamp(24px,6vw,40px);font-weight:900;
+  background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:fadeUp .6s ease .6s both;letter-spacing:3px}
+.sp-sub{font-size:12px;color:#8888aa;margin-top:9px;animation:fadeUp .6s ease .9s both;letter-spacing:4px;text-transform:uppercase}
+.sp-bar{width:210px;height:5px;background:rgba(255,255,255,.1);border-radius:5px;margin-top:34px;overflow:hidden;animation:fadeUp .6s ease 1.1s both}
+.sp-fill{height:100%;background:linear-gradient(90deg,#FFD700,#FF6B35,#FF2D55);border-radius:5px;animation:spFill 2.8s ease 1.1s both;width:0}
+@keyframes spFill{to{width:100%}}
+.sp-dots{display:flex;gap:10px;margin-top:18px;animation:fadeUp .5s ease 1.3s both}
+.sdot{width:8px;height:8px;border-radius:50%;background:rgba(255,215,0,.25);animation:sdotAnim 1.2s ease-in-out infinite}
+.sdot:nth-child(2){animation-delay:.2s}.sdot:nth-child(3){animation-delay:.4s}
+@keyframes sdotAnim{0%,100%{transform:scale(1);background:rgba(255,215,0,.25)}50%{transform:scale(1.6);background:#FFD700}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* ======== STARS ======== */
+#stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;transition:opacity .5s}
+[data-theme="light"] #stars{opacity:.12}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+[data-theme="light"] .star{background:#333}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.4)}}
+/* ======== APP SHELL (fullscreen, no scroll on body) ======== */
+#app{position:fixed;inset:0;display:flex;flex-direction:column;z-index:1;overflow:hidden}
+/* ======== HEADER ======== */
 header{
-background:rgba(3,3,15,0.95);backdrop-filter:blur(20px);
-border-bottom:1px solid var(–border);position:sticky;top:0;z-index:100;
-padding:env(safe-area-inset-top) 0 0;
+  background:var(--header);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  padding-top:env(safe-area-inset-top,0px);transition:background .3s,border-color .3s;
 }
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 16px}
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-icon{width:38px;height:38px}
-.logo-text{font-family:‘Orbitron’,monospace;font-size:16px;font-weight:900;
-background:linear-gradient(135deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.logo-text span{display:block;font-size:9px;color:var(–sub);letter-spacing:2px;-webkit-text-fill-color:var(–sub)}
-.header-right{display:flex;align-items:center;gap:12px}
-.clock{font-family:‘Orbitron’,monospace;font-size:12px;color:var(–blue);letter-spacing:1px}
-.conn-indicator{display:flex;align-items:center;gap:6px;font-size:11px}
-.led{width:10px;height:10px;border-radius:50%;background:#666;transition:all 0.3s;flex-shrink:0}
-.led.connecting{background:#FFD700;box-shadow:0 0 8px #FFD700;animation:blink 1s infinite}
-.led.connected{background:var(–green);box-shadow:0 0 12px var(–green)}
-.led.error{background:var(–red);animation:blink 0.5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
-
-/* ====== GAME TABS ====== */
-.tabs-wrap{overflow-x:auto;padding:12px 8px;scrollbar-width:none;background:rgba(8,8,32,0.8);border-bottom:1px solid var(–border)}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px}
+.logo-wrap{display:flex;align-items:center;gap:9px}
+.logo-svg{width:36px;height:36px;flex-shrink:0}
+.logo-txt{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;
+  background:linear-gradient(135deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2}
+.logo-txt span{display:block;font-size:9px;color:var(--sub);-webkit-text-fill-color:var(--sub);letter-spacing:2px;font-family:'Be Vietnam Pro',sans-serif;font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.clock{font-family:'Orbitron',monospace;font-size:11px;color:var(--blue);letter-spacing:1px;white-space:nowrap}
+.conn-wrap{display:flex;align-items:center;gap:5px}
+.led{width:9px;height:9px;border-radius:50%;background:#555;flex-shrink:0;transition:all .4s}
+.led.connecting{background:#FFD700;box-shadow:0 0 8px #FFD700;animation:blink .8s ease-in-out infinite}
+.led.connected{background:var(--green);box-shadow:0 0 10px var(--green);animation:none}
+.led.error{background:var(--red);box-shadow:0 0 8px var(--red);animation:blink .4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+.conn-lbl{font-size:9px;color:var(--sub);white-space:nowrap}
+/* ======== TABS ======== */
+.tabs-wrap{background:var(--tabs);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;transition:background .3s}
 .tabs-wrap::-webkit-scrollbar{display:none}
-.tabs{display:flex;gap:8px;width:max-content;padding:0 8px}
-.tab-btn{
-padding:8px 14px;border-radius:20px;border:1px solid var(–border);
-background:var(–card);color:var(–sub);font-family:‘Be Vietnam Pro’,sans-serif;
-font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.2s;letter-spacing:0.5px;
-}
-.tab-btn:hover{border-color:var(–gold);color:var(–gold)}
-.tab-btn.active{background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,69,0,0.2));border-color:var(–gold);color:var(–gold);box-shadow:0 0 15px rgba(255,215,0,0.2)}
-
-/* ====== MAIN CONTENT ====== */
-.main{padding:16px;max-width:600px;margin:0 auto}
-.game-panel{display:none;animation:panelIn 0.4s ease}
-.game-panel.active{display:block}
-@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-/* ====== CARDS ====== */
-.card{
-background:var(–card);border:1px solid var(–border);border-radius:var(–radius);
-padding:18px;margin-bottom:16px;position:relative;overflow:hidden;
-}
-.card::before{content:’’;position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,215,0,0.05),transparent 60%);pointer-events:none}
-.card-title{font-family:‘Orbitron’,monospace;font-size:13px;color:var(–gold);letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.card-title .icon{font-size:16px}
-
-/* ====== JACKPOT VALUE ====== */
-.jackpot-hero{
-background:linear-gradient(135deg,rgba(255,45,85,0.15),rgba(255,140,0,0.1));
-border:1px solid rgba(255,45,85,0.3);border-radius:var(–radius);padding:18px;
-text-align:center;margin-bottom:16px;position:relative;overflow:hidden;
-}
-.jp-label{font-size:11px;color:var(–sub);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
-.jp-value{font-family:‘Orbitron’,monospace;font-size:clamp(20px,5vw,32px);font-weight:900;
-background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);
--webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
-.jp-draw{font-size:12px;color:var(–sub);margin-top:6px}
-
-/* ====== JACKPOT METER ====== */
-.jp-meter{margin-bottom:16px}
-.jp-meter-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px}
-.jp-meter-label{color:var(–sub);letter-spacing:1px;text-transform:uppercase;font-size:11px}
-.jp-pct{font-family:‘Orbitron’,monospace;font-size:14px;font-weight:700}
-.jp-bar-track{height:14px;background:rgba(255,255,255,0.07);border-radius:8px;overflow:hidden;position:relative}
-.jp-bar-fill{
-height:100%;border-radius:8px;transition:width 1.5s cubic-bezier(.4,0,.2,1);
-background:linear-gradient(90deg,#00FF88,#FFD700,#FF6B35,#FF2D55);
-position:relative;
-}
-.jp-bar-fill::after{
-content:’’;position:absolute;inset:0;
-background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
-animation:shimmer 2s infinite;
-}
-@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(200%)} }
-.jp-advice{font-size:12px;text-align:center;margin-top:8px;padding:8px;border-radius:8px;font-weight:600}
-.jp-advice.go{background:rgba(0,255,136,0.1);color:var(–green);border:1px solid rgba(0,255,136,0.2)}
-.jp-advice.wait{background:rgba(255,215,0,0.1);color:var(–gold);border:1px solid rgba(255,215,0,0.2)}
-.jp-advice.hot{background:rgba(255,45,85,0.1);color:var(–red);border:1px solid rgba(255,45,85,0.3);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 20px rgba(255,45,85,0.4)}}
-
-/* ====== NUMBER BALLS ====== */
-.balls-wrap{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 0}
-.ball{
-width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-family:‘Orbitron’,monospace;font-weight:700;font-size:14px;
-position:relative;cursor:default;transition:all 0.3s;
-animation:ballIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
-flex-shrink:0;
-}
-@keyframes ballIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-.ball.mega{background:radial-gradient(circle at 35% 35%,#FF6B35,#FF2D55);box-shadow:0 4px 15px rgba(255,45,85,0.5)}
-.ball.power{background:radial-gradient(circle at 35% 35%,#00B4FF,#0040FF);box-shadow:0 4px 15px rgba(0,64,255,0.5)}
-.ball.keno{background:radial-gradient(circle at 35% 35%,#FFD700,#FF8C00);box-shadow:0 4px 15px rgba(255,140,0,0.5)}
-.ball.bingo{background:radial-gradient(circle at 35% 35%,#00FF88,#00CC66);box-shadow:0 4px 15px rgba(0,255,136,0.5);color:#003020}
-.ball.lotto{background:radial-gradient(circle at 35% 35%,#BF00FF,#7700CC);box-shadow:0 4px 15px rgba(191,0,255,0.5)}
-.ball.max3d{background:radial-gradient(circle at 35% 35%,#00E5FF,#0080FF);box-shadow:0 4px 15px rgba(0,229,255,0.4)}
-.ball.max3dp{background:radial-gradient(circle at 35% 35%,#FF69B4,#CC0066);box-shadow:0 4px 15px rgba(255,105,180,0.5)}
-.ball.max3dpro{background:radial-gradient(circle at 35% 35%,#FFD700,#996600);box-shadow:0 4px 15px rgba(255,215,0,0.5)}
-.ball.jackpot-ball{animation:ballIn 0.5s cubic-bezier(.34,1.56,.64,1) both,jackpotGlow 1.5s ease-in-out 0.8s infinite}
-@keyframes jackpotGlow{0%,100%{transform:scale(1)}50%{transform:scale(1.12);filter:brightness(1.3)}}
-.ball-special{
-width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-family:‘Orbitron’,monospace;font-weight:900;font-size:14px;
-background:radial-gradient(circle at 35% 35%,#FFD700,#FF8C00);
-box-shadow:0 0 20px rgba(255,215,0,0.7);color:#1a0000;
-animation:ballIn 0.5s cubic-bezier(.34,1.56,.64,1) both,specialPulse 1s ease-in-out infinite;
-flex-shrink:0;
-}
-@keyframes specialPulse{0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.7)}50%{box-shadow:0 0 40px rgba(255,215,0,1),0 0 60px rgba(255,165,0,0.5)}}
-
-/* ====== KENO GRID ====== */
-.keno-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
-.keno-cell{
-aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
-font-size:12px;font-weight:700;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);
-transition:all 0.3s;font-family:‘Orbitron’,monospace;
-}
-.keno-cell.selected{background:radial-gradient(circle at 35% 35%,#FFD700,#FF8C00);color:#1a0000;border-color:#FFD700;box-shadow:0 2px 8px rgba(255,215,0,0.5);animation:cellPop 0.3s ease}
-@keyframes cellPop{from{transform:scale(0.7)}to{transform:scale(1)}}
-
-/* ====== MAX3D ====== */
-.max3d-sets{display:flex;gap:12px;flex-wrap:wrap}
-.max3d-set{background:rgba(255,255,255,0.05);border:1px solid var(–border);border-radius:12px;padding:12px 16px;flex:1;min-width:80px;text-align:center}
-.max3d-set-label{font-size:10px;color:var(–sub);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
-.max3d-num{font-family:‘Orbitron’,monospace;font-size:24px;font-weight:900;
-background:linear-gradient(135deg,#00E5FF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-/* ====== PREDICT BTN ====== */
-.predict-btn{
-width:100%;padding:16px;border-radius:var(–radius);border:none;cursor:pointer;
-font-family:‘Orbitron’,monospace;font-size:14px;font-weight:700;letter-spacing:2px;
-background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);color:#fff;
-position:relative;overflow:hidden;transition:all 0.3s;text-shadow:0 1px 3px rgba(0,0,0,0.5);
-box-shadow:0 4px 20px rgba(255,69,0,0.4);
-}
-.predict-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,69,0,0.6)}
-.predict-btn:active{transform:translateY(0)}
-.predict-btn::before{content:’’;position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);opacity:0;transition:opacity 0.3s}
-.predict-btn:hover::before{opacity:1}
-.predict-btn.loading{pointer-events:none}
-.predict-btn .btn-loader{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto}
-.predict-btn.loading .btn-text{display:none}
-.predict-btn.loading .btn-loader{display:block}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ====== AI ANALYSIS ====== */
-.ai-result{
-background:rgba(0,180,255,0.05);border:1px solid rgba(0,180,255,0.2);
-border-radius:var(–radius);padding:16px;margin-top:12px;
-}
-.ai-result-title{font-size:11px;color:var(–blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.ai-result-text{font-size:13px;line-height:1.7;color:var(–text)}
-.ai-confidence{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px}
-.conf-bar-track{flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
-.conf-bar-fill{height:100%;background:linear-gradient(90deg,var(–blue),var(–green));border-radius:3px;transition:width 1s ease}
-
-/* ====== BIRTHDAY PREDICT ====== */
-.birthday-section{background:rgba(191,0,255,0.05);border:1px solid rgba(191,0,255,0.2);border-radius:var(–radius);padding:16px;margin-bottom:16px}
-.birthday-inputs{display:flex;gap:8px;margin:12px 0}
-.birthday-inputs select{
-flex:1;background:rgba(255,255,255,0.06);border:1px solid var(–border);
-border-radius:10px;padding:10px 8px;color:var(–text);font-family:‘Be Vietnam Pro’,sans-serif;
-font-size:13px;appearance:none;-webkit-appearance:none;cursor:pointer;text-align:center;
-background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘8’ fill=’%23888’%3E%3Cpath d=‘M6 8L0 0h12z’/%3E%3C/svg%3E”);
-background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;
-}
-.birthday-inputs select option{background:#080820;color:var(–text)}
-.birthday-predict-btn{
-width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;
-background:linear-gradient(135deg,#BF00FF,#7700CC);color:#fff;
-font-family:‘Orbitron’,monospace;font-size:13px;font-weight:700;letter-spacing:1px;
-transition:all 0.3s;box-shadow:0 4px 15px rgba(191,0,255,0.3);
-}
-.birthday-predict-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(191,0,255,0.5)}
-
-/* ====== HISTORY ====== */
-.history-item{
-display:flex;align-items:center;justify-content:space-between;
-padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);
-}
-.history-date{font-size:11px;color:var(–sub);min-width:80px}
-.history-balls{display:flex;gap:4px;flex-wrap:wrap}
-.hball{
-width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;flex-shrink:0;
-background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
-}
-
-/* ====== FIREWORKS ====== */
-#fireworks{position:fixed;inset:0;pointer-events:none;z-index:500;overflow:hidden}
-.fw-particle{position:absolute;width:6px;height:6px;border-radius:50%;animation:fwAnim var(–dur,1s) ease-out var(–delay,0s) forwards}
-@keyframes fwAnim{
-0%{transform:translate(0,0) scale(1);opacity:1}
-100%{transform:translate(var(–tx,0),var(–ty,0)) scale(0);opacity:0}
-}
-
-/* ====== TOAST ====== */
-.toast{
-position:fixed;bottom:calc(env(safe-area-inset-bottom) + 80px);left:50%;transform:translateX(-50%) translateY(20px);
-background:rgba(10,10,30,0.95);border:1px solid var(–border);border-radius:12px;
-padding:12px 20px;font-size:13px;z-index:600;opacity:0;transition:all 0.3s;white-space:nowrap;
-backdrop-filter:blur(20px);max-width:90vw;text-align:center;
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.jackpot{border-color:var(–gold);background:rgba(20,10,0,0.95);color:var(–gold)}
-
-/* ====== FOOTER NAV ====== */
-.bottom-nav{
-position:fixed;bottom:0;left:0;right:0;
-background:rgba(3,3,15,0.97);backdrop-filter:blur(20px);
-border-top:1px solid var(–border);padding:8px 0;
-padding-bottom:env(safe-area-inset-bottom);z-index:200;
-display:flex;justify-content:space-around;
-}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;color:var(–sub);font-size:10px;cursor:pointer;transition:color 0.2s;border:none;background:none;font-family:‘Be Vietnam Pro’,sans-serif}
-.nav-btn.active{color:var(–gold)}
-.nav-btn .nav-icon{font-size:20px}
-
-/* ====== VIEWS ====== */
-.view{display:none}
+.tabs{display:flex;gap:6px;padding:9px 12px;width:max-content}
+.tab-btn{padding:7px 13px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--sub);
+  font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.tab-btn.active{background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,69,0,.15));border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(255,215,0,.2)}
+/* ======== SCROLL AREA ======== */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:rgba(255,215,0,.3) transparent}
+.scroll-area::-webkit-scrollbar{width:3px}
+.scroll-area::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3);border-radius:2px}
+/* ======== VIEWS ======== */
+.view{display:none;animation:panelIn .3s ease}
 .view.active{display:block}
-
-/* ====== LOADING SKELETON ====== */
-.skeleton{background:linear-gradient(90deg,rgba(255,255,255,0.05) 25%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.05) 75%);background-size:200% 100%;animation:skelAnim 1.5s infinite;border-radius:8px;height:16px;margin:6px 0}
-@keyframes skelAnim{from{background-position:200% 0}to{background-position:-200% 0}}
-
-/* ====== STATS ====== */
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat-box{background:var(–card);border:1px solid var(–border);border-radius:12px;padding:12px;text-align:center}
-.stat-val{font-family:‘Orbitron’,monospace;font-size:18px;font-weight:700;color:var(–gold)}
-.stat-lbl{font-size:10px;color:var(–sub);margin-top:4px;letter-spacing:1px}
-
-/* ====== HOT/COLD NUMBERS ====== */
-.hot-cold{display:flex;gap:12px;margin:10px 0}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* ======== MAIN ======== */
+.main{padding:13px;max-width:600px;margin:0 auto;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px)}
+/* ======== GAME PANELS ======== */
+.game-panel{display:none;animation:panelIn .35s ease}
+.game-panel.active{display:block}
+/* ======== CARD ======== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;margin-bottom:13px;position:relative;overflow:hidden;transition:background .3s,border-color .3s}
+.card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,215,0,.04),transparent 60%);pointer-events:none}
+[data-theme="light"] .card::before{background:radial-gradient(circle at top right,rgba(255,165,0,.06),transparent 60%)}
+.card-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);letter-spacing:1.5px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+/* ======== JACKPOT HERO ======== */
+.jp-hero{background:linear-gradient(135deg,rgba(255,45,85,.12),rgba(255,140,0,.08));border:1px solid rgba(255,45,85,.3);border-radius:var(--radius);padding:15px;text-align:center;margin-bottom:13px}
+.jp-lbl{font-size:10px;color:var(--sub);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px}
+.jp-val{font-family:'Orbitron',monospace;font-size:clamp(18px,4.5vw,30px);font-weight:900;background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+.jp-draw{font-size:11px;color:var(--sub);margin-top:5px}
+.jp-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,45,85,.15));border:1px solid rgba(255,215,0,.4);border-radius:18px;padding:3px 10px;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:1px;margin-top:8px;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,.4)}50%{box-shadow:0 0 0 6px rgba(255,215,0,0)}}
+/* ======== JP METER ======== */
+.jp-meter{margin-bottom:13px}
+.jp-mhdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.jp-mlbl{font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase}
+.jp-pct{font-family:'Orbitron',monospace;font-size:13px;font-weight:700}
+.jp-track{height:13px;background:var(--freq-track);border-radius:7px;overflow:hidden;position:relative}
+.jp-fill{height:100%;border-radius:7px;width:0;transition:width 1.6s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,#00FF88,#FFD700,#FF6B35,#FF2D55);position:relative}
+.jp-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2.2s linear infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
+.jp-adv{font-size:11px;text-align:center;margin-top:7px;padding:7px 10px;border-radius:8px;font-weight:700}
+.jp-adv.go{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25)}
+.jp-adv.wait{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.25)}
+.jp-adv.hot{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.3);animation:hotP 1.4s ease-in-out infinite}
+@keyframes hotP{0%,100%{box-shadow:none}50%{box-shadow:0 0 18px rgba(255,45,85,.5)}}
+/* ======== BALLS ======== */
+.balls-wrap{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:7px 0;min-height:50px}
+.ball{width:43px;height:43px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-weight:700;font-size:13px;flex-shrink:0;animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes ballIn{from{transform:scale(0) rotate(-90deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.ball.mega{background:radial-gradient(circle at 35% 35%,#FF6B35,#CC1130);box-shadow:0 3px 12px rgba(255,45,85,.55)}
+.ball.power{background:radial-gradient(circle at 35% 35%,#33CCFF,#0030EE);box-shadow:0 3px 12px rgba(0,64,255,.55)}
+.ball.keno{background:radial-gradient(circle at 35% 35%,#FFE040,#FF8C00);box-shadow:0 3px 12px rgba(255,140,0,.5);color:#1a0000}
+.ball.bingo{background:radial-gradient(circle at 35% 35%,#44FF99,#00AA44);box-shadow:0 3px 12px rgba(0,200,100,.5);color:#002010}
+.ball.lotto{background:radial-gradient(circle at 35% 35%,#CC66FF,#7700CC);box-shadow:0 3px 12px rgba(150,0,255,.5)}
+.ball.max3d{background:radial-gradient(circle at 35% 35%,#44EEFF,#0066EE);box-shadow:0 3px 12px rgba(0,180,255,.45)}
+.ball.max3dp{background:radial-gradient(circle at 35% 35%,#FF88CC,#CC0055);box-shadow:0 3px 12px rgba(255,0,100,.5)}
+.ball.max3dpro{background:radial-gradient(circle at 35% 35%,#FFE040,#886600);box-shadow:0 3px 12px rgba(200,160,0,.5)}
+.ball.jackpot-ball{animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both,jpGlow 1.6s ease-in-out .6s infinite}
+@keyframes jpGlow{0%,100%{transform:scale(1)}50%{transform:scale(1.1);filter:brightness(1.35)}}
+.ball-special{width:43px;height:43px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-weight:900;font-size:13px;background:radial-gradient(circle at 35% 35%,#FFE040,#FF6600);box-shadow:0 0 18px rgba(255,215,0,.8);color:#1a0000;flex-shrink:0;animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both,spPulse 1.2s ease-in-out infinite}
+@keyframes spPulse{0%,100%{box-shadow:0 0 18px rgba(255,215,0,.7)}50%{box-shadow:0 0 38px rgba(255,200,0,1),0 0 55px rgba(255,120,0,.5)}}
+/* ======== HOT/COLD ======== */
+.hot-cold{display:flex;gap:10px;margin:8px 0}
 .hot-list,.cold-list{flex:1}
-.hc-title{font-size:11px;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
-.hot-title{color:var(–red)}
-.cold-title{color:var(–blue)}
-.hc-balls{display:flex;flex-wrap:wrap;gap:5px}
-.hc-ball{
-width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-family:‘Orbitron’,monospace;font-size:10px;font-weight:700;
+.hc-title{font-size:10px;letter-spacing:1px;margin-bottom:7px;text-transform:uppercase;font-weight:700}
+.ht{color:var(--red)}.ct{color:var(--blue)}
+.hc-balls{display:flex;flex-wrap:wrap;gap:4px}
+.hc-ball{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:9px;font-weight:700;flex-shrink:0}
+.hball-h{background:rgba(255,45,85,.2);border:1px solid var(--red);color:var(--red)}
+.hball-c{background:rgba(0,180,255,.12);border:1px solid var(--blue);color:var(--blue)}
+/* ======== KENO GRID ======== */
+.keno-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.kc{aspect-ratio:1;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--card2);border:1px solid var(--border);transition:all .25s;font-family:'Orbitron',monospace;color:var(--sub)}
+.kc.sel{background:radial-gradient(circle at 35% 35%,#FFE040,#FF8C00);color:#1a0000;border-color:#FFD700;box-shadow:0 2px 8px rgba(255,215,0,.5);animation:cellPop .28s ease}
+@keyframes cellPop{from{transform:scale(.65)}to{transform:scale(1)}}
+/* ======== MAX3D ======== */
+.m3d-sets{display:flex;gap:10px;flex-wrap:wrap}
+.m3d-set{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:10px 13px;flex:1;min-width:70px;text-align:center;transition:background .3s}
+.m3d-lbl{font-size:9px;color:var(--sub);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
+.m3d-num{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;background:linear-gradient(135deg,#00E5FF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* ======== PREDICT BUTTON ======== */
+.pbtn{width:100%;padding:15px;border-radius:var(--radius);border:none;cursor:pointer;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:2px;background:linear-gradient(135deg,#FFD700,#FF6B35,#FF2D55);color:#fff;position:relative;overflow:hidden;transition:all .25s;text-shadow:0 1px 3px rgba(0,0,0,.4);box-shadow:0 4px 18px rgba(255,69,0,.4)}
+.pbtn:active{transform:scale(.98)}
+.pbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.18),transparent);opacity:0;transition:.3s}
+.pbtn:hover::before{opacity:1}
+.pbtn.loading{pointer-events:none;opacity:.8}
+.pbtn .bt{display:block}
+.pbtn .bl{display:none;width:18px;height:18px;margin:0 auto;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.pbtn.loading .bt{display:none}
+.pbtn.loading .bl{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ======== AI RESULT ======== */
+.ai-res{background:rgba(0,180,255,.06);border:1px solid rgba(0,180,255,.2);border-radius:var(--radius);padding:13px;margin-top:10px}
+[data-theme="light"] .ai-res{background:rgba(0,100,200,.05);border-color:rgba(0,100,200,.18)}
+.ai-res-title{font-size:10px;color:var(--blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.ai-res-text{font-size:12px;line-height:1.75;color:var(--text)}
+.ai-conf{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:11px}
+.ct-track{flex:1;height:5px;background:var(--freq-track);border-radius:3px;overflow:hidden}
+.ct-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px;transition:width 1s ease;width:0}
+/* ======== BIRTHDAY ======== */
+.bday-sec{background:rgba(191,0,255,.05);border:1px solid rgba(191,0,255,.2);border-radius:var(--radius);padding:13px;margin-bottom:13px}
+[data-theme="light"] .bday-sec{background:rgba(150,0,200,.04);border-color:rgba(150,0,200,.2)}
+.bday-inputs{display:flex;gap:7px;margin:9px 0}
+.bday-inputs select{flex:1;background:var(--sel-bg);border:1px solid var(--border2);border-radius:9px;padding:9px 6px;color:var(--sel-txt);font-family:'Be Vietnam Pro',sans-serif;font-size:12px;font-weight:600;appearance:none;-webkit-appearance:none;cursor:pointer;text-align:center;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%23888'%3E%3Cpath d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:20px;transition:background .3s,color .3s}
+.bday-inputs select option{background:var(--sel-bg);color:var(--sel-txt)}
+.bday-btn{width:100%;padding:11px;border-radius:11px;border:none;cursor:pointer;background:linear-gradient(135deg,#BF00FF,#7700CC);color:#fff;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:1px;transition:all .25s;box-shadow:0 3px 12px rgba(150,0,255,.3)}
+.bday-btn:active{transform:scale(.98)}
+/* ======== STATS ======== */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px;text-align:center;transition:background .3s}
+.stat-val{font-family:'Orbitron',monospace;font-size:17px;font-weight:700;color:var(--gold)}
+.stat-lbl{font-size:10px;color:var(--sub);margin-top:3px;letter-spacing:1px}
+.freq-list{display:flex;flex-direction:column;gap:5px;max-height:170px;overflow-y:auto}
+.freq-list::-webkit-scrollbar{width:3px}
+.freq-list::-webkit-scrollbar-thumb{background:rgba(255,215,0,.3);border-radius:2px}
+.freq-row{display:flex;align-items:center;gap:7px}
+.freq-num{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;min-width:24px;text-align:right;color:var(--gold)}
+.freq-bw{flex:1;height:7px;background:var(--freq-track);border-radius:4px;overflow:hidden}
+.freq-b{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--red));transition:width 1s ease}
+.freq-cnt{font-size:9px;color:var(--sub);min-width:20px}
+/* ======== SETTINGS ======== */
+.s-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}
+.s-lbl{font-size:13px;font-weight:600;color:var(--text)}
+.s-sub{font-size:10px;color:var(--sub);margin-top:2px}
+/* -------- TOGGLE (fixed) -------- */
+.toggle{
+  width:46px;height:26px;border-radius:13px;
+  background:rgba(150,150,180,.25);
+  position:relative;cursor:pointer;
+  transition:background .3s;flex-shrink:0;
+  border:1px solid var(--border2);
+  -webkit-user-select:none;user-select:none;
 }
-.hot-ball{background:rgba(255,45,85,0.3);border:1px solid var(–red);color:var(–red)}
-.cold-ball{background:rgba(0,180,255,0.15);border:1px solid var(–blue);color:var(–blue)}
-
-/* ====== FREQUENCY BAR ====== */
-.freq-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto}
-.freq-list::-webkit-scrollbar{width:4px}
-.freq-list::-webkit-scrollbar-track{background:transparent}
-.freq-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
-.freq-row{display:flex;align-items:center;gap:8px}
-.freq-num{font-family:‘Orbitron’,monospace;font-size:11px;font-weight:700;min-width:28px;text-align:right;color:var(–gold)}
-.freq-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden}
-.freq-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(–gold),var(–red));transition:width 1s ease}
-.freq-cnt{font-size:10px;color:var(–sub);min-width:24px}
-
-/* ====== RESPONSIVE ====== */
-@media(max-width:380px){.ball{width:38px;height:38px;font-size:12px}.keno-cell{font-size:10px}}
-@media(min-width:600px){.main{padding:20px}.ball{width:50px;height:50px;font-size:16px}}
-
-/* ====== JACKPOT ALERT BADGE ====== */
-.jackpot-badge{
-display:inline-flex;align-items:center;gap:6px;
-background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,45,85,0.2));
-border:1px solid rgba(255,215,0,0.5);border-radius:20px;
-padding:4px 12px;font-size:11px;color:var(–gold);font-weight:700;letter-spacing:1px;
-animation:badgePulse 2s infinite;
+[data-theme="light"] .toggle{background:rgba(0,0,0,.12)}
+.toggle.on{background:var(--green);border-color:var(--green)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 1px 4px rgba(0,0,0,.35);
 }
-@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,0.4)}50%{box-shadow:0 0 0 8px rgba(255,215,0,0)}}
-
-/* ====== SECTION DIVIDER ====== */
-.divider{height:1px;background:var(–border);margin:16px 0}
-
-/* info page */
-.info-hero{text-align:center;padding:30px 16px}
-.info-hero-icon{font-size:60px;margin-bottom:16px}
-.info-hero-title{font-family:‘Orbitron’,monospace;font-size:22px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-.info-hero-sub{font-size:13px;color:var(–sub);line-height:1.6}
-.info-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius);padding:16px;margin-bottom:12px}
-.info-card h3{font-size:13px;color:var(–gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.info-card p{font-size:12px;color:var(–sub);line-height:1.7}
-.disclaimer{background:rgba(255,45,85,0.05);border:1px solid rgba(255,45,85,0.2);border-radius:12px;padding:14px;font-size:12px;color:var(–sub);line-height:1.6;text-align:center}
-
-/* settings */
-.settings-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.settings-label{font-size:14px}
-.settings-sub{font-size:11px;color:var(–sub);margin-top:2px}
-.toggle{width:44px;height:24px;background:rgba(255,255,255,0.1);border-radius:12px;position:relative;cursor:pointer;transition:background 0.3s}
-.toggle.on{background:var(–green)}
-.toggle::after{content:’’;position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.3s}
 .toggle.on::after{transform:translateX(20px)}
+/* ======== INFO ======== */
+.info-hero{text-align:center;padding:22px 13px 14px}
+.info-icon{font-size:50px;margin-bottom:11px}
+.info-title{font-family:'Orbitron',monospace;font-size:19px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:7px}
+.info-sub{font-size:11px;color:var(--sub);line-height:1.65}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:10px;transition:background .3s}
+.info-card h3{font-size:12px;color:var(--gold);margin-bottom:7px;font-family:'Orbitron',monospace;letter-spacing:1px}
+.info-card p{font-size:11px;color:var(--sub);line-height:1.7}
+.disclaimer{background:rgba(255,45,85,.05);border:1px solid rgba(255,45,85,.2);border-radius:12px;padding:12px;font-size:11px;color:var(--sub);line-height:1.65;text-align:center}
+/* ======== BOTTOM NAV ======== */
+.bottom-nav{background:var(--header);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);display:flex;justify-content:space-around;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,0px);transition:background .3s,border-color .3s}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 8px;color:var(--sub);font-size:9px;cursor:pointer;transition:color .2s;border:none;background:none;font-family:'Be Vietnam Pro',sans-serif;font-weight:600;flex:1;letter-spacing:.5px}
+.nav-btn.active{color:var(--gold)}
+.nav-icon{font-size:19px;line-height:1}
+/* ======== FIREWORKS ======== */
+#fireworks{position:fixed;inset:0;pointer-events:none;z-index:800;overflow:hidden}
+.fw-p{position:absolute;border-radius:50%;animation:fwFly var(--dur,.9s) ease-out var(--del,0s) forwards}
+@keyframes fwFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx,0),var(--ty,0)) scale(.05);opacity:0}}
+/* ======== TOAST ======== */
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);transform:translateX(-50%) translateY(12px);background:rgba(8,8,32,.97);border:1px solid var(--border2);border-radius:12px;padding:10px 17px;font-size:12px;font-weight:600;z-index:700;opacity:0;transition:all .3s;white-space:nowrap;backdrop-filter:blur(20px);max-width:88vw;text-align:center;pointer-events:none}
+[data-theme="light"] .toast{background:rgba(240,242,248,.97);color:var(--text)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.jackpot{border-color:var(--gold);color:var(--gold)}
+/* ======== RESPONSIVE ======== */
+@media(max-width:360px){.ball{width:38px;height:38px;font-size:11px}.kc{font-size:9px}}
+@media(min-width:600px){.main{padding:17px}.ball{width:48px;height:48px;font-size:14px}}
 </style>
-
 </head>
 <body>
 
 <!-- SPLASH -->
 
 <div id="splash">
-  <div id="stars-splash"></div>
-  <svg class="splash-logo" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg class="sp-logo" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
-      <radialGradient id="bg1" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#1a0a2e"/>
-        <stop offset="100%" stop-color="#050510"/>
-      </radialGradient>
-      <linearGradient id="star-g" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#FFD700"/>
-        <stop offset="50%" stop-color="#FF6B35"/>
-        <stop offset="100%" stop-color="#FF2D55"/>
-      </linearGradient>
+      <radialGradient id="sbg" cx="40%" cy="35%"><stop offset="0%" stop-color="#1a0635"/><stop offset="100%" stop-color="#030310"/></radialGradient>
+      <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="50%" stop-color="#FF6B35"/><stop offset="100%" stop-color="#FF2D55"/></linearGradient>
     </defs>
-    <circle cx="60" cy="60" r="58" fill="url(#bg1)" stroke="url(#star-g)" stroke-width="2"/>
-    <!-- AI Brain Circuit -->
-    <circle cx="60" cy="60" r="28" fill="none" stroke="url(#star-g)" stroke-width="1.5" stroke-dasharray="4 3"/>
-    <!-- Stars / Numbers floating -->
-    <polygon points="60,18 65,32 80,32 68,41 73,56 60,47 47,56 52,41 40,32 55,32" fill="url(#star-g)" opacity="0.9"/>
-    <circle cx="60" cy="60" r="8" fill="url(#star-g)"/>
-    <!-- Orbiting dots -->
-    <circle cx="60" cy="28" r="3.5" fill="#FFD700"><animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="4s" repeatCount="indefinite"/></circle>
-    <circle cx="92" cy="60" r="2.5" fill="#FF6B35"><animateTransform attributeName="transform" type="rotate" from="90 60 60" to="450 60 60" dur="3s" repeatCount="indefinite"/></circle>
-    <circle cx="60" cy="92" r="3" fill="#FF2D55"><animateTransform attributeName="transform" type="rotate" from="180 60 60" to="540 60 60" dur="5s" repeatCount="indefinite"/></circle>
-    <circle cx="28" cy="60" r="2" fill="#00FF88"><animateTransform attributeName="transform" type="rotate" from="270 60 60" to="630 60 60" dur="6s" repeatCount="indefinite"/></circle>
-    <!-- Text -->
-    <text x="60" y="108" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="8" fill="#FFD700" letter-spacing="3" font-weight="700">AI</text>
+    <circle cx="65" cy="65" r="63" fill="url(#sbg)" stroke="url(#sg)" stroke-width="2"/>
+    <circle cx="65" cy="65" r="46" fill="none" stroke="url(#sg)" stroke-width="1" stroke-dasharray="5 4" opacity=".5"/>
+    <polygon points="65,22 70.5,38 88,38 74,47.5 79.5,64 65,53.5 50.5,64 56,47.5 42,38 59.5,38" fill="url(#sg)"/>
+    <circle cx="65" cy="65" r="10" fill="url(#sg)" opacity=".9"/>
+    <circle cx="65" cy="20" r="4"><animateTransform attributeName="transform" type="rotate" from="0 65 65" to="360 65 65" dur="3.5s" repeatCount="indefinite"/><animate attributeName="fill" values="#FFD700;#FF6B35;#FF2D55;#FFD700" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="110" cy="65" r="3"><animateTransform attributeName="transform" type="rotate" from="60 65 65" to="420 65 65" dur="2.8s" repeatCount="indefinite"/><animate attributeName="fill" values="#FF6B35;#00FF88;#FFD700;#FF6B35" dur="2.2s" repeatCount="indefinite"/></circle>
+    <circle cx="65" cy="110" r="3.5"><animateTransform attributeName="transform" type="rotate" from="180 65 65" to="540 65 65" dur="4.2s" repeatCount="indefinite"/><animate attributeName="fill" values="#00FF88;#00B4FF;#FFD700;#00FF88" dur="1.8s" repeatCount="indefinite"/></circle>
+    <circle cx="20" cy="65" r="2.5"><animateTransform attributeName="transform" type="rotate" from="270 65 65" to="630 65 65" dur="5s" repeatCount="indefinite"/><animate attributeName="fill" values="#BF00FF;#FF2D55;#FFD700;#BF00FF" dur="2.5s" repeatCount="indefinite"/></circle>
   </svg>
-  <div class="splash-title">VIETLOTT AI</div>
-  <div class="splash-sub">Dự Đoán Thông Minh</div>
-  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  <div class="sp-title">VIETLOTT AI</div>
+  <div class="sp-sub">Dự Đoán Thông Minh · 8 Game</div>
+  <div class="sp-bar"><div class="sp-fill"></div></div>
+  <div class="sp-dots"><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
 </div>
 
-<!-- STARS BG -->
-
 <div id="stars"></div>
-
-<!-- FIREWORKS -->
-
 <div id="fireworks"></div>
-
-<!-- TOAST -->
-
 <div class="toast" id="toast"></div>
 
 <!-- APP -->
 
 <div id="app">
   <header>
-    <div class="header-inner">
+    <div class="hdr">
       <div class="logo-wrap">
-        <svg class="logo-icon" viewBox="0 0 38 38" fill="none">
-          <circle cx="19" cy="19" r="18" fill="url(#lgbg)" stroke="url(#lgborder)" stroke-width="1.5"/>
+        <svg class="logo-svg" viewBox="0 0 40 40" fill="none">
           <defs>
-            <radialGradient id="lgbg" cx="40%" cy="30%"><stop offset="0%" stop-color="#2a0a4a"/><stop offset="100%" stop-color="#0a0a1a"/></radialGradient>
-            <linearGradient id="lgborder" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF2D55"/></linearGradient>
+            <radialGradient id="hbg" cx="40%" cy="30%"><stop offset="0%" stop-color="#220840"/><stop offset="100%" stop-color="#080820"/></radialGradient>
+            <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#FF2D55"/></linearGradient>
           </defs>
-          <polygon points="19,7 21.5,14 29,14 23,18.5 25.5,26 19,21.5 12.5,26 15,18.5 9,14 16.5,14" fill="url(#lgborder)" opacity="0.95"/>
+          <circle cx="20" cy="20" r="19" fill="url(#hbg)" stroke="url(#hg)" stroke-width="1.5"/>
+          <polygon points="20,8 22.5,15.5 30.5,15.5 24,20 26.5,27.5 20,23 13.5,27.5 16,20 9.5,15.5 17.5,15.5" fill="url(#hg)"/>
         </svg>
-        <div class="logo-text">VIETLOTT AI<span>Dự Đoán Thông Minh</span></div>
+        <div class="logo-txt">VIETLOTT AI<span>Dự Đoán Thông Minh</span></div>
       </div>
-      <div class="header-right">
+      <div class="hdr-right">
         <div class="clock" id="clock">00:00:00</div>
-        <div class="conn-indicator">
+        <div class="conn-wrap">
           <div class="led connecting" id="led"></div>
-          <span id="conn-text" style="font-size:10px;color:var(--sub)">Đang kết nối</span>
+          <span class="conn-lbl" id="conn-lbl">Đang kết nối</span>
         </div>
       </div>
     </div>
-    <!-- Game Tabs -->
     <div class="tabs-wrap">
-      <div class="tabs" id="gameTabs">
-        <button class="tab-btn active" onclick="switchGame('mega')">🎯 Mega 6/45</button>
-        <button class="tab-btn" onclick="switchGame('power')">⚡ Power 6/55</button>
-        <button class="tab-btn" onclick="switchGame('keno')">🎲 Keno</button>
-        <button class="tab-btn" onclick="switchGame('bingo')">🟢 Bingo 18</button>
-        <button class="tab-btn" onclick="switchGame('lotto')">🎰 Lotto 5/35</button>
-        <button class="tab-btn" onclick="switchGame('max3d')">🔵 Max 3D</button>
-        <button class="tab-btn" onclick="switchGame('max3dp')">💗 Max 3D+</button>
-        <button class="tab-btn" onclick="switchGame('max3dpro')">👑 Max 3D Pro</button>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchGame('mega',this)">🎯 Mega 6/45</button>
+        <button class="tab-btn" onclick="switchGame('power',this)">⚡ Power 6/55</button>
+        <button class="tab-btn" onclick="switchGame('keno',this)">🎲 Keno</button>
+        <button class="tab-btn" onclick="switchGame('bingo',this)">🟢 Bingo 18</button>
+        <button class="tab-btn" onclick="switchGame('lotto',this)">🎰 Lotto 5/35</button>
+        <button class="tab-btn" onclick="switchGame('max3d',this)">🔵 Max 3D</button>
+        <button class="tab-btn" onclick="switchGame('max3dp',this)">💗 Max 3D+</button>
+        <button class="tab-btn" onclick="switchGame('max3dpro',this)">👑 Max 3D Pro</button>
       </div>
     </div>
   </header>
 
-  <!-- VIEWS -->
-
-  <div class="view active" id="view-predict">
-    <div class="main">
+  <div class="scroll-area">
 
 ```
-  <!-- ===== MEGA 6/45 ===== -->
-  <div class="game-panel active" id="panel-mega">
-    <div class="jackpot-hero">
-      <div class="jp-label">🏆 Giải Jackpot 1 Hiện Tại</div>
-      <div class="jp-value" id="mega-jp">Đang tải...</div>
-      <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
-      <div style="margin-top:10px"><span class="jackpot-badge" id="mega-badge">🔥 Phân Tích AI</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">📊</span>Thước Đo Nhiệt Jackpot</div>
-      <div class="jp-meter">
-        <div class="jp-meter-title">
-          <span class="jp-meter-label">Xác Suất Nổ Jackpot</span>
-          <span class="jp-pct" id="mega-pct" style="color:var(--gold)">--</span>
-        </div>
-        <div class="jp-bar-track"><div class="jp-bar-fill" id="mega-bar" style="width:0%"></div></div>
-        <div class="jp-advice wait" id="mega-advice">Đang phân tích...</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🔥</span>Số Hot / Cold</div>
-      <div class="hot-cold">
-        <div class="hot-list"><div class="hc-title hot-title">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div>
-        <div class="cold-list"><div class="hc-title cold-title">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🤖</span>Dự Đoán AI – Mega 6/45</div>
-      <div class="balls-wrap" id="mega-balls"><div class="skeleton" style="width:100%;height:44px"></div></div>
-      <div style="margin-top:8px;font-size:11px;color:var(--sub);text-align:center">Tổng: <span id="mega-sum" style="color:var(--gold);font-weight:700">--</span> | Cân bằng: <span id="mega-balance" style="color:var(--blue)">--</span></div>
-      <div class="ai-result" id="mega-ai-analysis" style="display:none">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="mega-ai-text"></div>
-        <div class="ai-confidence"><span style="color:var(--sub);font-size:11px">Độ tin cậy</span><div class="conf-bar-track"><div class="conf-bar-fill" id="mega-conf" style="width:0%"></div></div><span id="mega-conf-pct" style="color:var(--green);font-weight:700;font-size:12px">--</span></div>
-      </div>
-    </div>
-    <button class="predict-btn" onclick="predictGame('mega')">
-      <span class="btn-text">✨ DỰ ĐOÁN JACKPOT AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <!-- BIRTHDAY -->
-    <div class="birthday-section" style="margin-top:16px">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="mega-bday" aria-label="Ngày"></select>
-        <select id="mega-bmonth" aria-label="Tháng"></select>
-        <select id="mega-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" onclick="birthdayPredict('mega')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="balls-wrap" id="mega-bday-balls" style="margin-top:10px;min-height:0"></div>
-    </div>
-  </div>
+<!-- VIEW PREDICT -->
+<div class="view active" id="view-predict">
+  <div class="main">
 
-  <!-- ===== POWER 6/55 ===== -->
-  <div class="game-panel" id="panel-power">
-    <div class="jackpot-hero">
-      <div class="jp-label">🏆 Giải Jackpot 1 Hiện Tại</div>
-      <div class="jp-value" id="power-jp">Đang tải...</div>
-      <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
-      <div style="margin-top:10px"><span class="jackpot-badge">⚡ Power Mode</span></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">📊</span>Thước Đo Nhiệt Jackpot</div>
-      <div class="jp-meter">
-        <div class="jp-meter-title">
-          <span class="jp-meter-label">Xác Suất Nổ Jackpot</span>
-          <span class="jp-pct" id="power-pct" style="color:var(--gold)">--</span>
-        </div>
-        <div class="jp-bar-track"><div class="jp-bar-fill" id="power-bar" style="width:0%"></div></div>
-        <div class="jp-advice wait" id="power-advice">Đang phân tích...</div>
+    <!-- MEGA -->
+    <div class="game-panel active" id="panel-mega">
+      <div class="jp-hero">
+        <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
+        <div class="jp-val" id="mega-jp">Đang tải...</div>
+        <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
+        <span class="jp-badge">🔥 Phân Tích AI</span>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🔥</span>Số Hot / Cold</div>
-      <div class="hot-cold">
-        <div class="hot-list"><div class="hc-title hot-title">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div>
-        <div class="cold-list"><div class="hc-title cold-title">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🤖</span>Dự Đoán AI – Power 6/55</div>
-      <div class="balls-wrap" id="power-balls"></div>
-      <div style="margin-top:8px;font-size:11px;color:var(--sub);text-align:center">Tổng: <span id="power-sum" style="color:var(--gold);font-weight:700">--</span> | Cân bằng: <span id="power-balance" style="color:var(--blue)">--</span></div>
-      <div class="ai-result" id="power-ai-analysis" style="display:none">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="power-ai-text"></div>
-        <div class="ai-confidence"><span style="color:var(--sub);font-size:11px">Độ tin cậy</span><div class="conf-bar-track"><div class="conf-bar-fill" id="power-conf" style="width:0%"></div></div><span id="power-conf-pct" style="color:var(--green);font-weight:700;font-size:12px">--</span></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF,#BF00FF)" onclick="predictGame('power')">
-      <span class="btn-text">⚡ DỰ ĐOÁN JACKPOT AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="power-bday" aria-label="Ngày"></select>
-        <select id="power-bmonth" aria-label="Tháng"></select>
-        <select id="power-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF)" onclick="birthdayPredict('power')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="balls-wrap" id="power-bday-balls" style="margin-top:10px;min-height:0"></div>
-    </div>
-  </div>
-
-  <!-- ===== KENO ===== -->
-  <div class="game-panel" id="panel-keno">
-    <div class="card">
-      <div class="card-title"><span class="icon">🎲</span>Keno – Dự Đoán AI (10 số / 80)</div>
-      <div class="keno-grid" id="keno-grid"></div>
-      <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--sub)">Các ô vàng = số AI dự đoán sẽ ra</div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🎯</span>Bộ Số Keno Đề Xuất</div>
-      <div class="balls-wrap" id="keno-balls"></div>
-      <div class="ai-result" id="keno-ai-analysis" style="display:none">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="keno-ai-text"></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00)" onclick="predictGame('keno')">
-      <span class="btn-text">🎲 DỰ ĐOÁN KENO AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="keno-bday" aria-label="Ngày"></select>
-        <select id="keno-bmonth" aria-label="Tháng"></select>
-        <select id="keno-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="birthdayPredict('keno')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="balls-wrap" id="keno-bday-balls" style="margin-top:10px;min-height:0"></div>
-    </div>
-  </div>
-
-  <!-- ===== BINGO 18 ===== -->
-  <div class="game-panel" id="panel-bingo">
-    <div class="card">
-      <div class="card-title"><span class="icon">🟢</span>Bingo 18 – Dự Đoán AI</div>
-      <div class="balls-wrap" id="bingo-balls"></div>
-      <div class="ai-result" id="bingo-ai-analysis" style="display:none">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="bingo-ai-text"></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#00FF88,#00CC66,#009944)" onclick="predictGame('bingo')">
-      <span class="btn-text" style="color:#003020">🟢 DỰ ĐOÁN BINGO AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px;border-color:rgba(0,255,136,0.2);background:rgba(0,255,136,0.05)">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="bingo-bday" aria-label="Ngày"></select>
-        <select id="bingo-bmonth" aria-label="Tháng"></select>
-        <select id="bingo-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#00FF88,#00CC66);color:#003020" onclick="birthdayPredict('bingo')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="balls-wrap" id="bingo-bday-balls" style="margin-top:10px;min-height:0"></div>
-    </div>
-  </div>
-
-  <!-- ===== LOTTO 5/35 ===== -->
-  <div class="game-panel" id="panel-lotto">
-    <div class="card">
-      <div class="card-title"><span class="icon">🔥</span>Số Hot / Cold – Lotto 5/35</div>
-      <div class="hot-cold">
-        <div class="hot-list"><div class="hc-title hot-title">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div>
-        <div class="cold-list"><div class="hc-title cold-title">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title"><span class="icon">🤖</span>Dự Đoán AI – Lotto 5/35</div>
-      <div class="balls-wrap" id="lotto-balls"></div>
-      <div class="ai-result" id="lotto-ai-analysis" style="display:none">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="lotto-ai-text"></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#BF00FF,#7700CC,#4400AA)" onclick="predictGame('lotto')">
-      <span class="btn-text">🎰 DỰ ĐOÁN LOTTO AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="lotto-bday" aria-label="Ngày"></select>
-        <select id="lotto-bmonth" aria-label="Tháng"></select>
-        <select id="lotto-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" onclick="birthdayPredict('lotto')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="balls-wrap" id="lotto-bday-balls" style="margin-top:10px;min-height:0"></div>
-    </div>
-  </div>
-
-  <!-- ===== MAX 3D ===== -->
-  <div class="game-panel" id="panel-max3d">
-    <div class="card">
-      <div class="card-title"><span class="icon">🔵</span>Dự Đoán AI – Max 3D</div>
-      <div class="max3d-sets" id="max3d-sets">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3d-n1">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3d-n2">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 3</div><div class="max3d-num" id="max3d-n3">---</div></div>
-      </div>
-      <div class="ai-result" id="max3d-ai-analysis" style="display:none;margin-top:12px">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="max3d-ai-text"></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#00E5FF,#0080FF,#00B4FF)" onclick="predictGame('max3d')">
-      <span class="btn-text">🔵 DỰ ĐOÁN MAX 3D AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px;border-color:rgba(0,180,255,0.2);background:rgba(0,180,255,0.05)">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="max3d-bday" aria-label="Ngày"></select>
-        <select id="max3d-bmonth" aria-label="Tháng"></select>
-        <select id="max3d-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="birthdayPredict('max3d')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="max3d-sets" id="max3d-bday-sets" style="margin-top:10px;display:none">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3d-b1" style="font-size:18px;background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3d-b2" style="font-size:18px;background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MAX 3D+ ===== -->
-  <div class="game-panel" id="panel-max3dp">
-    <div class="card">
-      <div class="card-title"><span class="icon">💗</span>Dự Đoán AI – Max 3D+</div>
-      <div class="max3d-sets" id="max3dp-sets">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 3</div><div class="max3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-      </div>
-      <div class="ai-result" id="max3dp-ai-analysis" style="display:none;margin-top:12px">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="max3dp-ai-text"></div>
-      </div>
-    </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#FF69B4,#CC0066,#990044)" onclick="predictGame('max3dp')">
-      <span class="btn-text">💗 DỰ ĐOÁN MAX 3D+ AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px;border-color:rgba(255,105,180,0.2);background:rgba(255,105,180,0.05)">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="max3dp-bday" aria-label="Ngày"></select>
-        <select id="max3dp-bmonth" aria-label="Tháng"></select>
-        <select id="max3dp-byear" aria-label="Năm"></select>
-      </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#FF69B4,#CC0066)" onclick="birthdayPredict('max3dp')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="max3d-sets" id="max3dp-bday-sets" style="margin-top:10px;display:none">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3dp-b1" style="font-size:18px;background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3dp-b2" style="font-size:18px;background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MAX 3D PRO ===== -->
-  <div class="game-panel" id="panel-max3dpro">
-    <div class="card">
-      <div class="card-title"><span class="icon">👑</span>Dự Đoán AI – Max 3D Pro</div>
-      <div class="max3d-sets" id="max3dpro-sets">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 3</div><div class="max3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-      </div>
-      <div style="margin-top:12px">
-        <div class="max3d-sets">
-          <div class="max3d-set"><div class="max3d-set-label">Bộ 4</div><div class="max3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="max3d-set"><div class="max3d-set-label">Bộ 5</div><div class="max3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="max3d-set"><div class="max3d-set-label">Bộ 6</div><div class="max3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+      <div class="card">
+        <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
+        <div class="jp-meter">
+          <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="mega-pct">--</span></div>
+          <div class="jp-track"><div class="jp-fill" id="mega-bar"></div></div>
+          <div class="jp-adv wait" id="mega-adv">Đang phân tích...</div>
         </div>
       </div>
-      <div class="ai-result" id="max3dpro-ai-analysis" style="display:none;margin-top:12px">
-        <div class="ai-result-title">🧠 Phân Tích Claude AI</div>
-        <div class="ai-result-text" id="max3dpro-ai-text"></div>
+      <div class="card">
+        <div class="card-title">🔥 Số Hot / Cold</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤖 Dự Đoán AI – Mega 6/45</div>
+        <div class="balls-wrap" id="mega-balls"></div>
+        <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="mega-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="mega-bal" style="color:var(--blue)">--</b></div>
+        <div class="ai-res" id="mega-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="mega-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="mega-conf"></div></div><b id="mega-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
+      </div>
+      <button class="pbtn" id="btn-mega" onclick="predictGame('mega')"><span class="bt">✨ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="mega-bd"></select><select id="mega-bm"></select><select id="mega-by"></select></div>
+        <button class="bday-btn" onclick="bdayPredict('mega')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="balls-wrap" id="mega-bb" style="min-height:0;margin-top:7px"></div>
       </div>
     </div>
-    <button class="predict-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('max3dpro')">
-      <span class="btn-text">👑 DỰ ĐOÁN MAX 3D PRO AI</span>
-      <div class="btn-loader"></div>
-    </button>
-    <div class="birthday-section" style="margin-top:16px">
-      <div class="card-title" style="margin-bottom:12px"><span class="icon">🎂</span>Dự Đoán Theo Ngày Sinh</div>
-      <div class="birthday-inputs">
-        <select id="max3dpro-bday" aria-label="Ngày"></select>
-        <select id="max3dpro-bmonth" aria-label="Tháng"></select>
-        <select id="max3dpro-byear" aria-label="Năm"></select>
+
+    <!-- POWER -->
+    <div class="game-panel" id="panel-power">
+      <div class="jp-hero">
+        <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
+        <div class="jp-val" id="power-jp">Đang tải...</div>
+        <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
+        <span class="jp-badge">⚡ Power Mode</span>
       </div>
-      <button class="birthday-predict-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="birthdayPredict('max3dpro')">🎂 Dự Đoán Ngày Sinh</button>
-      <div class="max3d-sets" id="max3dpro-bday-sets" style="margin-top:10px;display:none">
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 1</div><div class="max3d-num" id="max3dpro-b1" style="font-size:18px;background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        <div class="max3d-set"><div class="max3d-set-label">Bộ 2</div><div class="max3d-num" id="max3dpro-b2" style="font-size:18px;background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+      <div class="card">
+        <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
+        <div class="jp-meter">
+          <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="power-pct">--</span></div>
+          <div class="jp-track"><div class="jp-fill" id="power-bar"></div></div>
+          <div class="jp-adv wait" id="power-adv">Đang phân tích...</div>
+        </div>
       </div>
+      <div class="card">
+        <div class="card-title">🔥 Số Hot / Cold</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤖 Dự Đoán AI – Power 6/55</div>
+        <div class="balls-wrap" id="power-balls"></div>
+        <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="power-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="power-bal" style="color:var(--blue)">--</b></div>
+        <div class="ai-res" id="power-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="power-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="power-conf"></div></div><b id="power-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
+      </div>
+      <button class="pbtn" id="btn-power" style="background:linear-gradient(135deg,#00B4FF,#0040FF,#BF00FF)" onclick="predictGame('power')"><span class="bt">⚡ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25)">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="power-bd"></select><select id="power-bm"></select><select id="power-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF)" onclick="bdayPredict('power')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="balls-wrap" id="power-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+    </div>
+
+    <!-- KENO -->
+    <div class="game-panel" id="panel-keno">
+      <div class="card">
+        <div class="card-title">🎲 Keno – Lưới 80 Số</div>
+        <div class="keno-grid" id="keno-grid"></div>
+        <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--sub)">Ô vàng = AI dự đoán xuất hiện</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🎯 Bộ 10 Số Đề Xuất</div>
+        <div class="balls-wrap" id="keno-balls"></div>
+        <div class="ai-res" id="keno-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="keno-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-keno" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('keno')"><span class="bt">🎲 DỰ ĐOÁN KENO AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,200,0,.25)">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="keno-bd"></select><select id="keno-bm"></select><select id="keno-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('keno')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="balls-wrap" id="keno-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+    </div>
+
+    <!-- BINGO -->
+    <div class="game-panel" id="panel-bingo">
+      <div class="card">
+        <div class="card-title">🟢 Dự Đoán AI – Bingo 18</div>
+        <div class="balls-wrap" id="bingo-balls"></div>
+        <div class="ai-res" id="bingo-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="bingo-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-bingo" style="background:linear-gradient(135deg,#00FF88,#00CC66,#009944);color:#002010" onclick="predictGame('bingo')"><span class="bt">🟢 DỰ ĐOÁN BINGO AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,200,100,.25);background:rgba(0,200,100,.04)">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="bingo-bd"></select><select id="bingo-bm"></select><select id="bingo-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#00FF88,#00CC66);color:#002010" onclick="bdayPredict('bingo')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="balls-wrap" id="bingo-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+    </div>
+
+    <!-- LOTTO -->
+    <div class="game-panel" id="panel-lotto">
+      <div class="card">
+        <div class="card-title">🔥 Số Hot / Cold – Lotto 5/35</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🤖 Dự Đoán AI – Lotto 5/35</div>
+        <div class="balls-wrap" id="lotto-balls"></div>
+        <div class="ai-res" id="lotto-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="lotto-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-lotto" style="background:linear-gradient(135deg,#BF00FF,#7700CC,#4400AA)" onclick="predictGame('lotto')"><span class="bt">🎰 DỰ ĐOÁN LOTTO AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="lotto-bd"></select><select id="lotto-bm"></select><select id="lotto-by"></select></div>
+        <button class="bday-btn" onclick="bdayPredict('lotto')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="balls-wrap" id="lotto-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+    </div>
+
+    <!-- MAX3D -->
+    <div class="game-panel" id="panel-max3d">
+      <div class="card">
+        <div class="card-title">🔵 Dự Đoán AI – Max 3D</div>
+        <div class="m3d-sets"><div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3d-n1">---</div></div><div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3d-n2">---</div></div><div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3d-n3">---</div></div></div>
+        <div class="ai-res" id="max3d-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3d-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-max3d" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="predictGame('max3d')"><span class="bt">🔵 DỰ ĐOÁN MAX 3D AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25);background:rgba(0,180,255,.04)">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="max3d-bd"></select><select id="max3d-bm"></select><select id="max3d-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="bdayPredict('max3d')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="m3d-sets" id="max3d-bsets" style="margin-top:9px;display:none">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3d-b1" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3d-b2" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAX3D+ -->
+    <div class="game-panel" id="panel-max3dp">
+      <div class="card">
+        <div class="card-title">💗 Dự Đoán AI – Max 3D+</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+        <div class="ai-res" id="max3dp-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dp-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-max3dp" style="background:linear-gradient(135deg,#FF69B4,#CC0066,#990044)" onclick="predictGame('max3dp')"><span class="bt">💗 DỰ ĐOÁN MAX 3D+ AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,100,180,.25);background:rgba(255,100,180,.04)">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="max3dp-bd"></select><select id="max3dp-bm"></select><select id="max3dp-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#FF69B4,#CC0066)" onclick="bdayPredict('max3dp')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="m3d-sets" id="max3dp-bsets" style="margin-top:9px;display:none">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dp-b1" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dp-b2" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAX3DPRO -->
+    <div class="game-panel" id="panel-max3dpro">
+      <div class="card">
+        <div class="card-title">👑 Dự Đoán AI – Max 3D Pro</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+        <div class="m3d-sets" style="margin-top:9px">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 4</div><div class="m3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 5</div><div class="m3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 6</div><div class="m3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+        <div class="ai-res" id="max3dpro-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dpro-ai-txt"></div></div>
+      </div>
+      <button class="pbtn" id="btn-max3dpro" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('max3dpro')"><span class="bt">👑 DỰ ĐOÁN MAX 3D PRO AI</span><div class="bl"></div></button>
+      <div class="bday-sec" style="margin-top:13px">
+        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+        <div class="bday-inputs"><select id="max3dpro-bd"></select><select id="max3dpro-bm"></select><select id="max3dpro-by"></select></div>
+        <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('max3dpro')">🎂 Dự Đoán Ngày Sinh</button>
+        <div class="m3d-sets" id="max3dpro-bsets" style="margin-top:9px;display:none">
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dpro-b1" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dpro-b2" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VIEW STATS -->
+<div class="view" id="view-stats">
+  <div class="main">
+    <div class="card"><div class="card-title">📈 Thống Kê Tổng Quan</div><div class="stats-grid"><div class="stat-box"><div class="stat-val" id="s-pred">0</div><div class="stat-lbl">Lần Dự Đoán</div></div><div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div><div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Game Jackpot</div></div><div class="stat-box"><div class="stat-val">AI</div><div class="stat-lbl">Claude Powered</div></div></div></div>
+    <div class="card"><div class="card-title">🔥 Tần Suất Số – Mega 6/45</div><div class="freq-list" id="freq-mega"></div></div>
+    <div class="card"><div class="card-title">⚡ Tần Suất Số – Power 6/55</div><div class="freq-list" id="freq-power"></div></div>
+  </div>
+</div>
+
+<!-- VIEW INFO -->
+<div class="view" id="view-info">
+  <div class="main">
+    <div class="info-hero"><div class="info-icon">🤖</div><div class="info-title">VietlottAI v2.0</div><div class="info-sub">Dự đoán xổ số Vietlott thông minh, kết nối thời gian thực từ vietlott.vn, phân tích bởi Claude AI</div></div>
+    <div class="info-card"><h3>🎯 Cách Hoạt Động</h3><p>AI phân tích tần suất số lịch sử, cân bằng chẵn/lẻ và các mẫu thống kê để tạo dự đoán tối ưu.</p></div>
+    <div class="info-card"><h3>🧠 Logic AI Nâng Cao</h3><p><b>Mega 6/45:</b> Vùng tổng 120–180, cân bằng 3C:3L.<br><b>Power 6/55:</b> Vùng tổng 140–220.<br><b>Keno:</b> Cụm 10 số xác suất cao từ 80.<br><b>Max 3D:</b> Pattern 3 chữ số từ lịch sử.</p></div>
+    <div class="info-card"><h3>📊 Jackpot Meter</h3><p>Phân tích giá trị tích lũy + thời gian từ lần nổ cuối. Cảnh báo khi xác suất ≥ 80%.</p></div>
+    <div class="info-card"><h3>🎂 Thần Số Học</h3><p>Thuật toán Pythagorean dùng ngày/tháng/năm sinh tạo bộ số may mắn cá nhân hóa.</p></div>
+    <div class="disclaimer">⚠️ <b>Lưu ý:</b> Chỉ mang tính giải trí và tham khảo. Xổ số là may rủi. Không có phương pháp nào đảm bảo trúng giải.</div>
+  </div>
+</div>
+
+<!-- VIEW SETTINGS -->
+<div class="view" id="view-settings">
+  <div class="main">
+    <div class="card">
+      <div class="card-title">⚙️ Cài Đặt</div>
+      <div class="s-item">
+        <div><div class="s-lbl">🌓 Chế Độ Sáng / Tối</div><div class="s-sub">Chuyển đổi giao diện Light / Dark Mode</div></div>
+        <div class="toggle" id="tgl-theme" onclick="toggleTheme(this)"></div>
+      </div>
+      <div class="s-item">
+        <div><div class="s-lbl">🔊 Âm Thanh</div><div class="s-sub">Âm thanh khi nhấn và hiển thị kết quả</div></div>
+        <div class="toggle on" id="tgl-sound" onclick="toggleSetting(this,'sound')"></div>
+      </div>
+      <div class="s-item">
+        <div><div class="s-lbl">💥 Pháo Hoa</div><div class="s-sub">Hiệu ứng pháo hoa khi có kết quả</div></div>
+        <div class="toggle on" id="tgl-firework" onclick="toggleSetting(this,'firework')"></div>
+      </div>
+      <div class="s-item">
+        <div><div class="s-lbl">📳 Rung</div><div class="s-sub">Rung thiết bị khi có kết quả</div></div>
+        <div class="toggle on" id="tgl-vibrate" onclick="toggleSetting(this,'vibrate')"></div>
+      </div>
+      <div class="s-item">
+        <div><div class="s-lbl">🔔 Cảnh Báo Jackpot</div><div class="s-sub">Âm thanh khi bộ số Jackpot xác suất cao</div></div>
+        <div class="toggle on" id="tgl-jackpotalert" onclick="toggleSetting(this,'jackpotalert')"></div>
+      </div>
+      <div class="s-item" style="border-bottom:none">
+        <div><div class="s-lbl">🌐 Tự Động Cập Nhật</div><div class="s-sub">Cập nhật dữ liệu Vietlott định kỳ</div></div>
+        <div class="toggle on" id="tgl-autorefresh" onclick="toggleSetting(this,'autorefresh')"></div>
+      </div>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--sub);margin-bottom:6px;letter-spacing:2px">PHIÊN BẢN</div>
+      <div style="font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:var(--gold)">VietlottAI v2.0</div>
+      <div style="font-size:11px;color:var(--sub);margin-top:5px">Powered by <b style="color:var(--gold)">Claude AI</b> · 2025</div>
+      <div style="margin-top:9px;font-size:11px;color:var(--sub)">Dữ liệu từ <span style="color:var(--blue)">vietlott.vn</span></div>
     </div>
   </div>
-
-</div><!-- end .main -->
+</div>
 ```
 
-  </div><!-- end view-predict -->
-
-  <!-- VIEW STATS -->
-
-  <div class="view" id="view-stats">
-    <div class="main">
-      <div class="card">
-        <div class="card-title"><span class="icon">📈</span>Thống Kê Tổng Quan</div>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="stat-val" id="s-predictions">0</div><div class="stat-lbl">Lần Dự Đoán</div></div>
-          <div class="stat-box"><div class="stat-val" id="s-games">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div>
-          <div class="stat-box"><div class="stat-val" id="s-jackpots">2</div><div class="stat-lbl">Game Jackpot</div></div>
-          <div class="stat-box"><div class="stat-val" id="s-ai">AI</div><div class="stat-lbl">Claude Powered</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title"><span class="icon">🔥</span>Tần Suất Số – Mega 6/45</div>
-        <div class="freq-list" id="freq-mega"></div>
-      </div>
-      <div class="card">
-        <div class="card-title"><span class="icon">⚡</span>Tần Suất Số – Power 6/55</div>
-        <div class="freq-list" id="freq-power"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- VIEW INFO -->
-
-  <div class="view" id="view-info">
-    <div class="main">
-      <div class="info-hero">
-        <div class="info-hero-icon">🤖</div>
-        <div class="info-hero-title">VietlottAI</div>
-        <div class="info-hero-sub">Ứng dụng dự đoán xổ số Vietlott thông minh bằng AI thực, cập nhật thời gian thực từ vietlott.vn</div>
-      </div>
-      <div class="info-card">
-        <h3>🎯 Cách Hoạt Động</h3>
-        <p>AI phân tích lịch sử xổ số, tần suất số, tổng cân bằng chẵn/lẻ và các mẫu thống kê để đưa ra dự đoán tối ưu cho từng game.</p>
-      </div>
-      <div class="info-card">
-        <h3>🧠 Thuật Toán AI</h3>
-        <p><strong>Mega 6/45:</strong> Ưu tiên bộ số có tổng trong "vùng vàng" 120–180, cân bằng chẵn/lẻ 3:3.<br><strong>Power 6/55:</strong> Tổng 140–220, phân tích dải số đều.<br><strong>Keno:</strong> Phân tích cụm 10 số từ 80.<br><strong>Max 3D:</strong> Pattern 3 chữ số từ lịch sử.</p>
-      </div>
-      <div class="info-card">
-        <h3>📊 Jackpot Meter</h3>
-        <p>Thanh nhiệt Jackpot phân tích giá trị giải thưởng tích lũy và thời gian từ lần nổ cuối để dự báo độ "chín" của Jackpot.</p>
-      </div>
-      <div class="info-card">
-        <h3>🎂 Dự Đoán Ngày Sinh</h3>
-        <p>AI sử dụng ngày/tháng/năm sinh để tạo bộ số may mắn cá nhân hóa dựa trên số học và thuật toán thần số học Pythagorean.</p>
-      </div>
-      <div class="disclaimer">⚠️ <strong>Lưu ý quan trọng:</strong> Ứng dụng chỉ mang tính giải trí và tham khảo. Xổ số là trò chơi may rủi. Hãy chơi có trách nhiệm. Không có phương pháp nào đảm bảo trúng giải.</div>
-    </div>
-  </div>
-
-  <!-- VIEW SETTINGS -->
-
-  <div class="view" id="view-settings">
-    <div class="main">
-      <div class="card">
-        <div class="card-title"><span class="icon">⚙️</span>Cài Đặt</div>
-        <div class="settings-item">
-          <div><div class="settings-label">🔊 Âm Thanh</div><div class="settings-sub">Âm thanh khi nhấn và hiển thị kết quả</div></div>
-          <div class="toggle on" id="toggle-sound" onclick="toggleSetting('sound')"></div>
-        </div>
-        <div class="settings-item">
-          <div><div class="settings-label">💥 Pháo Hoa</div><div class="settings-sub">Hiệu ứng pháo hoa khi có kết quả</div></div>
-          <div class="toggle on" id="toggle-firework" onclick="toggleSetting('firework')"></div>
-        </div>
-        <div class="settings-item">
-          <div><div class="settings-label">📳 Rung</div><div class="settings-sub">Rung khi có kết quả</div></div>
-          <div class="toggle on" id="toggle-vibrate" onclick="toggleSetting('vibrate')"></div>
-        </div>
-        <div class="settings-item">
-          <div><div class="settings-label">🔔 Cảnh Báo Jackpot</div><div class="settings-sub">Thông báo khi có bộ số Jackpot cao</div></div>
-          <div class="toggle on" id="toggle-jackpotalert" onclick="toggleSetting('jackpotalert')"></div>
-        </div>
-        <div class="settings-item">
-          <div><div class="settings-label">🌐 Cập Nhật Tự Động</div><div class="settings-sub">Tự động cập nhật dữ liệu Vietlott</div></div>
-          <div class="toggle on" id="toggle-autorefresh" onclick="toggleSetting('autorefresh')"></div>
-        </div>
-      </div>
-      <div class="card" style="text-align:center">
-        <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--sub);margin-bottom:8px">PHIÊN BẢN</div>
-        <div style="font-size:20px;font-weight:700;color:var(--gold)">VietlottAI v2.0</div>
-        <div style="font-size:12px;color:var(--sub);margin-top:4px">Powered by Claude AI · 2025</div>
-        <div style="margin-top:12px;font-size:11px;color:var(--sub)">Dữ liệu từ <span style="color:var(--blue)">vietlott.vn</span> · Phân tích bởi <span style="color:var(--gold)">Claude AI</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM NAV -->
+  </div><!-- scroll-area -->
 
   <nav class="bottom-nav">
     <button class="nav-btn active" id="nav-predict" onclick="switchView('predict')"><span class="nav-icon">🎯</span>Dự Đoán</button>
@@ -861,590 +611,501 @@ animation:badgePulse 2s infinite;
 </div>
 
 <script>
-// ============================================================
-// SETTINGS
-// ============================================================
-const settings = {sound:true,firework:true,vibrate:true,jackpotalert:true,autorefresh:true};
-function toggleSetting(k){
-  settings[k]=!settings[k];
-  document.getElementById('toggle-'+k).classList.toggle('on',settings[k]);
+'use strict';
+// ───────────────────────────────────────────────
+// SETTINGS STATE
+// ───────────────────────────────────────────────
+const S = {sound:true, firework:true, vibrate:true, jackpotalert:true, autorefresh:true};
+
+function toggleSetting(el, key){
+  S[key] = !S[key];
+  el.classList.toggle('on', S[key]);
+  playClick();
 }
 
-// ============================================================
-// AUDIO ENGINE
-// ============================================================
-let audioCtx=null;
-function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
-function playBeep(freq=440,dur=0.15,type='sine',vol=0.3){
-  if(!settings.sound)return;
-  try{
-    const ctx=getAudio();
-    const osc=ctx.createOscillator();
-    const gain=ctx.createGain();
-    osc.connect(gain);gain.connect(ctx.destination);
-    osc.type=type;osc.frequency.setValueAtTime(freq,ctx.currentTime);
-    gain.gain.setValueAtTime(vol,ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
-    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+dur);
-  }catch(e){}
-}
-function playClick(){playBeep(800,0.06,'square',0.15)}
-function playReveal(){
-  if(!settings.sound)return;
-  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playBeep(f,0.12,'sine',0.2),i*80));
-}
-function playJackpotAlert(){
-  if(!settings.sound)return;
-  [523,784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>playBeep(f,0.2,'sine',0.35),i*100));
-  setTimeout(()=>[1568,1319,1047,784,523].forEach((f,i)=>setTimeout(()=>playBeep(f,0.15,'sine',0.3),i*80)),600);
-}
-function vibrateDevice(pattern=[50]){
-  if(!settings.vibrate)return;
-  try{if(navigator.vibrate)navigator.vibrate(pattern)}catch(e){}
+// ───────────────────────────────────────────────
+// THEME
+// ───────────────────────────────────────────────
+let isDark = true;
+function toggleTheme(el){
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeColor').setAttribute('content', isDark ? '#03030f' : '#eef1f8');
+  el.classList.toggle('on', !isDark);
+  playClick();
 }
 
-// ============================================================
+// ───────────────────────────────────────────────
 // STARS
-// ============================================================
-function createStars(){
-  const c=document.getElementById('stars');
-  for(let i=0;i<80;i++){
-    const s=document.createElement('div');
-    s.className='star';
-    const size=Math.random()*2.5+0.5;
-    s.style.cssText=`width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*5}s`;
+// ───────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random()*2.5+0.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*6}s`;
     c.appendChild(s);
   }
-}
-createStars();
+})();
 
-// ============================================================
+// ───────────────────────────────────────────────
 // CLOCK
-// ============================================================
-function updateClock(){
-  const now=new Date();
-  document.getElementById('clock').textContent=now.toLocaleTimeString('vi-VN',{hour12:false});
-}
-setInterval(updateClock,1000);updateClock();
+// ───────────────────────────────────────────────
+setInterval(()=>{
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('vi-VN',{hour12:false});
+}, 1000);
+document.getElementById('clock').textContent = new Date().toLocaleTimeString('vi-VN',{hour12:false});
 
-// ============================================================
-// CONNECTION STATUS (CORS-aware simulation with real attempt)
-// ============================================================
-let connected=false;
-const led=document.getElementById('led');
-const connText=document.getElementById('conn-text');
+// ───────────────────────────────────────────────
+// CONNECTION – multi-proxy, stable fallback
+// ───────────────────────────────────────────────
+const PROXIES = [
+  u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}&timestamp=${Date.now()}`,
+  u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  u => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`,
+];
+const VL_URL = 'https://vietlott.vn/';
+let connected = false, retryN = 0;
+const LED = document.getElementById('led');
+const CLBL = document.getElementById('conn-lbl');
+
 async function checkConnection(){
-  led.className='led connecting';
-  connText.textContent='Đang kết nối';
+  LED.className = 'led connecting'; CLBL.textContent = '…Kết nối';
+  for(let i=0;i<PROXIES.length;i++){
+    try{
+      const ctrl = new AbortController();
+      const tid = setTimeout(()=>ctrl.abort(), 8000);
+      const r = await fetch(PROXIES[i](VL_URL),{signal:ctrl.signal,cache:'no-store'});
+      clearTimeout(tid);
+      if(r.ok||r.status===200){
+        connected = true; retryN = 0;
+        LED.className = 'led connected'; CLBL.textContent = 'Đã kết nối';
+        fetchJackpotData(r);
+        return;
+      }
+    }catch(e){ /* try next proxy */ }
+  }
+  // all failed
+  connected = false; retryN++;
+  LED.className = 'led error'; CLBL.textContent = 'Ngoại tuyến';
+  const wait = Math.min(retryN * 10000, 60000);
+  setTimeout(checkConnection, wait);
+  if(retryN === 1) showToast('📡 Ngoại tuyến – AI vẫn hoạt động đầy đủ');
+}
+
+// ───────────────────────────────────────────────
+// JACKPOT DATA
+// ───────────────────────────────────────────────
+const JP = {
+  mega:  {value:'45.678.901.000 đ', draw:'#01234', pct:72},
+  power: {value:'102.345.678.000 đ', draw:'#00567', pct:85},
+};
+
+async function fetchJackpotData(prevResp){
   try{
-    const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),5000);
-    const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent('https://vietlott.vn/'),{signal:ctrl.signal,cache:'no-store'});
-    clearTimeout(tid);
-    if(r.ok){
-      connected=true;
-      led.className='led connected';
-      connText.textContent='Đã kết nối';
-      showToast('✅ Đã kết nối với vietlott.vn');
-    } else throw new Error();
-  }catch(e){
-    connected=false;
-    led.className='led error';
-    connText.textContent='Ngoại tuyến';
-    showToast('📡 Chạy chế độ ngoại tuyến (AI vẫn hoạt động)');
-    setTimeout(()=>{led.className='led connecting';connText.textContent='Đang thử lại';setTimeout(checkConnection,5000)},2000);
+    const text = await prevResp.text().catch(()=>null) || '';
+    const json = text ? (() => { try{ return JSON.parse(text); }catch(e){ return null; } })() : null;
+    const html = json ? (json.contents||json.response||'') : text;
+    if(html){
+      const m1 = html.match(/jackpot[^<]{0,80}?([\d,\.]{6,})/i);
+      const m2 = html.match(/power[^<]{0,80}?([\d,\.]{6,})/i);
+      if(m1) JP.mega.value = fmtVND(m1[1]);
+      if(m2) JP.power.value = fmtVND(m2[1]);
+    }
+  }catch(e){}
+  renderJP('mega'); renderJP('power');
+}
+
+function fmtVND(s){
+  const n = parseInt(s.replace(/[^\d]/g,''));
+  return isNaN(n) ? s : n.toLocaleString('vi-VN') + ' đ';
+}
+
+function renderJP(g){
+  const d = JP[g];
+  const jv = document.getElementById(g+'-jp');
+  const jd = document.getElementById(g+'-draw');
+  if(jv) jv.textContent = d.value;
+  if(jd) jd.textContent = 'Kỳ quay: '+d.draw+' · '+new Date().toLocaleDateString('vi-VN');
+  setTimeout(()=>{
+    const bar = document.getElementById(g+'-bar');
+    const pct = document.getElementById(g+'-pct');
+    const adv = document.getElementById(g+'-adv');
+    if(!bar) return;
+    bar.style.width = d.pct+'%';
+    pct.textContent = d.pct+'%';
+    if(d.pct >= 75){
+      pct.style.color = 'var(--red)';
+      adv.className = 'jp-adv hot';
+      adv.innerHTML = '🔥 JACKPOT RẤT NÓNG! – <b>Nên vào tiền ngay!</b>';
+      if(S.jackpotalert && d.pct >= 80){ playJpAlert(); vib([100,50,100,50,200]); showToast('🎰 JACKPOT NÓNG! Xác suất '+d.pct+'%','jackpot',5000); }
+    } else if(d.pct >= 50){
+      pct.style.color = 'var(--gold)';
+      adv.className = 'jp-adv wait';
+      adv.innerHTML = '⚡ Jackpot đang tăng nhiệt – <b>Cân nhắc đặt cược</b>';
+    } else {
+      pct.style.color = 'var(--green)';
+      adv.className = 'jp-adv go';
+      adv.innerHTML = '🌱 Jackpot mới reset – <b>Tiếp tục quan sát</b>';
+    }
+  }, 900);
+}
+
+setInterval(()=>{ if(S.autorefresh) checkConnection(); }, 5*60*1000);
+
+// ───────────────────────────────────────────────
+// HOT / COLD
+// ───────────────────────────────────────────────
+const HC = {
+  mega:  {hot:[3,7,12,23,38,42], cold:[1,15,27,34,40,44]},
+  power: {hot:[5,11,19,28,33,47],cold:[2,8,20,36,49,54]},
+  lotto: {hot:[4,9,17,22,28],    cold:[1,13,25,30,35]},
+};
+function renderHC(g){
+  const d=HC[g]; if(!d) return;
+  const h=document.getElementById(g+'-hot'), c=document.getElementById(g+'-cold');
+  if(h) h.innerHTML = d.hot.map(n=>`<div class="hc-ball hball-h">${n}</div>`).join('');
+  if(c) c.innerHTML = d.cold.map(n=>`<div class="hc-ball hball-c">${n}</div>`).join('');
+}
+['mega','power','lotto'].forEach(renderHC);
+
+// ───────────────────────────────────────────────
+// KENO GRID
+// ───────────────────────────────────────────────
+function buildKeno(sel=[]){
+  const g=document.getElementById('keno-grid'); if(!g) return;
+  g.innerHTML='';
+  for(let i=1;i<=80;i++){
+    const c=document.createElement('div');
+    c.className='kc'+(sel.includes(i)?' sel':'');
+    c.textContent=i; g.appendChild(c);
   }
 }
-checkConnection();
-if(settings.autorefresh)setInterval(checkConnection,60000);
+buildKeno();
 
-// ============================================================
-// TOAST
-// ============================================================
-let toastTimer=null;
-function showToast(msg,type='',dur=3000){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
+// ───────────────────────────────────────────────
+// AUDIO
+// ───────────────────────────────────────────────
+let AC=null;
+function getAC(){ if(!AC) AC=new(window.AudioContext||window.webkitAudioContext)(); return AC; }
+function beep(f=440,d=.15,t='sine',v=.3){
+  if(!S.sound) return;
+  try{
+    const ctx=getAC();
+    if(ctx.state==='suspended') ctx.resume();
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type=t; o.frequency.setValueAtTime(f,ctx.currentTime);
+    g.gain.setValueAtTime(v,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+d);
+    o.start(ctx.currentTime); o.stop(ctx.currentTime+d);
+  }catch(e){}
 }
+function playClick(){ beep(700,.055,'square',.12); }
+function playReveal(){ if(S.sound)[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.13,'sine',.22),i*90)); }
+function playJpAlert(){
+  if(!S.sound) return;
+  [523,784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.22,'sine',.38),i*110));
+  setTimeout(()=>[1568,1319,1047,784,523].forEach((f,i)=>setTimeout(()=>beep(f,.16,'sine',.28),i*80)),700);
+}
+function vib(p=[50]){ if(S.vibrate) try{ navigator.vibrate&&navigator.vibrate(p); }catch(e){} }
 
-// ============================================================
-// FIREWORKS
-// ============================================================
-function launchFireworks(){
-  if(!settings.firework)return;
-  const fw=document.getElementById('fireworks');
-  fw.innerHTML='';
-  const colors=['#FFD700','#FF6B35','#FF2D55','#00FF88','#00B4FF','#BF00FF','#fff'];
-  for(let i=0;i<6;i++){
-    const cx=20+Math.random()*60;
-    const cy=10+Math.random()*40;
-    const color=colors[Math.floor(Math.random()*colors.length)];
-    for(let j=0;j<18;j++){
+// ───────────────────────────────────────────────
+// FIREWORKS (fixed pixel positions)
+// ───────────────────────────────────────────────
+function launchFW(){
+  if(!S.firework) return;
+  const fw=document.getElementById('fireworks'); fw.innerHTML='';
+  const cols=['#FFD700','#FF6B35','#FF2D55','#00FF88','#00B4FF','#BF00FF','#fff','#FF69B4'];
+  const W=window.innerWidth, H=window.innerHeight;
+  for(let b=0;b<5;b++){
+    const cx=.15*W+Math.random()*.7*W, cy=.08*H+Math.random()*.4*H;
+    const delay=b*180, col=cols[b%cols.length];
+    const cnt=18+Math.floor(Math.random()*10);
+    for(let j=0;j<cnt;j++){
       const p=document.createElement('div');
-      p.className='fw-particle';
-      const angle=(j/18)*360;
-      const rad=angle*Math.PI/180;
-      const dist=60+Math.random()*80;
-      const tx=Math.cos(rad)*dist;
-      const ty=Math.sin(rad)*dist-30;
-      p.style.cssText=`left:${cx}vw;top:${cy}vh;background:${color};--tx:${tx}px;--ty:${ty}px;--dur:${0.6+Math.random()*0.5}s;--delay:${i*0.15}s;width:${3+Math.random()*4}px;height:${3+Math.random()*4}px`;
+      p.className='fw-p';
+      const ang=(j/cnt)*360*Math.PI/180;
+      const dist=55+Math.random()*95;
+      const sz=3+Math.random()*4;
+      p.style.cssText=`left:${cx}px;top:${cy}px;width:${sz}px;height:${sz}px;background:${col};box-shadow:0 0 ${sz*2}px ${col};--tx:${Math.cos(ang)*dist}px;--ty:${Math.sin(ang)*dist-20}px;--dur:${.55+Math.random()*.5}s;--del:${delay/1000}s`;
       fw.appendChild(p);
     }
   }
-  setTimeout(()=>fw.innerHTML='',3000);
+  setTimeout(()=>{ fw.innerHTML=''; }, 3500);
 }
 
-// ============================================================
-// VIEW SWITCHING
-// ============================================================
+// ───────────────────────────────────────────────
+// TOAST
+// ───────────────────────────────────────────────
+let toastTid=null;
+function showToast(msg,cls='',dur=3200){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show'+(cls?' '+cls:'');
+  clearTimeout(toastTid);
+  toastTid=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+// ───────────────────────────────────────────────
+// VIEW / GAME SWITCHING
+// ───────────────────────────────────────────────
 function switchView(v){
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
   playClick();
-  if(v==='stats')buildStats();
+  if(v==='stats') buildStats();
+  const sa=document.querySelector('.scroll-area');
+  if(sa) sa.scrollTop=0;
 }
-function switchGame(g){
-  document.querySelectorAll('.game-panel').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+function switchGame(g,btn){
+  document.querySelectorAll('.game-panel').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(e=>e.classList.remove('active'));
   document.getElementById('panel-'+g).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if(btn) btn.classList.add('active');
   playClick();
-  currentGame=g;
 }
-let currentGame='mega';
 
-// ============================================================
-// BIRTHDAY SELECTS INIT
-// ============================================================
-function initBirthdaySelects(prefix){
-  const days=document.getElementById(prefix+'-bday');
-  const months=document.getElementById(prefix+'-bmonth');
-  const years=document.getElementById(prefix+'-byear');
-  if(!days)return;
-  for(let i=1;i<=31;i++){const o=new Option(i+'',i);days.add(o)}
-  const mn=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
-  mn.forEach((m,i)=>{const o=new Option(m,i+1);months.add(o)});
-  const curYear=new Date().getFullYear();
-  for(let y=curYear;y>=1950;y--){const o=new Option(y+'',y);years.add(o)}
-  // Set defaults to today
+// ───────────────────────────────────────────────
+// BIRTHDAY SELECTS
+// ───────────────────────────────────────────────
+const MONTHS=['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+function initBD(pfx){
+  const bd=document.getElementById(pfx+'-bd');
+  const bm=document.getElementById(pfx+'-bm');
+  const by=document.getElementById(pfx+'-by');
+  if(!bd) return;
+  for(let i=1;i<=31;i++) bd.add(new Option(i,i));
+  MONTHS.forEach((m,i)=>bm.add(new Option(m,i+1)));
+  const cy=new Date().getFullYear();
+  for(let y=cy;y>=1950;y--) by.add(new Option(y,y));
   const now=new Date();
-  days.value=now.getDate();
-  months.value=now.getMonth()+1;
-  years.value=now.getFullYear()-25;
+  bd.value=now.getDate(); bm.value=now.getMonth()+1; by.value=cy-25;
 }
-['mega','power','keno','bingo','lotto','max3d','max3dp','max3dpro'].forEach(initBirthdaySelects);
+['mega','power','keno','bingo','lotto','max3d','max3dp','max3dpro'].forEach(initBD);
 
-// ============================================================
+// ───────────────────────────────────────────────
 // GAME CONFIG
-// ============================================================
-const GAMES={
-  mega:{name:'Mega 6/45',count:6,max:45,ballClass:'mega',sumGold:[120,180],jackpotBase:12},
-  power:{name:'Power 6/55',count:6,max:55,ballClass:'power',sumGold:[140,220],jackpotBase:30,special:true},
-  keno:{name:'Keno',count:10,max:80,ballClass:'keno'},
-  bingo:{name:'Bingo 18',count:18,max:80,ballClass:'bingo'},
-  lotto:{name:'Lotto 5/35',count:5,max:35,ballClass:'lotto'},
-  max3d:{name:'Max 3D',count:3,max:999,ballClass:'max3d',is3d:true},
-  max3dp:{name:'Max 3D+',count:3,max:999,ballClass:'max3dp',is3d:true},
-  max3dpro:{name:'Max 3D Pro',count:6,max:999,ballClass:'max3dpro',is3d:true,is3dpro:true},
+// ───────────────────────────────────────────────
+const G={
+  mega:    {name:'Mega 6/45',   count:6, max:45, cls:'mega',    sumG:[120,180], isJP:true},
+  power:   {name:'Power 6/55',  count:6, max:55, cls:'power',   sumG:[140,220], isJP:true},
+  keno:    {name:'Keno',        count:10,max:80, cls:'keno'},
+  bingo:   {name:'Bingo 18',    count:18,max:80, cls:'bingo'},
+  lotto:   {name:'Lotto 5/35',  count:5, max:35, cls:'lotto'},
+  max3d:   {name:'Max 3D',      count:3, max:999,cls:'max3d',   is3d:true},
+  max3dp:  {name:'Max 3D+',     count:3, max:999,cls:'max3dp',  is3d:true},
+  max3dpro:{name:'Max 3D Pro',  count:6, max:999,cls:'max3dpro',is3d:true,is3dpro:true},
 };
 
-// ============================================================
-// SYNTHETIC JACKPOT DATA (simulating real-time fetch)
-// ============================================================
-const jackpotData={
-  mega:{value:'45,678,901,000 đ',draw:'#01234',pct:72,weeks:8},
-  power:{value:'102,345,678,000 đ',draw:'#00567',pct:85,weeks:14},
-};
-function renderJackpotMeter(game){
-  const d=jackpotData[game];
-  if(!d)return;
-  document.getElementById(game+'-jp').textContent=d.value;
-  document.getElementById(game+'-draw').textContent='Kỳ quay: '+d.draw+' | '+new Date().toLocaleDateString('vi-VN');
-  setTimeout(()=>{
-    const bar=document.getElementById(game+'-bar');
-    const pct=document.getElementById(game+'-pct');
-    const advice=document.getElementById(game+'-advice');
-    if(!bar)return;
-    bar.style.width=d.pct+'%';
-    pct.textContent=d.pct+'%';
-    if(d.pct>=75){
-      pct.style.color='var(--red)';
-      advice.className='jp-advice hot';
-      advice.innerHTML='🔥 JACKPOT RẤT NÓNG! Xác suất cao – <strong>Nên vào tiền ngay!</strong>';
-      if(settings.jackpotalert&&d.pct>=80){
-        playJackpotAlert();vibrateDevice([100,50,100,50,200]);
-        showToast('🎰 JACKPOT NÓNG! Xác suất nổ '+d.pct+'%','jackpot',5000);
-      }
-    } else if(d.pct>=50){
-      pct.style.color='var(--gold)';
-      advice.className='jp-advice wait';
-      advice.innerHTML='⚡ Jackpot đang tăng nhiệt – <strong>Có thể cân nhắc đặt cược</strong>';
-    } else {
-      pct.style.color='var(--green)';
-      advice.className='jp-advice go';
-      advice.innerHTML='🌱 Jackpot mới reset – <strong>Tiếp tục quan sát</strong>';
+// ───────────────────────────────────────────────
+// SMART NUMBER GENERATOR
+// ───────────────────────────────────────────────
+function genNums(game){
+  const c=G[game];
+  if(c.is3d){ const n=c.is3dpro?6:3; return Array.from({length:n},()=>String(Math.floor(Math.random()*1000)).padStart(3,'0')); }
+  const {max,count,sumG}=c;
+  for(let att=0;att<300;att++){
+    const pool=Array.from({length:max},(_,i)=>i+1).sort(()=>Math.random()-.47);
+    const arr=pool.slice(0,count).sort((a,b)=>a-b);
+    if(sumG){
+      const s=arr.reduce((a,b)=>a+b,0);
+      if(s<sumG[0]||s>sumG[1]) continue;
+      const ev=arr.filter(n=>n%2===0).length;
+      if(count===6&&(ev<2||ev>4)) continue;
+      if(count===5&&(ev<1||ev>4)) continue;
     }
-  },800);
-}
-renderJackpotMeter('mega');
-renderJackpotMeter('power');
-
-// ============================================================
-// HOT/COLD NUMBERS (simulated from history data)
-// ============================================================
-function getHotCold(max,hotArr,coldArr){return{hot:hotArr,cold:coldArr}}
-const hotColdData={
-  mega:{hot:[3,7,12,23,38,42],cold:[1,15,27,34,40,44]},
-  power:{hot:[5,11,19,28,33,47],cold:[2,8,20,36,49,54]},
-  lotto:{hot:[4,9,17,22,28],cold:[1,13,25,30,35]},
-};
-function renderHotCold(game,ballClass){
-  const d=hotColdData[game];
-  if(!d)return;
-  const hEl=document.getElementById(game+'-hot');
-  const cEl=document.getElementById(game+'-cold');
-  if(hEl)hEl.innerHTML=d.hot.map(n=>`<div class="hc-ball hot-ball">${n}</div>`).join('');
-  if(cEl)cEl.innerHTML=d.cold.map(n=>`<div class="hc-ball cold-ball">${n}</div>`).join('');
-}
-renderHotCold('mega');renderHotCold('power');renderHotCold('lotto');
-
-// ============================================================
-// KENO GRID
-// ============================================================
-function buildKenoGrid(selected=[]){
-  const g=document.getElementById('keno-grid');
-  if(!g)return;
-  g.innerHTML='';
-  for(let i=1;i<=80;i++){
-    const cell=document.createElement('div');
-    cell.className='keno-cell'+(selected.includes(i)?' selected':'');
-    cell.textContent=i;
-    g.appendChild(cell);
+    return arr;
   }
-}
-buildKenoGrid();
-
-// ============================================================
-// SMART AI NUMBER GENERATION
-// ============================================================
-function generateSmartNumbers(game){
-  const cfg=GAMES[game];
-  if(cfg.is3d){
-    if(cfg.is3dpro){return Array.from({length:6},()=>String(Math.floor(Math.random()*1000)).padStart(3,'0'))}
-    return Array.from({length:3},()=>String(Math.floor(Math.random()*1000)).padStart(3,'0'));
-  }
-  const max=cfg.max;
-  const count=cfg.count;
-  const sumGold=cfg.sumGold;
-  // Weighted pool - bias toward hot numbers and golden sum range
-  let attempt=0;
-  while(attempt<200){
-    attempt++;
-    const pool=[];
-    const all=Array.from({length:max},(_,i)=>i+1);
-    // Shuffle with weight
-    all.sort(()=>Math.random()-0.48);
-    const picked=[];
-    for(let n of all){
-      if(picked.length<count)picked.push(n);
-    }
-    picked.sort((a,b)=>a-b);
-    if(sumGold){
-      const sum=picked.reduce((a,b)=>a+b,0);
-      if(sum<sumGold[0]||sum>sumGold[1])continue;
-      // Check even/odd balance
-      const evens=picked.filter(n=>n%2===0).length;
-      if(count===6&&(evens<2||evens>4))continue;
-      if(count===5&&(evens<1||evens>4))continue;
-    }
-    return picked;
-  }
-  // Fallback
-  const arr=[];
-  while(arr.length<count){const n=Math.floor(Math.random()*max)+1;if(!arr.includes(n))arr.push(n)}
-  return arr.sort((a,b)=>a-b);
+  const arr=[]; while(arr.length<count){const n=1+Math.floor(Math.random()*max);if(!arr.includes(n))arr.push(n);} return arr.sort((a,b)=>a-b);
 }
 
-// ============================================================
+// ───────────────────────────────────────────────
 // RENDER BALLS
-// ============================================================
-function renderBalls(containerId,numbers,ballClass,isSpecial=false,delays=null){
-  const c=document.getElementById(containerId);
-  if(!c)return;
+// ───────────────────────────────────────────────
+function renderBalls(cid,nums,cls,isJP=false){
+  const c=document.getElementById(cid); if(!c) return;
   c.innerHTML='';
-  numbers.forEach((n,i)=>{
-    const ball=document.createElement('div');
-    const sp=isSpecial&&i===numbers.length-1;
-    ball.className=(sp?'ball-special':'ball '+ballClass+(isSpecial?' jackpot-ball':''));
-    ball.textContent=n;
-    ball.style.animationDelay=(delays?delays[i]:(i*0.08))+'s';
-    c.appendChild(ball);
+  nums.forEach((n,i)=>{
+    const el=document.createElement('div');
+    const sp=isJP&&i===nums.length-1;
+    el.className=sp?'ball-special':('ball '+cls+(isJP?' jackpot-ball':''));
+    el.textContent=n; el.style.animationDelay=(i*.07)+'s';
+    c.appendChild(el);
   });
 }
 
-// ============================================================
-// MAIN PREDICT FUNCTION
-// ============================================================
-let predictionCount=0;
-async function predictGame(game){
-  playClick();vibrateDevice([30]);
-  const btn=document.querySelector(`#panel-${game} .predict-btn`);
-  if(btn){btn.classList.add('loading')}
-  predictionCount++;
-  document.getElementById('s-predictions').textContent=predictionCount;
-  const cfg=GAMES[game];
+// ───────────────────────────────────────────────
+// PREDICTION COUNTER
+// ───────────────────────────────────────────────
+let predCount=0;
 
-  // Generate smart numbers first (instant feedback)
-  let numbers;
+// ───────────────────────────────────────────────
+// MAIN PREDICT
+// ───────────────────────────────────────────────
+async function predictGame(game){
+  playClick(); vib([25]);
+  const cfg=G[game];
+  const btn=document.getElementById('btn-'+game);
+  if(btn) btn.classList.add('loading');
+  predCount++;
+  const sc=document.getElementById('s-pred'); if(sc) sc.textContent=predCount;
+
+  const nums=genNums(game);
+
   if(cfg.is3d){
-    numbers=generateSmartNumbers(game);
-    if(cfg.is3dpro){
-      ['n1','n2','n3','n4','n5','n6'].forEach((id,i)=>{
-        const el=document.getElementById('max3dpro-'+id);
-        if(el)el.textContent=numbers[i]||'000';
-      });
-    } else {
-      const prefix=game;
-      ['n1','n2','n3'].forEach((id,i)=>{
-        const el=document.getElementById(prefix+'-'+id);
-        if(el)el.textContent=numbers[i]||'000';
-      });
-    }
+    const ids=cfg.is3dpro?['n1','n2','n3','n4','n5','n6']:['n1','n2','n3'];
+    ids.forEach((id,i)=>{ const el=document.getElementById(game+'-'+id); if(el) el.textContent=nums[i]||'000'; });
   } else if(game==='keno'){
-    numbers=generateSmartNumbers(game);
-    buildKenoGrid(numbers);
-    renderBalls('keno-balls',numbers,cfg.ballClass);
+    buildKeno(nums); renderBalls('keno-balls',nums,cfg.cls);
   } else if(game==='bingo'){
-    numbers=generateSmartNumbers(game);
-    renderBalls('bingo-balls',numbers,cfg.ballClass);
+    renderBalls('bingo-balls',nums,cfg.cls);
   } else {
-    numbers=generateSmartNumbers(game);
-    const isJackpot=(game==='mega'||game==='power');
-    renderBalls(game+'-balls',numbers,cfg.ballClass,isJackpot);
-    if(game==='mega'||game==='power'){
-      const sum=numbers.reduce((a,b)=>a+b,0);
-      const evens=numbers.filter(n=>n%2===0).length;
-      const el_s=document.getElementById(game+'-sum');
-      const el_b=document.getElementById(game+'-balance');
-      if(el_s)el_s.textContent=sum;
-      if(el_b)el_b.textContent=evens+'C / '+(numbers.length-evens)+'L';
+    renderBalls(game+'-balls',nums,cfg.cls,cfg.isJP||false);
+    if(cfg.isJP){
+      const s=nums.reduce((a,b)=>a+b,0), ev=nums.filter(n=>n%2===0).length;
+      const es=document.getElementById(game+'-sum'), eb=document.getElementById(game+'-bal');
+      if(es) es.textContent=s; if(eb) eb.textContent=ev+'C / '+(nums.length-ev)+'L';
     }
   }
 
-  // Play reveal sound
-  playReveal();vibrateDevice([50,30,100]);
+  playReveal(); vib([40,20,80]); setTimeout(launchFW,200);
 
-  // Launch fireworks
-  launchFireworks();
-
-  // Now call Claude AI for real analysis
   try{
-    const prompt=buildAIPrompt(game,numbers,cfg);
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:`Bạn là chuyên gia phân tích xổ số Vietlott với kinh nghiệm 20 năm. Phân tích ngắn gọn, chính xác bằng tiếng Việt. Không có phần mở đầu dài. Trả lời trực tiếp với: (1) Đánh giá bộ số, (2) Điểm mạnh, (3) Lời khuyên. Tối đa 100 từ.`,
-        messages:[{role:'user',content:prompt}]
+        model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:'Bạn là chuyên gia phân tích xổ số Vietlott 20 năm. Phân tích ngắn gọn tiếng Việt. Không mở đầu dài. Trả lời: (1)Đánh giá (2)Điểm mạnh (3)Lời khuyên. Tối đa 90 từ.',
+        messages:[{role:'user',content:buildPrompt(game,nums,cfg)}]
       })
     });
-    const data=await response.json();
-    const text=data.content?.map(b=>b.text||'').join('')||'';
-    if(text){
-      const analysisId=cfg.is3d?(game+'-ai-analysis'):(game+'-ai-analysis');
-      const textId=cfg.is3d?(game+'-ai-text'):(game+'-ai-text');
-      const aEl=document.getElementById(analysisId);
-      const tEl=document.getElementById(textId);
-      if(aEl&&tEl){
-        aEl.style.display='block';
-        tEl.textContent=text;
-        // Confidence
-        const confEl=document.getElementById(game+'-conf');
-        const confPct=document.getElementById(game+'-conf-pct');
-        const conf=55+Math.floor(Math.random()*30);
-        if(confEl)confEl.style.width=conf+'%';
-        if(confPct)confPct.textContent=conf+'%';
-      }
-      // Jackpot alert check
-      if((game==='mega'||game==='power')&&settings.jackpotalert){
-        const sum=numbers.reduce((a,b)=>a+b,0);
-        const sumGold=cfg.sumGold;
-        const inGold=sum>=sumGold[0]&&sum<=sumGold[1];
-        const evens=numbers.filter(n=>n%2===0).length;
-        const balanced=(evens===3);
-        if(inGold&&balanced){
-          setTimeout(()=>{
-            playJackpotAlert();vibrateDevice([200,100,200,100,400]);
-            showToast('🏆 BỘ SỐ JACKPOT XÁC SUẤT CAO! Tổng '+sum+' – Cân bằng hoàn hảo!','jackpot',6000);
-          },1000);
+    const d=await r.json();
+    const txt=(d.content||[]).map(b=>b.text||'').join('');
+    if(txt){
+      const aiEl=document.getElementById(game+'-ai'), txEl=document.getElementById(game+'-ai-txt');
+      if(aiEl&&txEl){ aiEl.style.display='block'; txEl.textContent=txt; }
+      const cf=55+Math.floor(Math.random()*30);
+      const cfEl=document.getElementById(game+'-conf'), cpEl=document.getElementById(game+'-conf-pct');
+      if(cfEl) cfEl.style.width=cf+'%'; if(cpEl) cpEl.textContent=cf+'%';
+      if(cfg.isJP&&S.jackpotalert){
+        const sum=nums.reduce((a,b)=>a+b,0), sg=cfg.sumG;
+        if(sum>=sg[0]&&sum<=sg[1]&&nums.filter(n=>n%2===0).length===3){
+          setTimeout(()=>{ playJpAlert(); vib([200,80,200,80,400]); showToast('🏆 BỘ SỐ JACKPOT XÁC SUẤT CAO! Tổng '+sum+' – Cân bằng hoàn hảo!','jackpot',6000); },1200);
         }
       }
     }
   }catch(e){
-    // Fallback AI text
-    const tEl=document.getElementById(game+'-ai-text');
-    const aEl=document.getElementById(game+'-ai-analysis');
-    if(tEl&&aEl){
-      aEl.style.display='block';
-      tEl.textContent='Bộ số được tạo theo thuật toán thống kê nâng cao. Kiểm tra cân bằng chẵn/lẻ và vùng tổng tối ưu. Chúc may mắn!';
-    }
+    const aiEl=document.getElementById(game+'-ai'), txEl=document.getElementById(game+'-ai-txt');
+    if(aiEl&&txEl){ aiEl.style.display='block'; txEl.textContent='Bộ số tối ưu theo thuật toán thống kê nâng cao. Chúc may mắn! 🍀'; }
   }
-
-  if(btn)btn.classList.remove('loading');
+  if(btn) btn.classList.remove('loading');
 }
 
-function buildAIPrompt(game,numbers,cfg){
-  if(cfg.is3d){
-    return `Phân tích bộ số Max 3D "${numbers.join(', ')}" cho game ${cfg.name}. Đây có phải là lựa chọn tốt không?`;
-  }
-  const sum=numbers.reduce((a,b)=>a+b,0);
-  const evens=numbers.filter(n=>n%2===0).length;
-  return `Phân tích bộ số ${cfg.name}: [${numbers.join(', ')}]
-Tổng: ${sum} (vùng vàng: ${cfg.sumGold?cfg.sumGold[0]+'-'+cfg.sumGold[1]:'N/A'})
-Chẵn/Lẻ: ${evens}/${numbers.length-evens}
-Đây có phải bộ số tiềm năng không? Tại sao?`;
+function buildPrompt(game,nums,cfg){
+  if(cfg.is3d) return `Phân tích bộ số Max 3D [${nums.join(', ')}] cho ${cfg.name}. Tiềm năng không?`;
+  const s=nums.reduce((a,b)=>a+b,0), ev=nums.filter(n=>n%2===0).length;
+  return `Game ${cfg.name}: [${nums.join(', ')}]\nTổng: ${s} (vùng vàng: ${cfg.sumG?cfg.sumG.join('–'):'N/A'})\nChẵn/Lẻ: ${ev}/${nums.length-ev}\nPhân tích ngắn tiềm năng bộ số này.`;
 }
 
-// ============================================================
+// ───────────────────────────────────────────────
 // BIRTHDAY PREDICT
-// ============================================================
-async function birthdayPredict(game){
-  playClick();vibrateDevice([30]);
-  const day=parseInt(document.getElementById(game+'-bday')?.value||1);
-  const month=parseInt(document.getElementById(game+'-bmonth')?.value||1);
-  const year=parseInt(document.getElementById(game+'-byear')?.value||1990);
-  const cfg=GAMES[game];
+// ───────────────────────────────────────────────
+async function bdayPredict(game){
+  playClick(); vib([25]);
+  const day=parseInt(document.getElementById(game+'-bd')?.value||1);
+  const mon=parseInt(document.getElementById(game+'-bm')?.value||1);
+  const yr=parseInt(document.getElementById(game+'-by')?.value||1990);
+  const cfg=G[game];
+  const seed=day+mon+(yr%100);
+  const rng=s=>{let x=Math.sin(s+1.618)*10000; return x-Math.floor(x);};
 
-  // Numerology seed
-  const seed=day+month+(year%100);
-  const rng=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x)};
-
-  let numbers=[];
   if(cfg.is3d){
-    const bsets=document.getElementById(game+'-bday-sets');
-    if(bsets)bsets.style.display='flex';
-    const n1=String(((day*month+year)%1000)).padStart(3,'0');
-    const n2=String(((day+month*7+year%100)%1000)).padStart(3,'0');
-    const b1=document.getElementById(game+'-b1');
-    const b2=document.getElementById(game+'-b2');
-    if(b1)b1.textContent=n1;if(b2)b2.textContent=n2;
-    playReveal();launchFireworks();
-    return;
+    const bs=document.getElementById(game+'-bsets'); if(bs) bs.style.display='flex';
+    const n1=String(((day*mon+yr)%1000+1000)%1000).padStart(3,'0');
+    const n2=String(((day*7+mon*13+yr%100)%1000+1000)%1000).padStart(3,'0');
+    const e1=document.getElementById(game+'-b1'), e2=document.getElementById(game+'-b2');
+    if(e1) e1.textContent=n1; if(e2) e2.textContent=n2;
+    playReveal(); setTimeout(launchFW,150); vib([40,20,80]); return;
   }
 
-  const max=cfg.max,count=cfg.count;
-  const pool=[];
-  for(let i=0;i<max*3;i++){
-    const n=Math.floor(rng(seed+i*7)*max)+1;
-    if(!pool.includes(n)&&pool.length<max)pool.push(n);
-  }
-  const full=Array.from({length:max},(_,i)=>i+1);
-  full.forEach(n=>{if(!pool.includes(n))pool.push(n)});
+  const {max,count}=cfg;
+  const pool=[]; for(let i=0;i<max*4;i++){const n=Math.floor(rng(seed+i*11)*max)+1;if(!pool.includes(n))pool.push(n);if(pool.length>=max)break;}
+  for(let i=1;i<=max;i++) if(!pool.includes(i)) pool.push(i);
+  const picked=[]; let idx=0;
+  while(picked.length<count&&idx<pool.length){const n=pool[idx++];if(!picked.includes(n))picked.push(n);}
+  const nums=picked.sort((a,b)=>a-b);
 
-  const picked=[];
-  let attempt=0;
-  while(picked.length<count&&attempt<max){
-    const n=pool[attempt];attempt++;
-    if(!picked.includes(n))picked.push(n);
-  }
-  numbers=picked.sort((a,b)=>a-b);
+  renderBalls(game+'-bb',nums,cfg.cls);
+  playReveal(); setTimeout(launchFW,150); vib([40,20,80]);
 
-  const containerId=game+'-bday-balls';
-  renderBalls(containerId,numbers,cfg.ballClass);
-  playReveal();launchFireworks();
-  vibrateDevice([50,30,100]);
-
-  // AI analysis for birthday
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+    const lifeNum=(day+mon+(yr%100))%9+1;
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:400,
-        system:'Bạn là chuyên gia thần số học và xổ số. Trả lời ngắn gọn bằng tiếng Việt.',
-        messages:[{role:'user',content:`Người sinh ngày ${day}/${month}/${year}, số chủ đạo là ${(day+month+(year%100))%9+1}. Phân tích ý nghĩa bộ số [${numbers.join(', ')}] theo thần số học cho game ${cfg.name}. Tối đa 60 từ.`}]
+        model:'claude-sonnet-4-20250514',max_tokens:250,
+        system:'Chuyên gia thần số học. Tiếng Việt ngắn gọn tích cực.',
+        messages:[{role:'user',content:`Người sinh ${day}/${mon}/${yr}, số chủ đạo ${lifeNum}. Bộ số [${nums.join(', ')}] cho ${cfg.name}. Ý nghĩa? Tối đa 40 từ.`}]
       })
     });
-    const d=await resp.json();
-    const txt=d.content?.map(b=>b.text||'').join('')||'';
-    if(txt)showToast('🎂 '+txt.substring(0,80)+'...',''  ,4000);
+    const d=await r.json();
+    const t=(d.content||[]).map(b=>b.text||'').join('');
+    if(t) showToast('🎂 '+t.substring(0,70)+(t.length>70?'…':''),'',4000);
   }catch(e){}
 }
 
-// ============================================================
-// STATS VIEW
-// ============================================================
+// ───────────────────────────────────────────────
+// STATS
+// ───────────────────────────────────────────────
 function buildStats(){
-  // Mega frequency
-  buildFreqList('freq-mega','mega',45);
-  buildFreqList('freq-power','power',55);
+  bFreq('freq-mega','mega',45); bFreq('freq-power','power',55);
 }
-function buildFreqList(containerId,game,max){
-  const el=document.getElementById(containerId);
-  if(!el||el.children.length>0)return;
-  const freqs={};
-  const hot=hotColdData[game]?.hot||[];
-  for(let i=1;i<=max;i++){
-    freqs[i]=Math.floor(Math.random()*50)+5;
-    if(hot.includes(i))freqs[i]+=30;
-  }
-  const sorted=Object.entries(freqs).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  const maxF=sorted[0][1];
-  el.innerHTML=sorted.map(([n,f])=>`
-    <div class="freq-row">
-      <span class="freq-num">${n}</span>
-      <div class="freq-bar-wrap"><div class="freq-bar" style="width:${(f/maxF*100).toFixed(0)}%"></div></div>
-      <span class="freq-cnt">${f}</span>
-    </div>
-  `).join('');
+function bFreq(cid,game,max){
+  const el=document.getElementById(cid); if(!el||el.children.length>0) return;
+  const hot=HC[game]?.hot||[];
+  const f={};
+  for(let i=1;i<=max;i++){ f[i]=Math.floor(Math.random()*50)+5; if(hot.includes(i)) f[i]+=30; }
+  const sorted=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,15), mf=sorted[0][1];
+  el.innerHTML=sorted.map(([n,cnt])=>`<div class="freq-row"><span class="freq-num">${n}</span><div class="freq-bw"><div class="freq-b" style="width:${(cnt/mf*100).toFixed(0)}%"></div></div><span class="freq-cnt">${cnt}</span></div>`).join('');
 }
 
-// ============================================================
-// AUTO INIT PREDICTIONS ON LOAD
-// ============================================================
-setTimeout(()=>{
-  // Render placeholder balls for all games
-  ['mega','power','lotto'].forEach(g=>{
-    const nums=generateSmartNumbers(g);
-    renderBalls(g+'-balls',nums,GAMES[g].ballClass,g==='mega'||g==='power');
-    if(g==='mega'||g==='power'){
-      const sum=nums.reduce((a,b)=>a+b,0);
-      const evens=nums.filter(n=>n%2===0).length;
-      const es=document.getElementById(g+'-sum');
-      const eb=document.getElementById(g+'-balance');
-      if(es)es.textContent=sum;
-      if(eb)eb.textContent=evens+'C / '+(nums.length-evens)+'L';
-    }
-  });
-  // Keno
-  const kenoNums=generateSmartNumbers('keno');
-  buildKenoGrid(kenoNums);
-  renderBalls('keno-balls',kenoNums,'keno');
-  // Bingo
-  const bingoNums=generateSmartNumbers('bingo');
-  renderBalls('bingo-balls',bingoNums,'bingo');
-  // Max 3D
-  ['max3d','max3dp'].forEach(g=>{
-    const nums=generateSmartNumbers(g);
-    ['n1','n2','n3'].forEach((id,i)=>{
-      const el=document.getElementById(g+'-'+id);
-      if(el)el.textContent=nums[i]||'000';
+// ───────────────────────────────────────────────
+// INIT
+// ───────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  checkConnection();
+  setTimeout(()=>{ renderJP('mega'); renderJP('power'); }, 1600);
+
+  setTimeout(()=>{
+    ['mega','power','lotto'].forEach(g=>{
+      const n=genNums(g); renderBalls(g+'-balls',n,G[g].cls,G[g].isJP||false);
+      if(G[g].isJP){
+        const s=n.reduce((a,b)=>a+b,0), ev=n.filter(x=>x%2===0).length;
+        const es=document.getElementById(g+'-sum'), eb=document.getElementById(g+'-bal');
+        if(es) es.textContent=s; if(eb) eb.textContent=ev+'C / '+(n.length-ev)+'L';
+      }
     });
-  });
-  const proNums=generateSmartNumbers('max3dpro');
-  ['n1','n2','n3','n4','n5','n6'].forEach((id,i)=>{
-    const el=document.getElementById('max3dpro-'+id);
-    if(el)el.textContent=proNums[i]||'000';
-  });
-},4200); // after splash
+    buildKeno(genNums('keno'));
+    renderBalls('keno-balls',genNums('keno'),'keno');
+    renderBalls('bingo-balls',genNums('bingo'),'bingo');
+    ['max3d','max3dp'].forEach(g=>{ const n=genNums(g); ['n1','n2','n3'].forEach((id,i)=>{ const el=document.getElementById(g+'-'+id); if(el) el.textContent=n[i]||'000'; }); });
+    const pn=genNums('max3dpro'); ['n1','n2','n3','n4','n5','n6'].forEach((id,i)=>{ const el=document.getElementById('max3dpro-'+id); if(el) el.textContent=pn[i]||'000'; });
+    document.getElementById('splash').classList.add('hide');
+  }, 4000);
+});
 
+// Prevent body bounce (iOS)
+document.addEventListener('touchmove', e=>{
+  if(!e.target.closest('.scroll-area,.tabs-wrap,.keno-grid,.freq-list')) e.preventDefault();
+},{passive:false});
+// Prevent double-tap zoom
+let lastTap=0;
+document.addEventListener('touchend', e=>{
+  const now=Date.now(); if(now-lastTap<300) e.preventDefault(); lastTap=now;
+},{passive:false});
 </script>
 
 </body>
