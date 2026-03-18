@@ -503,7 +503,11 @@ header{
     <div class="game-panel" id="panel-max3d">
       <div class="card">
         <div class="card-title">🔵 Dự Đoán AI – Max 3D</div>
-        <div class="m3d-sets"><div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3d-n1">---</div></div><div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3d-n2">---</div></div><div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3d-n3">---</div></div></div>
+        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 2 số 3 chữ số (000–999), hai số không trùng nhau</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3d-n1">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3d-n2">---</div></div>
+        </div>
         <div class="ai-res" id="max3d-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3d-ai-txt"></div></div>
       </div>
       <button class="pbtn" id="btn-max3d" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="predictGame('max3d')"><span class="bt">🔵 DỰ ĐOÁN MAX 3D AI</span><div class="bl"></div></button>
@@ -522,10 +526,11 @@ header{
     <div class="game-panel" id="panel-max3dp">
       <div class="card">
         <div class="card-title">💗 Dự Đoán AI – Max 3D+</div>
+        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 3 số 3 chữ số (000–999), ba số không trùng nhau</div>
         <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
         </div>
         <div class="ai-res" id="max3dp-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dp-ai-txt"></div></div>
       </div>
@@ -545,15 +550,26 @@ header{
     <div class="game-panel" id="panel-max3dpro">
       <div class="card">
         <div class="card-title">👑 Dự Đoán AI – Max 3D Pro</div>
+        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 4 cặp số, mỗi cặp gồm 2 số 3 chữ số (000–999) không trùng nhau</div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:1px">CẶP 1</div>
         <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 3</div><div class="m3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
         </div>
-        <div class="m3d-sets" style="margin-top:9px">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 4</div><div class="m3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 5</div><div class="m3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 6</div><div class="m3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 2</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số D</div><div class="m3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 3</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Số E</div><div class="m3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số F</div><div class="m3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 4</div>
+        <div class="m3d-sets">
+          <div class="m3d-set"><div class="m3d-lbl">Số G</div><div class="m3d-num" id="max3dpro-n7" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+          <div class="m3d-set"><div class="m3d-lbl">Số H</div><div class="m3d-num" id="max3dpro-n8" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
         </div>
         <div class="ai-res" id="max3dpro-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dpro-ai-txt"></div></div>
       </div>
@@ -819,14 +835,18 @@ try{
 // JACKPOT DATA
 // ═══════════════════════════════════════════════
 const JP = {
-  mega:  {value:'Đang tải...', draw:'--', pct:65, ts:0},
-  power: {value:'Đang tải...', draw:'--', pct:78, ts:0},
+  mega:  {value:'Đang tải...', draw:'--', drawNum:'#01485', nextDate:'', pct:48, ts:0},
+  power: {value:'Đang tải...', draw:'--', drawNum:'#01321', nextDate:'', pct:62, ts:0},
 };
-const FALLBACK_JP = {mega:'45.678.901.000 đ', power:'102.345.678.000 đ'};
+// Fallback = số thực tế gần nhất từ vietlott.vn (cập nhật thủ công khi cần)
+const FALLBACK_JP = {
+  mega:  {value:'24.896.153.000 đ', draw:'#01485', nextDate:'Thứ 4, 18/03/2026', pct:48},
+  power: {value:'44.307.824.700 đ', draw:'#01321', nextDate:'Thứ 5, 19/03/2026', pct:62},
+};
 
 function applyFallback(){
-  if(JP.mega.value  ==='Đang tải...') JP.mega.value  = FALLBACK_JP.mega;
-  if(JP.power.value ==='Đang tải...') JP.power.value = FALLBACK_JP.power;
+  if(JP.mega.value  ==='Đang tải...'){ JP.mega.value=FALLBACK_JP.mega.value; JP.mega.draw=FALLBACK_JP.mega.draw; JP.mega.nextDate=FALLBACK_JP.mega.nextDate; JP.mega.pct=FALLBACK_JP.mega.pct; }
+  if(JP.power.value ==='Đang tải...'){ JP.power.value=FALLBACK_JP.power.value; JP.power.draw=FALLBACK_JP.power.draw; JP.power.nextDate=FALLBACK_JP.power.nextDate; JP.power.pct=FALLBACK_JP.power.pct; }
 }
 
 // Extract largest VND number from a text blob (handles Vietnamese dot-format)
@@ -862,22 +882,55 @@ async function fetchJackpotData(resp, game){
     const raw = await resp.text();
     let body = raw;
     try{ const j=JSON.parse(raw); body=j.contents||j.response||j.data||j.body||raw; }catch(_){}
-    // Strip scripts/styles/tags
+
+    // Strip scripts/styles but keep text content
     const txt = body
       .replace(/<script[\s\S]*?<\/script>/gi,'')
       .replace(/<style[\s\S]*?<\/style>/gi,'')
       .replace(/<[^>]+>/g,' ')
-      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&')
+      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&đ;/g,'đ')
       .replace(/\s+/g,' ');
+
+    // Extract jackpot value
     const val = extractBigVND(txt);
-    if(val){ JP[game].value=fmtVND(val); JP[game].ts=Date.now(); }
-    else { applyFallback(); }
-  }catch(e){ applyFallback(); }
+    if(val){
+      JP[game].value = fmtVND(val);
+      JP[game].ts    = Date.now();
+      // Update fallback so offline stays current
+      FALLBACK_JP[game].value = JP[game].value;
+    } else {
+      if(JP[game].value==='Đang tải...') applyFallback();
+    }
+
+    // Extract draw number: kỳ #01485 or kỳ 01485
+    const drawM = txt.match(/[Kk]ỳ[\s#]+0*(\d{4,5})/);
+    if(drawM) {
+      JP[game].draw = '#' + drawM[1].padStart(5,'0');
+      FALLBACK_JP[game].draw = JP[game].draw;
+    }
+
+    // Extract draw date from page
+    // Vietlott uses: "Thứ 4, 18/03/2026" or "18/03/2026" 
+    const dateM = txt.match(/(Thứ\s+[2-7]|Chủ\s+nhật)[,\s]+(\d{1,2}\/\d{2}\/\d{4})/);
+    if(dateM){
+      JP[game].nextDate = dateM[1].replace(/\s+/g,' ')+', '+dateM[2];
+      FALLBACK_JP[game].nextDate = JP[game].nextDate;
+    } else {
+      // Try just date
+      const dm = txt.match(/(\d{1,2}\/\d{2}\/\d{4})/);
+      if(dm && !JP[game].nextDate) JP[game].nextDate = dm[1];
+    }
+
+  }catch(e){
+    if(JP[game].value==='Đang tải...') applyFallback();
+  }
+
   JP.mega.pct  = estimatePct(JP.mega.value);
   JP.power.pct = estimatePct(JP.power.value);
-  renderJP('mega'); renderJP('power');
-  const updated = JP.mega.value!==FALLBACK_JP.mega || JP.power.value!==FALLBACK_JP.power;
-  if(updated) showToast('✅ Jackpot cập nhật từ Vietlott','',2200);
+  renderJP('mega');
+  renderJP('power');
+  const isFallback = JP[game].value===FALLBACK_JP[game].value && JP[game].ts===0;
+  if(!isFallback) showToast('✅ Jackpot cập nhật từ Vietlott','',2000);
 }
 
 // ── CORS Proxy list ───────────────────────────────
@@ -888,8 +941,11 @@ const PROXIES = [
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}&t=${Date.now()}`,
   u => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`,
 ];
+// Vietlott result pages – proxy will fetch HTML, we parse jackpot value
 const VL_MEGA  = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/mega645';
 const VL_POWER = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/655';
+// Homepage also has jackpot banners
+const VL_HOME  = 'https://vietlott.vn/';
 let connected = false, retryN = 0, retryTid = null;
 
 async function fetchWithTimeout(url, ms=10000){
@@ -919,11 +975,17 @@ async function checkConnection(){
     applyFallback(); renderJP('mega'); renderJP('power');
     retryTid=setTimeout(checkConnection,30000); return;
   }
-  const ok = await tryProxies(VL_MEGA,'mega');
+  // Try result pages first, then homepage as fallback
+  let ok = await tryProxies(VL_MEGA,'mega');
+  if(!ok) ok = await tryProxies(VL_HOME,'mega'); // homepage has jackpot banner
   if(ok){
     connected=true; retryN=0;
     updateConnUI('connected');
-    setTimeout(()=>tryProxies(VL_POWER,'power').catch(()=>{}), 500);
+    // Fetch Power in background
+    setTimeout(async()=>{
+      const ok2 = await tryProxies(VL_POWER,'power');
+      if(!ok2) tryProxies(VL_HOME,'power');
+    }, 600);
     if(S.autorefresh) retryTid=setTimeout(checkConnection,3*60*1000);
     return;
   }
@@ -942,7 +1004,9 @@ function renderJP(g){
   const jv = document.getElementById(g+'-jp');
   const jd = document.getElementById(g+'-draw');
   if(jv) jv.textContent = d.value;
-  if(jd) jd.textContent = 'Kỳ quay: '+d.draw+' · '+new Date().toLocaleDateString('vi-VN');
+  // Show real draw date if available, else today
+  const drawDateStr = d.nextDate || new Date().toLocaleDateString('vi-VN');
+  if(jd) jd.textContent = 'Kỳ '+(d.draw||'--')+' · '+drawDateStr;
 
   // Animate bar with delay for smooth effect
   const bar = document.getElementById(g+'-bar');
@@ -1123,22 +1187,51 @@ function initBD(pfx){
 // GAME CONFIG
 // ───────────────────────────────────────────────
 const G={
-  mega:    {name:'Mega 6/45',   count:6, max:45, cls:'mega',    sumG:[120,180], isJP:true},
-  power:   {name:'Power 6/55',  count:6, max:55, cls:'power',   sumG:[140,220], isJP:true},
-  keno:    {name:'Keno',        count:10,max:80, cls:'keno'},
-  bingo:   {name:'Bingo 18',    count:18,max:80, cls:'bingo'},
-  lotto:   {name:'Lotto 5/35',  count:5, max:35, cls:'lotto'},
-  max3d:   {name:'Max 3D',      count:3, max:999,cls:'max3d',   is3d:true},
-  max3dp:  {name:'Max 3D+',     count:3, max:999,cls:'max3dp',  is3d:true},
-  max3dpro:{name:'Max 3D Pro',  count:6, max:999,cls:'max3dpro',is3d:true,is3dpro:true},
+  mega:    {name:'Mega 6/45',   count:6,  max:45,  cls:'mega',    sumG:[120,180], isJP:true},
+  power:   {name:'Power 6/55',  count:6,  max:55,  cls:'power',   sumG:[140,220], isJP:true},
+  keno:    {name:'Keno',        count:10, max:80,  cls:'keno'},
+  bingo:   {name:'Bingo 18',    count:18, max:80,  cls:'bingo'},
+  lotto:   {name:'Lotto 5/35',  count:5,  max:35,  cls:'lotto'},
+  // Max 3D: chọn 1 bộ gồm 2 số (mỗi số 3 chữ số 000-999)
+  max3d:   {name:'Max 3D',      count:2,  max:999, cls:'max3d',   is3d:true,  sets:1,  perSet:2},
+  // Max 3D+: chọn 1 bộ gồm 3 số (mỗi số 3 chữ số 000-999)
+  max3dp:  {name:'Max 3D+',     count:3,  max:999, cls:'max3dp',  is3d:true,  sets:1,  perSet:3},
+  // Max 3D Pro: chọn 4 cặp, mỗi cặp 2 số (tổng 8 số 3 chữ số)
+  max3dpro:{name:'Max 3D Pro',  count:8,  max:999, cls:'max3dpro',is3d:true,  sets:4,  perSet:2, is3dpro:true},
 };
 
 // ───────────────────────────────────────────────
 // SMART NUMBER GENERATOR
 // ───────────────────────────────────────────────
+// Generate unique 3-digit number 000-999
+function gen3d(){ return String(Math.floor(Math.random()*1000)).padStart(3,'0'); }
+
+// Generate a pair/set of unique 3-digit numbers (no duplicates within set)
+function gen3dSet(count){
+  const used=new Set(), result=[];
+  let tries=0;
+  while(result.length<count && tries<500){
+    const n=gen3d(); tries++;
+    if(!used.has(n)){ used.add(n); result.push(n); }
+  }
+  return result;
+}
+
 function genNums(game){
   const c=G[game];
-  if(c.is3d){ const n=c.is3dpro?6:3; return Array.from({length:n},()=>String(Math.floor(Math.random()*1000)).padStart(3,'0')); }
+  if(c.is3d){
+    if(c.is3dpro){
+      // Max 3D Pro: 4 cặp × 2 số = 8 số, mỗi cặp không trùng nhau
+      const result=[];
+      for(let s=0;s<4;s++){
+        const pair=gen3dSet(2);
+        result.push(...pair);
+      }
+      return result;
+    }
+    // Max 3D: 2 số / Max 3D+: 3 số – không trùng trong bộ
+    return gen3dSet(c.count);
+  }
   const {max,count,sumG}=c;
   for(let att=0;att<300;att++){
     const pool=Array.from({length:max},(_,i)=>i+1).sort(()=>Math.random()-.47);
@@ -1189,8 +1282,19 @@ async function predictGame(game){
   const nums=genNums(game);
 
   if(cfg.is3d){
-    const ids=cfg.is3dpro?['n1','n2','n3','n4','n5','n6']:['n1','n2','n3'];
-    ids.forEach((id,i)=>{ const el=document.getElementById(game+'-'+id); if(el) el.textContent=nums[i]||'000'; });
+    if(cfg.is3dpro){
+      // Max 3D Pro: 4 cặp, mỗi cặp 2 số → hiển thị n1..n8
+      ['n1','n2','n3','n4','n5','n6','n7','n8'].forEach((id,i)=>{
+        const el=document.getElementById(game+'-'+id);
+        if(el) el.textContent=nums[i]||'000';
+      });
+    } else {
+      // Max 3D: 2 số (n1,n2) / Max 3D+: 3 số (n1,n2,n3)
+      ['n1','n2','n3','n4'].slice(0,cfg.count).forEach((id,i)=>{
+        const el=document.getElementById(game+'-'+id);
+        if(el) el.textContent=nums[i]||'000';
+      });
+    }
   } else if(game==='keno'){
     buildKeno(nums); renderBalls('keno-balls',nums,cfg.cls);
   } else if(game==='bingo'){
@@ -1293,7 +1397,17 @@ async function predictGame(game){
 }
 
 function buildPrompt(game,nums,cfg){
-  if(cfg.is3d) return `Phân tích bộ số Max 3D [${nums.join(', ')}] cho ${cfg.name}. Tiềm năng không?`;
+  if(cfg.is3d){
+    if(cfg.is3dpro){
+      // 4 cặp
+      const pairs = [];
+      for(let i=0;i<8;i+=2) pairs.push(`(${nums[i]||'---'}, ${nums[i+1]||'---'})`);
+      return `Game ${cfg.name} – 4 cặp số: ${pairs.join(' / ')}. Phân tích xem các cặp có pattern tốt không? Mỗi số từ 000-999, hai số trong cặp khác nhau. Nhận xét ngắn gọn bằng tiếng Việt.`;
+    }
+    if(cfg.count===2)
+      return `Game ${cfg.name}: Bộ số A=${nums[0]||'---'}, B=${nums[1]||'---'}. Hai số 3 chữ số từ 000-999 không trùng nhau. Phân tích pattern và tiềm năng ngắn gọn bằng tiếng Việt.`;
+    return `Game ${cfg.name}: Bộ số A=${nums[0]||'---'}, B=${nums[1]||'---'}, C=${nums[2]||'---'}. Ba số 3 chữ số từ 000-999 không trùng nhau. Phân tích pattern và tiềm năng ngắn gọn bằng tiếng Việt.`;
+  }
   const s=nums.reduce((a,b)=>a+b,0), ev=nums.filter(n=>n%2===0).length;
   return `Game ${cfg.name}: [${nums.join(', ')}]\nTổng: ${s} (vùng vàng: ${cfg.sumG?cfg.sumG.join('–'):'N/A'})\nChẵn/Lẻ: ${ev}/${nums.length-ev}\nPhân tích ngắn tiềm năng bộ số này.`;
 }
