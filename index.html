@@ -707,164 +707,108 @@ setInterval(()=>{
 document.getElementById('clock').textContent = new Date().toLocaleTimeString('vi-VN',{hour12:false});
 
 // ═══════════════════════════════════════════════
-// CONNECTION ENGINE v3 – WiFi/Cellular icon + real JP parse
+// CONNECTION ENGINE v4 – iOS optimized
+// Key fixes vs v3:
+//  • Proxies run in PARALLEL (Promise.race) – no more 50s serial wait
+//  • iOS Safari timeout: 6s max per request (Safari kills slow fetches)
+//  • No blocking latency probe (was causing iOS connection drops)
+//  • Smart retry: exponential backoff capped at 60s (not 120s)
+//  • applyFallback() called immediately so UI never shows "Đang tải..."
 // ═══════════════════════════════════════════════
 
-// ── SVG icons ───────────────────────────────────
-const ICO_WIFI = `<svg width="14" height="11" viewBox="0 0 22 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><path d="M11 13.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z"/><path d="M11 9.5c-1.7 0-3.2.7-4.3 1.8l1.4 1.4c.8-.8 1.8-1.2 2.9-1.2s2.1.4 2.9 1.2l1.4-1.4C14.2 10.2 12.7 9.5 11 9.5z"/><path d="M11 5.5C8.3 5.5 5.9 6.6 4.1 8.4l1.4 1.4C7 8.4 8.9 7.5 11 7.5s4 .9 5.5 2.3l1.4-1.4C16.1 6.6 13.7 5.5 11 5.5z"/><path d="M11 1.5C7.2 1.5 3.8 3 1.4 5.5L2.8 7C4.9 4.8 7.8 3.5 11 3.5s6.1 1.3 8.2 3.5l1.4-1.5C18.2 3 14.8 1.5 11 1.5z"/></svg>`;
-
+// ── SVG icons ────────────────────────────────────
+const ICO_WIFI = `<svg width="14" height="11" viewBox="0 0 22 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><path d="M11 13.5c-.8 0-1.5.7-1.5 1.5s.7 1.5 1.5 1.5 1.5-.7 1.5-1.5-.7-1.5-1.5-1.5z"/><path d="M11 9.5c-1.7 0-3.2.7-4.3 1.8l1.4 1.4c.8-.8 1.8-1.2 2.9-1.2l1.4-1.4C14.2 10.2 12.7 9.5 11 9.5z"/><path d="M11 5.5C8.3 5.5 5.9 6.6 4.1 8.4l1.4 1.4C7 8.4 8.9 7.5 11 7.5s4 .9 5.5 2.3l1.4-1.4C16.1 6.6 13.7 5.5 11 5.5z"/><path d="M11 1.5C7.2 1.5 3.8 3 1.4 5.5L2.8 7C4.9 4.8 7.8 3.5 11 3.5s6.1 1.3 8.2 3.5l1.4-1.5C18.2 3 14.8 1.5 11 1.5z"/></svg>`;
 const ICO_CELL = `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><rect x="0" y="12" width="4" height="8" rx="1.5"/><rect x="5.5" y="8" width="4" height="12" rx="1.5"/><rect x="11" y="4" width="4" height="16" rx="1.5"/><rect x="16.5" y="0" width="3.5" height="20" rx="1.5"/></svg>`;
-
 const ICO_NONET = `<svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px;flex-shrink:0"><path d="M2 2L18 18M10 1C5 1 1 5 1 10s4 9 9 9 9-4 9-9-4-9-9-9z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`;
 
-// ── Network detection: robust WiFi vs Cellular ───
+// ── Network type: iOS Safari has no NetworkInformation API ──
 let _connState = 'connecting';
-let _netInfoCache = {type:'wifi', label:'WiFi', ts:0};
+// Detect iOS once (no NetworkInformation API on Safari)
+const _isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+// Simple cache for detected network type
+let _netType = {type:'wifi', label:'WiFi'};
 
-function probeNetInfo(){
-  // Step 1: NetworkInformation API (Chrome/Android/Firefox)
+function detectNetType(){
   try{
     const nc = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-    if(nc){
-      const t  = (nc.type||'').toLowerCase();
-      const et = (nc.effectiveType||'').toLowerCase();
-      const rtt = nc.rtt || 0;
-      if(t==='wifi'||t==='ethernet') return {type:'wifi', label:'WiFi'};
-      if(t==='cellular'||t==='wimax'){
-        const lbl = et==='4g'?'LTE':et==='3g'?'3G':(et==='2g'||et==='slow-2g')?'2G':'4G';
-        return {type:'cellular', label:lbl};
-      }
-      // Android Chrome: no .type but has .effectiveType
-      if(et==='4g') return {type:'cellular', label:'LTE'};
-      if(et==='3g') return {type:'cellular', label:'3G'};
-      if(et==='2g'||et==='slow-2g') return {type:'cellular', label:'2G'};
-      // Has API but ambiguous type – use RTT heuristic
-      if(rtt > 0){
-        // WiFi typically <30ms RTT; cellular >50ms
-        return rtt < 40 ? {type:'wifi',label:'WiFi'} : {type:'cellular',label:'4G'};
-      }
-    }
+    if(!nc) return _netType; // iOS: return cached
+    const t  = (nc.type||'').toLowerCase();
+    const et = (nc.effectiveType||'').toLowerCase();
+    if(t==='wifi'||t==='ethernet') return {type:'wifi',label:'WiFi'};
+    if(t==='cellular'||t==='wimax'){ const l=et==='4g'?'LTE':et==='3g'?'3G':'2G'; return {type:'cellular',label:l}; }
+    if(et==='4g') return {type:'cellular',label:'LTE'};
+    if(et==='3g') return {type:'cellular',label:'3G'};
+    if(et==='2g'||et==='slow-2g') return {type:'cellular',label:'2G'};
+    if(nc.rtt>0) return nc.rtt<60?{type:'wifi',label:'WiFi'}:{type:'cellular',label:'LTE'};
+    if(nc.downlink>=5) return {type:'wifi',label:'WiFi'};
+    if(nc.downlink>0)  return {type:'cellular',label:'LTE'};
   }catch(e){}
-
-  // Step 2: iOS / Safari fallback – no NetworkInformation API
-  // Use connection.saveData or downlink as hints if available
-  try{
-    const nc = navigator.connection;
-    if(nc && nc.downlink){
-      // downlink > 5 Mbps → likely WiFi; <2 → cellular
-      return nc.downlink >= 5
-        ? {type:'wifi', label:'WiFi'}
-        : {type:'cellular', label: nc.downlink>=1 ? '4G' : '3G'};
-    }
-  }catch(e){}
-
-  // Step 3: timing heuristic – measure a tiny fetch latency
-  // (cached from last probe, updated async)
-  return _netInfoCache;
-}
-
-// Async latency probe for iOS (runs once on connect, updates cache)
-async function probeLatencyAsync(){
-  if(!navigator.onLine) return;
-  try{
-    const t0 = performance.now();
-    await fetch('https://www.google.com/generate_204',{mode:'no-cors',cache:'no-store'});
-    const rtt = performance.now() - t0;
-    // <80ms → WiFi, 80-300ms → LTE, >300ms → 3G/2G
-    if(rtt < 80)       _netInfoCache = {type:'wifi',    label:'WiFi', ts:Date.now()};
-    else if(rtt < 300) _netInfoCache = {type:'cellular', label:'LTE', ts:Date.now()};
-    else               _netInfoCache = {type:'cellular', label:'3G',  ts:Date.now()};
-    if(_connState==='connected') renderConnIcon(_netInfoCache);
-  }catch(e){
-    _netInfoCache = {type:'wifi', label:'WiFi', ts:Date.now()};
-  }
+  return _netType;
 }
 
 function renderConnIcon(ni){
-  const led = document.getElementById('led');
-  const lbl = document.getElementById('conn-lbl');
+  const led=document.getElementById('led'), lbl=document.getElementById('conn-lbl');
   if(!led||!lbl) return;
+  _netType = ni;
   if(ni.type==='cellular'){
     led.className='led connected cellular';
-    lbl.innerHTML = ICO_CELL+'<span>'+ni.label+'</span>';
+    lbl.innerHTML=ICO_CELL+'<span>'+ni.label+'</span>';
   } else {
     led.className='led connected';
-    lbl.innerHTML = ICO_WIFI+'<span>'+ni.label+'</span>';
+    lbl.innerHTML=ICO_WIFI+'<span>'+ni.label+'</span>';
   }
 }
 
-// ── UI update ────────────────────────────────────
 function updateConnUI(state){
-  _connState = state;
-  const led = document.getElementById('led');
-  const lbl = document.getElementById('conn-lbl');
+  _connState=state;
+  const led=document.getElementById('led'), lbl=document.getElementById('conn-lbl');
   if(!led||!lbl) return;
-  if(state==='connecting'){
-    led.className='led connecting';
-    lbl.innerHTML='<span style="opacity:.6">Kết nối...</span>';
-    return;
-  }
-  if(state==='error'){
-    led.className='led error';
-    lbl.innerHTML=ICO_NONET+'<span>Offline</span>';
-    return;
-  }
-  // connected: show network type immediately from cache, probe async
-  const ni = probeNetInfo();
-  renderConnIcon(ni);
-  // If cache is stale (>30s) or first connect → probe async
-  if(Date.now()-_netInfoCache.ts > 30000) probeLatencyAsync();
+  if(state==='connecting'){ led.className='led connecting'; lbl.innerHTML='<span style="opacity:.6">Kết nối...</span>'; return; }
+  if(state==='error')     { led.className='led error';     lbl.innerHTML=ICO_NONET+'<span>Offline</span>'; return; }
+  renderConnIcon(detectNetType());
 }
 
-// Poll every 5s to refresh network icon
-setInterval(()=>{ if(_connState==='connected') updateConnUI('connected'); }, 5000);
+// Poll network icon every 8s (lighter than 5s, enough for mid-session switch)
+setInterval(()=>{ if(_connState==='connected') renderConnIcon(detectNetType()); }, 8000);
 
-// ── Network events ────────────────────────────────
-window.addEventListener('online',  ()=>{ _netInfoCache.ts=0; updateConnUI('connecting'); checkConnection(); });
+// Network events
+window.addEventListener('online',  ()=>{ checkConnection(); });
 window.addEventListener('offline', ()=>{ connected=false; updateConnUI('error'); });
 try{
   const nc=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
   if(nc) nc.addEventListener('change',()=>{
-    _netInfoCache.ts=0; // invalidate cache
-    if(_connState==='connected') updateConnUI('connected');
+    if(_connState==='connected') renderConnIcon(detectNetType());
     else if(navigator.onLine) checkConnection();
   });
 }catch(e){}
 
-// ═══════════════════════════════════════════════
+// ─────────────────────────────────────────────────────────
 // JACKPOT DATA
-// ═══════════════════════════════════════════════
+// ─────────────────────────────────────────────────────────
 const JP = {
   mega:  {value:'Đang tải...', draw:'--', drawNum:'#01485', nextDate:'', pct:48, ts:0},
   power: {value:'Đang tải...', draw:'--', drawNum:'#01321', nextDate:'', pct:62, ts:0},
 };
-// Fallback = số thực tế gần nhất từ vietlott.vn (cập nhật thủ công khi cần)
 const FALLBACK_JP = {
   mega:  {value:'24.896.153.000 đ', draw:'#01485', nextDate:'Thứ 4, 18/03/2026', pct:48},
   power: {value:'44.307.824.700 đ', draw:'#01321', nextDate:'Thứ 5, 19/03/2026', pct:62},
 };
 
 function applyFallback(){
-  if(JP.mega.value  ==='Đang tải...'){ JP.mega.value=FALLBACK_JP.mega.value; JP.mega.draw=FALLBACK_JP.mega.draw; JP.mega.nextDate=FALLBACK_JP.mega.nextDate; JP.mega.pct=FALLBACK_JP.mega.pct; }
-  if(JP.power.value ==='Đang tải...'){ JP.power.value=FALLBACK_JP.power.value; JP.power.draw=FALLBACK_JP.power.draw; JP.power.nextDate=FALLBACK_JP.power.nextDate; JP.power.pct=FALLBACK_JP.power.pct; }
+  if(JP.mega.value==='Đang tải...'){ const f=FALLBACK_JP.mega; JP.mega.value=f.value; JP.mega.draw=f.draw; JP.mega.nextDate=f.nextDate; JP.mega.pct=f.pct; }
+  if(JP.power.value==='Đang tải...'){ const f=FALLBACK_JP.power; JP.power.value=f.value; JP.power.draw=f.draw; JP.power.nextDate=f.nextDate; JP.power.pct=f.pct; }
 }
 
-// Extract largest VND number from a text blob (handles Vietnamese dot-format)
 function extractBigVND(txt){
-  const found = [];
-  let m;
-  // Pattern A: Vietnamese dot-thousands: 45.678.901.000
-  const reA = /\b(\d{1,3}(?:\.\d{3}){3,})\b/g;
+  const found=[]; let m;
+  const reA=/\b(\d{1,3}(?:\.\d{3}){3,})\b/g;
   while((m=reA.exec(txt))!==null){ const n=parseInt(m[1].replace(/\./g,'')); if(n>=1e9&&n<9e12) found.push(n); }
-  // Pattern B: comma-thousands: 45,678,901,000
-  const reB = /\b(\d{1,3}(?:,\d{3}){3,})\b/g;
+  const reB=/\b(\d{1,3}(?:,\d{3}){3,})\b/g;
   while((m=reB.exec(txt))!==null){ const n=parseInt(m[1].replace(/,/g,'')); if(n>=1e9&&n<9e12) found.push(n); }
-  // Pattern C: plain large digits
-  const reC = /\b(\d{10,13})\b/g;
+  const reC=/\b(\d{10,13})\b/g;
   while((m=reC.exec(txt))!==null){ const n=parseInt(m[1]); if(n>=1e9&&n<9e12) found.push(n); }
   if(!found.length) return null;
-  found.sort((a,b)=>b-a);
-  return found[0];
+  found.sort((a,b)=>b-a); return found[0];
 }
 
 function fmtVND(n){ return n.toLocaleString('vi-VN')+' đ'; }
@@ -877,63 +821,35 @@ function estimatePct(v){
   if(n>10e9)  return 55; return 48;
 }
 
-async function fetchJackpotData(resp, game){
+async function parseJPFromResponse(resp, game){
   try{
     const raw = await resp.text();
     let body = raw;
     try{ const j=JSON.parse(raw); body=j.contents||j.response||j.data||j.body||raw; }catch(_){}
-
-    // Strip scripts/styles but keep text content
     const txt = body
-      .replace(/<script[\s\S]*?<\/script>/gi,'')
-      .replace(/<style[\s\S]*?<\/style>/gi,'')
-      .replace(/<[^>]+>/g,' ')
-      .replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&đ;/g,'đ')
+      .replace(/<script[\s\S]*?<\/script>/gi,'').replace(/<style[\s\S]*?<\/style>/gi,'')
+      .replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&')
       .replace(/\s+/g,' ');
-
-    // Extract jackpot value
     const val = extractBigVND(txt);
-    if(val){
-      JP[game].value = fmtVND(val);
-      JP[game].ts    = Date.now();
-      // Update fallback so offline stays current
-      FALLBACK_JP[game].value = JP[game].value;
-    } else {
-      if(JP[game].value==='Đang tải...') applyFallback();
-    }
-
-    // Extract draw number: kỳ #01485 or kỳ 01485
-    const drawM = txt.match(/[Kk]ỳ[\s#]+0*(\d{4,5})/);
-    if(drawM) {
-      JP[game].draw = '#' + drawM[1].padStart(5,'0');
-      FALLBACK_JP[game].draw = JP[game].draw;
-    }
-
-    // Extract draw date from page
-    // Vietlott uses: "Thứ 4, 18/03/2026" or "18/03/2026" 
-    const dateM = txt.match(/(Thứ\s+[2-7]|Chủ\s+nhật)[,\s]+(\d{1,2}\/\d{2}\/\d{4})/);
-    if(dateM){
-      JP[game].nextDate = dateM[1].replace(/\s+/g,' ')+', '+dateM[2];
-      FALLBACK_JP[game].nextDate = JP[game].nextDate;
-    } else {
-      // Try just date
-      const dm = txt.match(/(\d{1,2}\/\d{2}\/\d{4})/);
-      if(dm && !JP[game].nextDate) JP[game].nextDate = dm[1];
-    }
-
-  }catch(e){
-    if(JP[game].value==='Đang tải...') applyFallback();
-  }
-
-  JP.mega.pct  = estimatePct(JP.mega.value);
-  JP.power.pct = estimatePct(JP.power.value);
-  renderJP('mega');
-  renderJP('power');
-  const isFallback = JP[game].value===FALLBACK_JP[game].value && JP[game].ts===0;
-  if(!isFallback) showToast('✅ Jackpot cập nhật từ Vietlott','',2000);
+    if(val){ JP[game].value=fmtVND(val); JP[game].ts=Date.now(); FALLBACK_JP[game].value=JP[game].value; }
+    else if(JP[game].value==='Đang tải...') applyFallback();
+    const drawM=txt.match(/[Kk]ỳ[\s#]+0*(\d{4,5})/);
+    if(drawM){ JP[game].draw='#'+drawM[1].padStart(5,'0'); FALLBACK_JP[game].draw=JP[game].draw; }
+    const dateM=txt.match(/(Thứ\s+[2-7]|Chủ\s+nhật)[,\s]+(\d{1,2}\/\d{2}\/\d{4})/);
+    if(dateM){ JP[game].nextDate=dateM[1].replace(/\s+/g,' ')+', '+dateM[2]; FALLBACK_JP[game].nextDate=JP[game].nextDate; }
+    else{ const dm=txt.match(/(\d{1,2}\/\d{2}\/\d{4})/); if(dm&&!JP[game].nextDate) JP[game].nextDate=dm[1]; }
+  }catch(e){ if(JP[game].value==='Đang tải...') applyFallback(); }
+  JP.mega.pct=estimatePct(JP.mega.value); JP.power.pct=estimatePct(JP.power.value);
+  renderJP('mega'); renderJP('power');
 }
 
-// ── CORS Proxy list ───────────────────────────────
+// ─────────────────────────────────────────────────────────
+// FETCH ENGINE – Parallel race (critical iOS fix)
+// ─────────────────────────────────────────────────────────
+// iOS Safari: max reliable timeout = 6s. Android: 10s fine.
+const FETCH_TIMEOUT = _isIOS ? 6000 : 10000;
+
+// All CORS proxies – ordered by speed/reliability
 const PROXIES = [
   u => `https://api.allorigins.win/get?url=${encodeURIComponent(u)}&t=${Date.now()}`,
   u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
@@ -941,59 +857,84 @@ const PROXIES = [
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}&t=${Date.now()}`,
   u => `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(u)}`,
 ];
-// Vietlott result pages – proxy will fetch HTML, we parse jackpot value
+
 const VL_MEGA  = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/mega645';
 const VL_POWER = 'https://vietlott.vn/vi/trung-thuong/ket-qua-trung-thuong/655';
-// Homepage also has jackpot banners
 const VL_HOME  = 'https://vietlott.vn/';
-let connected = false, retryN = 0, retryTid = null;
 
-async function fetchWithTimeout(url, ms=10000){
-  const ctrl = new AbortController();
-  const tid = setTimeout(()=>ctrl.abort(), ms);
+let connected=false, retryN=0, retryTid=null;
+
+// Single fetch with abort timeout
+async function safeFetch(url, ms=FETCH_TIMEOUT){
+  const ctrl=new AbortController();
+  const tid=setTimeout(()=>ctrl.abort(), ms);
   try{
-    const r = await fetch(url,{signal:ctrl.signal,cache:'no-store'});
+    const r=await fetch(url,{signal:ctrl.signal, cache:'no-store',
+      // iOS needs explicit headers to avoid 0-byte responses
+      headers:{'Accept':'text/html,application/json,*/*','Cache-Control':'no-cache'}});
     clearTimeout(tid);
     return (r.status>=200&&r.status<400) ? r : null;
   }catch(e){ clearTimeout(tid); return null; }
 }
 
-async function tryProxies(targetUrl, game){
-  for(let i=0;i<PROXIES.length;i++){
-    const r = await fetchWithTimeout(PROXIES[i](targetUrl), i===0?10000:8000);
-    if(r){ fetchJackpotData(r,game); return true; }
-  }
-  return false;
+// PARALLEL race: launch all proxies simultaneously, return FIRST success
+// This is the key iOS fix – no more 50s serial wait
+async function fetchParallel(targetUrl){
+  return new Promise(resolve => {
+    let done=false;
+    let pending=PROXIES.length;
+    PROXIES.forEach(proxyFn => {
+      safeFetch(proxyFn(targetUrl)).then(r => {
+        if(r && !done){ done=true; resolve(r); }
+        else { pending--; if(pending<=0 && !done) resolve(null); }
+      }).catch(()=>{ pending--; if(pending<=0 && !done) resolve(null); });
+    });
+    // Hard cap: iOS Safari kills fetches >12s
+    setTimeout(()=>{ if(!done){ done=true; resolve(null); } }, _isIOS?11000:14000);
+  });
 }
 
 async function checkConnection(){
   if(retryTid){ clearTimeout(retryTid); retryTid=null; }
   updateConnUI('connecting');
+
+  // Apply fallback immediately so UI shows data (not "Đang tải...")
+  applyFallback(); renderJP('mega'); renderJP('power');
+
   if(!navigator.onLine){
     connected=false; retryN++;
     updateConnUI('error');
-    applyFallback(); renderJP('mega'); renderJP('power');
-    retryTid=setTimeout(checkConnection,30000); return;
-  }
-  // Try result pages first, then homepage as fallback
-  let ok = await tryProxies(VL_MEGA,'mega');
-  if(!ok) ok = await tryProxies(VL_HOME,'mega'); // homepage has jackpot banner
-  if(ok){
-    connected=true; retryN=0;
-    updateConnUI('connected');
-    // Fetch Power in background
-    setTimeout(async()=>{
-      const ok2 = await tryProxies(VL_POWER,'power');
-      if(!ok2) tryProxies(VL_HOME,'power');
-    }, 600);
-    if(S.autorefresh) retryTid=setTimeout(checkConnection,3*60*1000);
+    retryTid=setTimeout(checkConnection, _isIOS?15000:30000);
     return;
   }
+
+  // Race all proxies in parallel – first wins
+  const r=await fetchParallel(VL_MEGA);
+  if(r){
+    connected=true; retryN=0;
+    updateConnUI('connected');
+    parseJPFromResponse(r,'mega'); // non-blocking
+    // Fetch Power slightly delayed so they don't contend
+    setTimeout(async()=>{
+      const r2=await fetchParallel(VL_POWER);
+      if(r2) parseJPFromResponse(r2,'power');
+      else {
+        const r3=await fetchParallel(VL_HOME);
+        if(r3) parseJPFromResponse(r3,'power');
+      }
+    }, _isIOS?1500:800);
+    // Next refresh: iOS 4min (shorter because iOS kills stale connections), Android 3min
+    if(S.autorefresh) retryTid=setTimeout(checkConnection, _isIOS?4*60*1000:3*60*1000);
+    return;
+  }
+
+  // All proxies failed
   connected=false; retryN++;
   updateConnUI('error');
-  applyFallback(); renderJP('mega'); renderJP('power');
-  if(retryN===1) showToast('📡 Dùng số ước tính – Đang thử lại');
-  retryTid=setTimeout(checkConnection,Math.min(20000+retryN*15000,120000));
+  // Exponential backoff: 15s, 30s, 45s, 60s max (faster than before)
+  const wait=Math.min(15000*retryN, 60000);
+  if(retryN===1) showToast('📡 Đang dùng dữ liệu gần nhất');
+  retryTid=setTimeout(checkConnection, wait);
 }
 
 function renderJP(g){
