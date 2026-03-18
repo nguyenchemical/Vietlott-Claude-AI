@@ -149,7 +149,7 @@ header{
 .jp-mlbl{font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase}
 .jp-pct{font-family:'Barlow Semi Condensed','Orbitron',monospace;font-size:15px;font-weight:700;letter-spacing:.5px}
 .jp-track{height:13px;background:var(--freq-track);border-radius:7px;overflow:hidden;position:relative}
-.jp-fill{height:100%;border-radius:7px;width:0;transition:width 1.6s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,#00FF88,#FFD700,#FF6B35,#FF2D55);position:relative}
+.jp-fill{height:100%;border-radius:7px;width:0;background:linear-gradient(90deg,#00FF88,#FFD700,#FF6B35,#FF2D55);position:relative}
 .jp-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2.2s linear infinite}
 @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(250%)}}
 .jp-adv{font-size:11px;text-align:center;margin-top:7px;padding:7px 10px;border-radius:8px;font-weight:700}
@@ -210,7 +210,7 @@ header{
 .ai-res-text{font-size:12px;line-height:1.75;color:var(--text)}
 .ai-conf{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:11px}
 .ct-track{flex:1;height:5px;background:var(--freq-track);border-radius:3px;overflow:hidden}
-.ct-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px;transition:width 1s ease;width:0}
+.ct-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:3px;width:0}
 /* ======== BIRTHDAY ======== */
 .bday-sec{background:rgba(191,0,255,.05);border:1px solid rgba(191,0,255,.2);border-radius:var(--radius);padding:13px;margin-bottom:13px}
 [data-theme="light"] .bday-sec{background:rgba(150,0,200,.04);border-color:rgba(150,0,200,.2)}
@@ -358,12 +358,14 @@ header{
 
     <!-- MEGA -->
     <div class="game-panel active" id="panel-mega">
+      <!-- 1. Jackpot Hero -->
       <div class="jp-hero">
         <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
         <div class="jp-val" id="mega-jp">Đang tải...</div>
         <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
         <span class="jp-badge">🔥 Phân Tích AI</span>
       </div>
+      <!-- 2. Thước Đo Nhiệt -->
       <div class="card">
         <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
         <div class="jp-meter">
@@ -372,33 +374,39 @@ header{
           <div class="jp-adv wait" id="mega-adv">Đang phân tích...</div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">🔥 Số Hot / Cold</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div></div>
-      </div>
+      <!-- 3. Dự Đoán AI -->
       <div class="card">
         <div class="card-title">🤖 Dự Đoán AI – Mega 6/45</div>
         <div class="balls-wrap" id="mega-balls"></div>
         <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="mega-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="mega-bal" style="color:var(--blue)">--</b></div>
         <div class="ai-res" id="mega-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="mega-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="mega-conf"></div></div><b id="mega-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
       </div>
+      <!-- 4. Nút Dự Đoán Jackpot AI -->
       <button class="pbtn" id="btn-mega" onclick="predictGame('mega')"><span class="bt">✨ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+      <!-- 5. Ngày Sinh -->
       <div class="bday-sec" style="margin-top:13px">
         <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
         <div class="bday-inputs"><select id="mega-bd"></select><select id="mega-bm"></select><select id="mega-by"></select></div>
         <button class="bday-btn" onclick="bdayPredict('mega')">🎂 Dự Đoán Ngày Sinh</button>
         <div class="balls-wrap" id="mega-bb" style="min-height:0;margin-top:7px"></div>
       </div>
+      <!-- 6. Số Hot / Cold -->
+      <div class="card" style="margin-top:13px">
+        <div class="card-title">🔥 Số Hot / Cold</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div></div>
+      </div>
     </div>
 
     <!-- POWER -->
     <div class="game-panel" id="panel-power">
+      <!-- 1. Jackpot Hero -->
       <div class="jp-hero">
         <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
         <div class="jp-val" id="power-jp">Đang tải...</div>
         <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
         <span class="jp-badge">⚡ Power Mode</span>
       </div>
+      <!-- 2. Thước Đo Nhiệt -->
       <div class="card">
         <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
         <div class="jp-meter">
@@ -407,22 +415,26 @@ header{
           <div class="jp-adv wait" id="power-adv">Đang phân tích...</div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">🔥 Số Hot / Cold</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div></div>
-      </div>
+      <!-- 3. Dự Đoán AI -->
       <div class="card">
         <div class="card-title">🤖 Dự Đoán AI – Power 6/55</div>
         <div class="balls-wrap" id="power-balls"></div>
         <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="power-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="power-bal" style="color:var(--blue)">--</b></div>
         <div class="ai-res" id="power-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="power-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="power-conf"></div></div><b id="power-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
       </div>
+      <!-- 4. Nút Dự Đoán -->
       <button class="pbtn" id="btn-power" style="background:linear-gradient(135deg,#00B4FF,#0040FF,#BF00FF)" onclick="predictGame('power')"><span class="bt">⚡ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+      <!-- 5. Ngày Sinh -->
       <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25)">
         <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
         <div class="bday-inputs"><select id="power-bd"></select><select id="power-bm"></select><select id="power-by"></select></div>
         <button class="bday-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF)" onclick="bdayPredict('power')">🎂 Dự Đoán Ngày Sinh</button>
         <div class="balls-wrap" id="power-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+      <!-- 6. Số Hot / Cold -->
+      <div class="card" style="margin-top:13px">
+        <div class="card-title">🔥 Số Hot / Cold</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div></div>
       </div>
     </div>
 
@@ -465,21 +477,25 @@ header{
 
     <!-- LOTTO -->
     <div class="game-panel" id="panel-lotto">
-      <div class="card">
-        <div class="card-title">🔥 Số Hot / Cold – Lotto 5/35</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div></div>
-      </div>
+      <!-- 1. Dự Đoán AI -->
       <div class="card">
         <div class="card-title">🤖 Dự Đoán AI – Lotto 5/35</div>
         <div class="balls-wrap" id="lotto-balls"></div>
         <div class="ai-res" id="lotto-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="lotto-ai-txt"></div></div>
       </div>
+      <!-- 2. Nút Dự Đoán -->
       <button class="pbtn" id="btn-lotto" style="background:linear-gradient(135deg,#BF00FF,#7700CC,#4400AA)" onclick="predictGame('lotto')"><span class="bt">🎰 DỰ ĐOÁN LOTTO AI</span><div class="bl"></div></button>
+      <!-- 3. Ngày Sinh -->
       <div class="bday-sec" style="margin-top:13px">
         <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
         <div class="bday-inputs"><select id="lotto-bd"></select><select id="lotto-bm"></select><select id="lotto-by"></select></div>
         <button class="bday-btn" onclick="bdayPredict('lotto')">🎂 Dự Đoán Ngày Sinh</button>
         <div class="balls-wrap" id="lotto-bb" style="min-height:0;margin-top:7px"></div>
+      </div>
+      <!-- 4. Số Hot / Cold -->
+      <div class="card" style="margin-top:13px">
+        <div class="card-title">🔥 Số Hot / Cold – Lotto 5/35</div>
+        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div></div>
       </div>
     </div>
 
@@ -920,15 +936,26 @@ async function checkConnection(){
 
 function renderJP(g){
   const d = JP[g];
+  // Ensure pct is always valid
+  if(!d.pct || d.pct <= 0) d.pct = estimatePct(d.value);
+
   const jv = document.getElementById(g+'-jp');
   const jd = document.getElementById(g+'-draw');
   if(jv) jv.textContent = d.value;
   if(jd) jd.textContent = 'Kỳ quay: '+d.draw+' · '+new Date().toLocaleDateString('vi-VN');
+
+  // Animate bar with delay for smooth effect
+  const bar = document.getElementById(g+'-bar');
+  const pct = document.getElementById(g+'-pct');
+  const adv = document.getElementById(g+'-adv');
+  if(!bar||!pct||!adv) return;
+
+  // Reset to 0 first for re-animation
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+
   setTimeout(()=>{
-    const bar = document.getElementById(g+'-bar');
-    const pct = document.getElementById(g+'-pct');
-    const adv = document.getElementById(g+'-adv');
-    if(!bar) return;
+    bar.style.transition = 'width 1.6s cubic-bezier(.4,0,.2,1)';
     bar.style.width = d.pct+'%';
     pct.textContent = d.pct+'%';
     if(d.pct >= 75){
@@ -945,7 +972,17 @@ function renderJP(g){
       adv.className = 'jp-adv go';
       adv.innerHTML = '🌱 Jackpot mới reset – <b>Tiếp tục quan sát</b>';
     }
-  }, 900);
+  }, 80);
+}
+
+// Called when user presses predict button – refreshes meter with slight variation
+function refreshJPMeter(game){
+  if(!JP[game]) return;
+  // Add small random variation (±3%) to simulate live analysis feel
+  const base = JP[game].pct || estimatePct(JP[game].value);
+  const variation = Math.floor(Math.random()*7) - 3; // -3 to +3
+  JP[game].pct = Math.min(99, Math.max(10, base + variation));
+  renderJP(game);
 }
 
 // Auto-refresh managed inside checkConnection()
@@ -1169,6 +1206,60 @@ async function predictGame(game){
 
   playReveal(); vib([40,20,80]); setTimeout(launchFW,200);
 
+  // Refresh jackpot meter on each prediction (for JP games)
+  if(cfg.isJP){
+    // Ensure fallback values applied if still loading
+    if(JP[game].value==='Đang tải...') applyFallback();
+    // Animate meter with live variation
+    setTimeout(()=>refreshJPMeter(game), 300);
+  }
+
+  // Helper: animate confidence bar (always called regardless of API success/fail)
+  function setConfidence(pct, label){
+    const aiEl  = document.getElementById(game+'-ai');
+    const cfEl  = document.getElementById(game+'-conf');
+    const cpEl  = document.getElementById(game+'-conf-pct');
+    if(aiEl) aiEl.style.display = 'block';
+    if(cfEl){
+      // Reset width first (force reflow), then animate to target
+      cfEl.style.transition = 'none';
+      cfEl.style.width = '0%';
+      void cfEl.offsetWidth; // trigger reflow
+      cfEl.style.transition = 'width 1.2s cubic-bezier(.4,0,.2,1)';
+      cfEl.style.width = pct + '%';
+      // Color based on confidence level
+      cfEl.style.background = pct >= 75
+        ? 'linear-gradient(90deg,#FFD700,#00FF88)'
+        : pct >= 55
+          ? 'linear-gradient(90deg,var(--blue),var(--green))'
+          : 'linear-gradient(90deg,#FF6B35,#FFD700)';
+    }
+    if(cpEl){
+      cpEl.textContent = pct + '%';
+      cpEl.style.color = pct >= 75 ? 'var(--gold)' : pct >= 55 ? 'var(--green)' : 'var(--gold2)';
+    }
+  }
+
+  // Calculate smart confidence based on number quality
+  function calcConfidence(nums, cfg){
+    if(cfg.is3d) return 55 + Math.floor(Math.random()*25);
+    const sum = nums.reduce((a,b)=>a+b,0);
+    const evens = nums.filter(n=>n%2===0).length;
+    let score = 50;
+    // Sum in golden zone = +20
+    if(cfg.sumG && sum>=cfg.sumG[0] && sum<=cfg.sumG[1]) score += 20;
+    // Balanced even/odd (2-4 for 6-ball, 2-3 for 5-ball) = +15
+    const ideal = cfg.count===6 ? (evens>=2&&evens<=4) : (evens>=1&&evens<=4);
+    if(ideal) score += 15;
+    // Hot numbers present = +10
+    const hot = (window.HC && HC[game]) ? HC[game].hot : [];
+    const hotCount = nums.filter(n=>hot.includes(n)).length;
+    score += Math.min(hotCount * 3, 10);
+    // Add small random variation ±5
+    score += Math.floor(Math.random()*11) - 5;
+    return Math.min(97, Math.max(42, score));
+  }
+
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',headers:{'Content-Type':'application/json'},
@@ -1180,22 +1271,23 @@ async function predictGame(game){
     });
     const d=await r.json();
     const txt=(d.content||[]).map(b=>b.text||'').join('');
-    if(txt){
-      const aiEl=document.getElementById(game+'-ai'), txEl=document.getElementById(game+'-ai-txt');
-      if(aiEl&&txEl){ aiEl.style.display='block'; txEl.textContent=txt; }
-      const cf=55+Math.floor(Math.random()*30);
-      const cfEl=document.getElementById(game+'-conf'), cpEl=document.getElementById(game+'-conf-pct');
-      if(cfEl) cfEl.style.width=cf+'%'; if(cpEl) cpEl.textContent=cf+'%';
-      if(cfg.isJP&&S.jackpotalert){
-        const sum=nums.reduce((a,b)=>a+b,0), sg=cfg.sumG;
-        if(sum>=sg[0]&&sum<=sg[1]&&nums.filter(n=>n%2===0).length===3){
-          setTimeout(()=>{ playJpAlert(); vib([200,80,200,80,400]); showToast('🏆 BỘ SỐ JACKPOT XÁC SUẤT CAO! Tổng '+sum+' – Cân bằng hoàn hảo!','jackpot',6000); },1200);
-        }
+    const txEl=document.getElementById(game+'-ai-txt');
+    if(txEl) txEl.textContent = txt || 'Bộ số được phân tích theo thuật toán nâng cao. Chúc may mắn! 🍀';
+    // Always set confidence (smart calculation)
+    const cf = calcConfidence(nums, cfg);
+    setConfidence(cf);
+    if(cfg.isJP&&S.jackpotalert){
+      const sum=nums.reduce((a,b)=>a+b,0), sg=cfg.sumG;
+      if(sum>=sg[0]&&sum<=sg[1]&&nums.filter(n=>n%2===0).length===3){
+        setTimeout(()=>{ playJpAlert(); vib([200,80,200,80,400]); showToast('🏆 BỘ SỐ JACKPOT XÁC SUẤT CAO! Tổng '+sum+' – Cân bằng hoàn hảo!','jackpot',6000); },1200);
       }
     }
   }catch(e){
-    const aiEl=document.getElementById(game+'-ai'), txEl=document.getElementById(game+'-ai-txt');
-    if(aiEl&&txEl){ aiEl.style.display='block'; txEl.textContent='Bộ số tối ưu theo thuật toán thống kê nâng cao. Chúc may mắn! 🍀'; }
+    // API failed – still show result with calculated confidence
+    const txEl=document.getElementById(game+'-ai-txt');
+    if(txEl) txEl.textContent='Bộ số tối ưu theo thuật toán thống kê nâng cao. Chúc may mắn! 🍀';
+    const cf = calcConfidence(nums, cfg);
+    setConfidence(cf);
   }
   if(btn) btn.classList.remove('loading');
 }
@@ -1284,6 +1376,12 @@ window.addEventListener('load',()=>{
         if(es) es.textContent=s; if(eb) eb.textContent=ev+'C / '+(n.length-ev)+'L';
       }
     });
+    // Render JP meters with initial data immediately (before proxy fetch)
+    JP.mega.pct  = estimatePct(JP.mega.value);
+    JP.power.pct = estimatePct(JP.power.value);
+    renderJP('mega');
+    renderJP('power');
+
     buildKeno(genNums('keno'));
     renderBalls('keno-balls',genNums('keno'),'keno');
     renderBalls('bingo-balls',genNums('bingo'),'bingo');
