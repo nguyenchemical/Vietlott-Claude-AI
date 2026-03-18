@@ -822,8 +822,11 @@ function estimatePct(v){
 }
 
 async function parseJPFromResponse(resp, game){
+  if(!resp) return;
   try{
-    const raw = await resp.text();
+    // Clone before reading (body can only be consumed once)
+    const clone = (typeof resp.clone === 'function') ? resp.clone() : resp;
+    const raw = await clone.text();
     let body = raw;
     try{ const j=JSON.parse(raw); body=j.contents||j.response||j.data||j.body||raw; }catch(_){}
     const txt = body
@@ -841,6 +844,8 @@ async function parseJPFromResponse(resp, game){
   }catch(e){ if(JP[game].value==='Đang tải...') applyFallback(); }
   JP.mega.pct=estimatePct(JP.mega.value); JP.power.pct=estimatePct(JP.power.value);
   renderJP('mega'); renderJP('power');
+  const real = JP[game].ts > 0;
+  if(real) showToast('✅ Jackpot cập nhật từ Vietlott','',2000);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -866,75 +871,115 @@ let connected=false, retryN=0, retryTid=null;
 
 // Single fetch with abort timeout
 async function safeFetch(url, ms=FETCH_TIMEOUT){
-  const ctrl=new AbortController();
-  const tid=setTimeout(()=>ctrl.abort(), ms);
+  const ctrl = new AbortController();
+  const tid  = setTimeout(()=>ctrl.abort(), ms);
   try{
-    const r=await fetch(url,{signal:ctrl.signal, cache:'no-store',
-      // iOS needs explicit headers to avoid 0-byte responses
-      headers:{'Accept':'text/html,application/json,*/*','Cache-Control':'no-cache'}});
+    const r = await fetch(url, {
+      method: 'GET',
+      signal: ctrl.signal,
+      cache: 'no-store',
+      // Keep headers minimal – some CORS proxies reject custom headers
+      headers: { 'Accept': 'application/json, text/html, */*' }
+    });
     clearTimeout(tid);
-    return (r.status>=200&&r.status<400) ? r : null;
-  }catch(e){ clearTimeout(tid); return null; }
+    return (r.ok || (r.status >= 200 && r.status < 400)) ? r : null;
+  } catch(e) {
+    clearTimeout(tid);
+    return null;
+  }
 }
 
 // PARALLEL race: launch all proxies simultaneously, return FIRST success
-// This is the key iOS fix – no more 50s serial wait
+// Fixed: proper pending counter, cancel remaining on first success
 async function fetchParallel(targetUrl){
   return new Promise(resolve => {
-    let done=false;
-    let pending=PROXIES.length;
+    let done = false;
+    let remaining = PROXIES.length;
+
+    function tryResolve(r){
+      if(done) return;
+      if(r){
+        done = true;
+        resolve(r);
+      } else {
+        remaining--;
+        if(remaining <= 0){ done = true; resolve(null); }
+      }
+    }
+
     PROXIES.forEach(proxyFn => {
-      safeFetch(proxyFn(targetUrl)).then(r => {
-        if(r && !done){ done=true; resolve(r); }
-        else { pending--; if(pending<=0 && !done) resolve(null); }
-      }).catch(()=>{ pending--; if(pending<=0 && !done) resolve(null); });
+      safeFetch(proxyFn(targetUrl))
+        .then(r => tryResolve(r))
+        .catch(() => tryResolve(null));
     });
-    // Hard cap: iOS Safari kills fetches >12s
-    setTimeout(()=>{ if(!done){ done=true; resolve(null); } }, _isIOS?11000:14000);
+
+    // Absolute hard cap (iOS 12s / Android 15s)
+    setTimeout(() => { if(!done){ done=true; resolve(null); } },
+      _isIOS ? 12000 : 15000);
   });
+}
+
+// Sequential fallback: try proxies one by one (used when parallel fails)
+async function fetchSequential(targetUrl){
+  for(let i = 0; i < PROXIES.length; i++){
+    const r = await safeFetch(PROXIES[i](targetUrl), _isIOS ? 7000 : 9000);
+    if(r) return r;
+  }
+  return null;
 }
 
 async function checkConnection(){
   if(retryTid){ clearTimeout(retryTid); retryTid=null; }
   updateConnUI('connecting');
 
-  // Apply fallback immediately so UI shows data (not "Đang tải...")
-  applyFallback(); renderJP('mega'); renderJP('power');
+  // Show fallback data immediately — never show "Đang tải..."
+  applyFallback();
+  renderJP('mega');
+  renderJP('power');
 
   if(!navigator.onLine){
-    connected=false; retryN++;
+    connected = false; retryN++;
     updateConnUI('error');
-    retryTid=setTimeout(checkConnection, _isIOS?15000:30000);
+    retryTid = setTimeout(checkConnection, _isIOS ? 15000 : 30000);
     return;
   }
 
-  // Race all proxies in parallel – first wins
-  const r=await fetchParallel(VL_MEGA);
+  // Step 1: Try parallel race (fastest)
+  let r = await fetchParallel(VL_MEGA);
+
+  // Step 2: If parallel failed, try sequential as fallback
+  if(!r){
+    r = await fetchSequential(VL_HOME);
+  }
+
   if(r){
-    connected=true; retryN=0;
+    connected = true; retryN = 0;
     updateConnUI('connected');
-    parseJPFromResponse(r,'mega'); // non-blocking
-    // Fetch Power slightly delayed so they don't contend
-    setTimeout(async()=>{
-      const r2=await fetchParallel(VL_POWER);
-      if(r2) parseJPFromResponse(r2,'power');
+    parseJPFromResponse(r, 'mega');
+
+    // Fetch Power in background after short delay
+    setTimeout(async () => {
+      const r2 = await fetchParallel(VL_POWER);
+      if(r2) parseJPFromResponse(r2, 'power');
       else {
-        const r3=await fetchParallel(VL_HOME);
-        if(r3) parseJPFromResponse(r3,'power');
+        const r3 = await fetchSequential(VL_HOME);
+        if(r3) parseJPFromResponse(r3, 'power');
       }
-    }, _isIOS?1500:800);
-    // Next refresh: iOS 4min (shorter because iOS kills stale connections), Android 3min
-    if(S.autorefresh) retryTid=setTimeout(checkConnection, _isIOS?4*60*1000:3*60*1000);
+    }, _isIOS ? 2000 : 1000);
+
+    // Schedule next refresh
+    if(S.autorefresh){
+      retryTid = setTimeout(checkConnection, _isIOS ? 4*60*1000 : 3*60*1000);
+    }
     return;
   }
 
-  // All proxies failed
-  connected=false; retryN++;
+  // All failed
+  connected = false; retryN++;
   updateConnUI('error');
-  // Exponential backoff: 15s, 30s, 45s, 60s max (faster than before)
-  const wait=Math.min(15000*retryN, 60000);
-  if(retryN===1) showToast('📡 Đang dùng dữ liệu gần nhất');
-  retryTid=setTimeout(checkConnection, wait);
+  const wait = Math.min(15000 * retryN, 60000);
+  if(retryN === 1) showToast('📡 Đang dùng dữ liệu gần nhất');
+  retryTid = setTimeout(checkConnection, wait);
 }
 
 function renderJP(g){
