@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="vi" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -157,6 +156,19 @@ header{
 .jp-adv.wait{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.25)}
 .jp-adv.hot{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.3);animation:hotP 1.4s ease-in-out infinite}
 @keyframes hotP{0%,100%{box-shadow:none}50%{box-shadow:0 0 18px rgba(255,45,85,.5)}}
+/* ── Game Meter (non-JP) ── */
+.gm-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:13px;transition:background .3s,border-color .3s}
+.gm-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.gm-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.gm-lbl{font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase}
+.gm-pct{font-family:'Barlow Semi Condensed','Orbitron',monospace;font-size:13px;font-weight:700}
+.gm-track{height:11px;background:var(--freq-track);border-radius:6px;overflow:hidden;position:relative;margin-bottom:7px}
+.gm-fill{height:100%;border-radius:6px;width:0;position:relative}
+.gm-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2.2s linear infinite}
+.gm-adv{font-size:11px;text-align:center;padding:6px 10px;border-radius:7px;font-weight:700}
+.gm-adv.gm-low{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.gm-adv.gm-mid{background:rgba(255,215,0,.1);color:var(--gold);border:1px solid rgba(255,215,0,.2)}
+.gm-adv.gm-high{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.25);animation:hotP 1.4s ease-in-out infinite}
 /* ======== BALLS ======== */
 .balls-wrap{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;padding:7px 0;min-height:50px}
 .ball{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Semi Condensed','Orbitron',monospace;font-weight:800;font-size:15px;flex-shrink:0;animation:ballIn .5s cubic-bezier(.34,1.56,.64,1) both;letter-spacing:.3px}
@@ -285,7 +297,6 @@ header{
 <body>
 
 <!-- SPLASH -->
-
 <div id="splash">
   <svg class="sp-logo" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -312,7 +323,6 @@ header{
 <div class="toast" id="toast"></div>
 
 <!-- APP -->
-
 <div id="app">
   <header>
     <div class="hdr">
@@ -351,303 +361,350 @@ header{
 
   <div class="scroll-area">
 
-```
-<!-- VIEW PREDICT -->
-<div class="view active" id="view-predict">
-  <div class="main">
+    <!-- VIEW PREDICT -->
+    <div class="view active" id="view-predict">
+      <div class="main">
 
-    <!-- MEGA -->
-    <div class="game-panel active" id="panel-mega">
-      <!-- 1. Jackpot Hero -->
-      <div class="jp-hero">
-        <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
-        <div class="jp-val" id="mega-jp">Đang tải...</div>
-        <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
-        <span class="jp-badge">🔥 Phân Tích AI</span>
-      </div>
-      <!-- 2. Thước Đo Nhiệt -->
-      <div class="card">
-        <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
-        <div class="jp-meter">
-          <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="mega-pct">--</span></div>
-          <div class="jp-track"><div class="jp-fill" id="mega-bar"></div></div>
-          <div class="jp-adv wait" id="mega-adv">Đang phân tích...</div>
+        <!-- MEGA -->
+        <div class="game-panel active" id="panel-mega">
+          <!-- 1. Jackpot Hero -->
+          <div class="jp-hero">
+            <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
+            <div class="jp-val" id="mega-jp">Đang tải...</div>
+            <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
+            <span class="jp-badge">🔥 Phân Tích AI</span>
+          </div>
+          <!-- 2. Thước Đo Nhiệt -->
+          <div class="card">
+            <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
+            <div class="jp-meter">
+              <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="mega-pct">--</span></div>
+              <div class="jp-track"><div class="jp-fill" id="mega-bar"></div></div>
+              <div class="jp-adv wait" id="mega-adv">Đang phân tích...</div>
+            </div>
+          </div>
+          <!-- 3. Dự Đoán AI -->
+          <div class="card">
+            <div class="card-title">🤖 Dự Đoán AI – Mega 6/45</div>
+            <div class="balls-wrap" id="mega-balls"></div>
+            <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="mega-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="mega-bal" style="color:var(--blue)">--</b></div>
+            <!-- Game Meter inline for Mega -->
+            <div id="mega-gmeter" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase">Chất Lượng Bộ Số</span><span class="gm-pct" style="font-family:'Barlow Semi Condensed',monospace;font-size:13px;font-weight:700;color:var(--sub)">--</span></div>
+              <div class="gm-track"><div class="gm-fill"></div></div>
+              <div class="gm-adv gm-mid" style="margin-top:5px">Nhấn Dự Đoán để phân tích</div>
+            </div>
+            <div class="ai-res" id="mega-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="mega-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="mega-conf"></div></div><b id="mega-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
+          </div>
+          <!-- 4. Nút Dự Đoán Jackpot AI -->
+          <button class="pbtn" id="btn-mega" onclick="predictGame('mega')"><span class="bt">✨ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+          <!-- 5. Ngày Sinh -->
+          <div class="bday-sec" style="margin-top:13px">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="mega-bd"></select><select id="mega-bm"></select><select id="mega-by"></select></div>
+            <button class="bday-btn" onclick="bdayPredict('mega')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="balls-wrap" id="mega-bb" style="min-height:0;margin-top:7px"></div>
+          </div>
+          <!-- 6. Số Hot / Cold -->
+          <div class="card" style="margin-top:13px">
+            <div class="card-title">🔥 Số Hot / Cold</div>
+            <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div></div>
+          </div>
         </div>
-      </div>
-      <!-- 3. Dự Đoán AI -->
-      <div class="card">
-        <div class="card-title">🤖 Dự Đoán AI – Mega 6/45</div>
-        <div class="balls-wrap" id="mega-balls"></div>
-        <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="mega-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="mega-bal" style="color:var(--blue)">--</b></div>
-        <div class="ai-res" id="mega-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="mega-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="mega-conf"></div></div><b id="mega-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
-      </div>
-      <!-- 4. Nút Dự Đoán Jackpot AI -->
-      <button class="pbtn" id="btn-mega" onclick="predictGame('mega')"><span class="bt">✨ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
-      <!-- 5. Ngày Sinh -->
-      <div class="bday-sec" style="margin-top:13px">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="mega-bd"></select><select id="mega-bm"></select><select id="mega-by"></select></div>
-        <button class="bday-btn" onclick="bdayPredict('mega')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="balls-wrap" id="mega-bb" style="min-height:0;margin-top:7px"></div>
-      </div>
-      <!-- 6. Số Hot / Cold -->
-      <div class="card" style="margin-top:13px">
-        <div class="card-title">🔥 Số Hot / Cold</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="mega-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="mega-cold"></div></div></div>
+
+        <!-- POWER -->
+        <div class="game-panel" id="panel-power">
+          <!-- 1. Jackpot Hero -->
+          <div class="jp-hero">
+            <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
+            <div class="jp-val" id="power-jp">Đang tải...</div>
+            <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
+            <span class="jp-badge">⚡ Power Mode</span>
+          </div>
+          <!-- 2. Thước Đo Nhiệt -->
+          <div class="card">
+            <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
+            <div class="jp-meter">
+              <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="power-pct">--</span></div>
+              <div class="jp-track"><div class="jp-fill" id="power-bar"></div></div>
+              <div class="jp-adv wait" id="power-adv">Đang phân tích...</div>
+            </div>
+          </div>
+          <!-- 3. Dự Đoán AI -->
+          <div class="card">
+            <div class="card-title">🤖 Dự Đoán AI – Power 6/55</div>
+            <div class="balls-wrap" id="power-balls"></div>
+            <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="power-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="power-bal" style="color:var(--blue)">--</b></div>
+            <!-- Game Meter inline for Power -->
+            <div id="power-gmeter" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:10px;color:var(--sub);letter-spacing:1px;text-transform:uppercase">Chất Lượng Bộ Số</span><span class="gm-pct" style="font-family:'Barlow Semi Condensed',monospace;font-size:13px;font-weight:700;color:var(--sub)">--</span></div>
+              <div class="gm-track"><div class="gm-fill"></div></div>
+              <div class="gm-adv gm-mid" style="margin-top:5px">Nhấn Dự Đoán để phân tích</div>
+            </div>
+            <div class="ai-res" id="power-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="power-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="power-conf"></div></div><b id="power-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
+          </div>
+          <!-- 4. Nút Dự Đoán -->
+          <button class="pbtn" id="btn-power" style="background:linear-gradient(135deg,#00B4FF,#0040FF,#BF00FF)" onclick="predictGame('power')"><span class="bt">⚡ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
+          <!-- 5. Ngày Sinh -->
+          <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25)">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="power-bd"></select><select id="power-bm"></select><select id="power-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF)" onclick="bdayPredict('power')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="balls-wrap" id="power-bb" style="min-height:0;margin-top:7px"></div>
+          </div>
+          <!-- 6. Số Hot / Cold -->
+          <div class="card" style="margin-top:13px">
+            <div class="card-title">🔥 Số Hot / Cold</div>
+            <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div></div>
+          </div>
+        </div>
+
+        <!-- KENO -->
+        <div class="game-panel" id="panel-keno">
+          <div class="card">
+            <div class="card-title">🎲 Keno – Lưới 80 Số</div>
+            <div class="keno-grid" id="keno-grid"></div>
+            <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--sub)">Ô vàng = AI dự đoán xuất hiện</div>
+          </div>
+          <div class="card">
+            <div class="card-title">🎯 Bộ 10 Số Đề Xuất</div>
+            <div class="balls-wrap" id="keno-balls"></div>
+            <div class="ai-res" id="keno-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="keno-ai-txt"></div></div>
+          </div>
+          <div class="gm-card" id="keno-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu Bộ Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <button class="pbtn" id="btn-keno" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('keno')"><span class="bt">🎲 DỰ ĐOÁN KENO AI</span><div class="bl"></div></button>
+          <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,200,0,.25)">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="keno-bd"></select><select id="keno-bm"></select><select id="keno-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('keno')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="balls-wrap" id="keno-bb" style="min-height:0;margin-top:7px"></div>
+          </div>
+        </div>
+
+        <!-- BINGO -->
+        <div class="game-panel" id="panel-bingo">
+          <div class="card">
+            <div class="card-title">🟢 Dự Đoán AI – Bingo 18</div>
+            <div class="balls-wrap" id="bingo-balls"></div>
+            <div class="ai-res" id="bingo-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="bingo-ai-txt"></div></div>
+          </div>
+          <div class="gm-card" id="bingo-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu Bộ 18 Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <button class="pbtn" id="btn-bingo" style="background:linear-gradient(135deg,#00FF88,#00CC66,#009944);color:#002010" onclick="predictGame('bingo')"><span class="bt">🟢 DỰ ĐOÁN BINGO AI</span><div class="bl"></div></button>
+          <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,200,100,.25);background:rgba(0,200,100,.04)">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="bingo-bd"></select><select id="bingo-bm"></select><select id="bingo-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#00FF88,#00CC66);color:#002010" onclick="bdayPredict('bingo')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="balls-wrap" id="bingo-bb" style="min-height:0;margin-top:7px"></div>
+          </div>
+        </div>
+
+        <!-- LOTTO -->
+        <div class="game-panel" id="panel-lotto">
+          <!-- 1. Dự Đoán AI -->
+          <div class="card">
+            <div class="card-title">🤖 Dự Đoán AI – Lotto 5/35</div>
+            <div class="balls-wrap" id="lotto-balls"></div>
+            <div class="ai-res" id="lotto-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="lotto-ai-txt"></div></div>
+          </div>
+          <!-- 1b. Game Meter -->
+          <div class="gm-card" id="lotto-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu Bộ 5 Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <!-- 2. Nút Dự Đoán -->
+          <button class="pbtn" id="btn-lotto" style="background:linear-gradient(135deg,#BF00FF,#7700CC,#4400AA)" onclick="predictGame('lotto')"><span class="bt">🎰 DỰ ĐOÁN LOTTO AI</span><div class="bl"></div></button>
+          <!-- 3. Ngày Sinh -->
+          <div class="bday-sec" style="margin-top:13px">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="lotto-bd"></select><select id="lotto-bm"></select><select id="lotto-by"></select></div>
+            <button class="bday-btn" onclick="bdayPredict('lotto')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="balls-wrap" id="lotto-bb" style="min-height:0;margin-top:7px"></div>
+          </div>
+          <!-- 4. Số Hot / Cold -->
+          <div class="card" style="margin-top:13px">
+            <div class="card-title">🔥 Số Hot / Cold – Lotto 5/35</div>
+            <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div></div>
+          </div>
+        </div>
+
+        <!-- MAX3D -->
+        <div class="game-panel" id="panel-max3d">
+          <div class="card">
+            <div class="card-title">🔵 Dự Đoán AI – Max 3D</div>
+            <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 2 số 3 chữ số (000–999), hai số không trùng nhau</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3d-n1">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3d-n2">---</div></div>
+            </div>
+            <div class="ai-res" id="max3d-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3d-ai-txt"></div></div>
+          </div>
+          <div class="gm-card" id="max3d-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu Cặp Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <button class="pbtn" id="btn-max3d" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="predictGame('max3d')"><span class="bt">🔵 DỰ ĐOÁN MAX 3D AI</span><div class="bl"></div></button>
+          <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25);background:rgba(0,180,255,.04)">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="max3d-bd"></select><select id="max3d-bm"></select><select id="max3d-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="bdayPredict('max3d')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="m3d-sets" id="max3d-bsets" style="margin-top:9px;display:none">
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3d-b1" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3d-b2" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAX3D+ -->
+        <div class="game-panel" id="panel-max3dp">
+          <div class="card">
+            <div class="card-title">💗 Dự Đoán AI – Max 3D+</div>
+            <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 3 số 3 chữ số (000–999), ba số không trùng nhau</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+            <div class="ai-res" id="max3dp-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dp-ai-txt"></div></div>
+          </div>
+          <div class="gm-card" id="max3dp-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu Bộ 3 Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <button class="pbtn" id="btn-max3dp" style="background:linear-gradient(135deg,#FF69B4,#CC0066,#990044)" onclick="predictGame('max3dp')"><span class="bt">💗 DỰ ĐOÁN MAX 3D+ AI</span><div class="bl"></div></button>
+          <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,100,180,.25);background:rgba(255,100,180,.04)">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="max3dp-bd"></select><select id="max3dp-bm"></select><select id="max3dp-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#FF69B4,#CC0066)" onclick="bdayPredict('max3dp')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="m3d-sets" id="max3dp-bsets" style="margin-top:9px;display:none">
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dp-b1" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dp-b2" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAX3DPRO -->
+        <div class="game-panel" id="panel-max3dpro">
+          <div class="card">
+            <div class="card-title">👑 Dự Đoán AI – Max 3D Pro</div>
+            <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 4 cặp số, mỗi cặp gồm 2 số 3 chữ số (000–999) không trùng nhau</div>
+            <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:1px">CẶP 1</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 2</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số D</div><div class="m3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 3</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số E</div><div class="m3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số F</div><div class="m3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 4</div>
+            <div class="m3d-sets">
+              <div class="m3d-set"><div class="m3d-lbl">Số G</div><div class="m3d-num" id="max3dpro-n7" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Số H</div><div class="m3d-num" id="max3dpro-n8" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+            <div class="ai-res" id="max3dpro-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dpro-ai-txt"></div></div>
+          </div>
+          <div class="gm-card" id="max3dpro-gmeter">
+            <div class="gm-title">📊 Xác Suất Trúng – AI Phân Tích</div>
+            <div class="gm-row"><span class="gm-lbl">Độ Tối Ưu 4 Cặp Số</span><span class="gm-pct" style="color:var(--sub)">--</span></div>
+            <div class="gm-track"><div class="gm-fill"></div></div>
+            <div class="gm-adv gm-mid">Nhấn Dự Đoán để phân tích</div>
+          </div>
+          <button class="pbtn" id="btn-max3dpro" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('max3dpro')"><span class="bt">👑 DỰ ĐOÁN MAX 3D PRO AI</span><div class="bl"></div></button>
+          <div class="bday-sec" style="margin-top:13px">
+            <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
+            <div class="bday-inputs"><select id="max3dpro-bd"></select><select id="max3dpro-bm"></select><select id="max3dpro-by"></select></div>
+            <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('max3dpro')">🎂 Dự Đoán Ngày Sinh</button>
+            <div class="m3d-sets" id="max3dpro-bsets" style="margin-top:9px;display:none">
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dpro-b1" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+              <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dpro-b2" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- POWER -->
-    <div class="game-panel" id="panel-power">
-      <!-- 1. Jackpot Hero -->
-      <div class="jp-hero">
-        <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
-        <div class="jp-val" id="power-jp">Đang tải...</div>
-        <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
-        <span class="jp-badge">⚡ Power Mode</span>
-      </div>
-      <!-- 2. Thước Đo Nhiệt -->
-      <div class="card">
-        <div class="card-title">📊 Thước Đo Nhiệt Jackpot</div>
-        <div class="jp-meter">
-          <div class="jp-mhdr"><span class="jp-mlbl">Xác Suất Nổ Jackpot</span><span class="jp-pct" id="power-pct">--</span></div>
-          <div class="jp-track"><div class="jp-fill" id="power-bar"></div></div>
-          <div class="jp-adv wait" id="power-adv">Đang phân tích...</div>
-        </div>
-      </div>
-      <!-- 3. Dự Đoán AI -->
-      <div class="card">
-        <div class="card-title">🤖 Dự Đoán AI – Power 6/55</div>
-        <div class="balls-wrap" id="power-balls"></div>
-        <div style="margin-top:6px;font-size:11px;color:var(--sub);text-align:center">Tổng: <b id="power-sum" style="color:var(--gold)">--</b> &nbsp;|&nbsp; Cân bằng: <b id="power-bal" style="color:var(--blue)">--</b></div>
-        <div class="ai-res" id="power-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="power-ai-txt"></div><div class="ai-conf"><span style="color:var(--sub)">Độ tin cậy</span><div class="ct-track"><div class="ct-fill" id="power-conf"></div></div><b id="power-conf-pct" style="color:var(--green);font-size:11px">--</b></div></div>
-      </div>
-      <!-- 4. Nút Dự Đoán -->
-      <button class="pbtn" id="btn-power" style="background:linear-gradient(135deg,#00B4FF,#0040FF,#BF00FF)" onclick="predictGame('power')"><span class="bt">⚡ DỰ ĐOÁN JACKPOT AI</span><div class="bl"></div></button>
-      <!-- 5. Ngày Sinh -->
-      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25)">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="power-bd"></select><select id="power-bm"></select><select id="power-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#00B4FF,#0040FF)" onclick="bdayPredict('power')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="balls-wrap" id="power-bb" style="min-height:0;margin-top:7px"></div>
-      </div>
-      <!-- 6. Số Hot / Cold -->
-      <div class="card" style="margin-top:13px">
-        <div class="card-title">🔥 Số Hot / Cold</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="power-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="power-cold"></div></div></div>
+    <!-- VIEW STATS -->
+    <div class="view" id="view-stats">
+      <div class="main">
+        <div class="card"><div class="card-title">📈 Thống Kê Tổng Quan</div><div class="stats-grid"><div class="stat-box"><div class="stat-val" id="s-pred">0</div><div class="stat-lbl">Lần Dự Đoán</div></div><div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div><div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Game Jackpot</div></div><div class="stat-box"><div class="stat-val">AI</div><div class="stat-lbl">Claude Powered</div></div></div></div>
+        <div class="card"><div class="card-title">🔥 Tần Suất Số – Mega 6/45</div><div class="freq-list" id="freq-mega"></div></div>
+        <div class="card"><div class="card-title">⚡ Tần Suất Số – Power 6/55</div><div class="freq-list" id="freq-power"></div></div>
       </div>
     </div>
 
-    <!-- KENO -->
-    <div class="game-panel" id="panel-keno">
-      <div class="card">
-        <div class="card-title">🎲 Keno – Lưới 80 Số</div>
-        <div class="keno-grid" id="keno-grid"></div>
-        <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--sub)">Ô vàng = AI dự đoán xuất hiện</div>
-      </div>
-      <div class="card">
-        <div class="card-title">🎯 Bộ 10 Số Đề Xuất</div>
-        <div class="balls-wrap" id="keno-balls"></div>
-        <div class="ai-res" id="keno-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="keno-ai-txt"></div></div>
-      </div>
-      <button class="pbtn" id="btn-keno" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('keno')"><span class="bt">🎲 DỰ ĐOÁN KENO AI</span><div class="bl"></div></button>
-      <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,200,0,.25)">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="keno-bd"></select><select id="keno-bm"></select><select id="keno-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('keno')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="balls-wrap" id="keno-bb" style="min-height:0;margin-top:7px"></div>
+    <!-- VIEW INFO -->
+    <div class="view" id="view-info">
+      <div class="main">
+        <div class="info-hero"><div class="info-icon">🤖</div><div class="info-title">VietlottAI v2.0</div><div class="info-sub">Dự đoán xổ số Vietlott thông minh, kết nối thời gian thực từ vietlott.vn, phân tích bởi Claude AI</div></div>
+        <div class="info-card"><h3>🎯 Cách Hoạt Động</h3><p>AI phân tích tần suất số lịch sử, cân bằng chẵn/lẻ và các mẫu thống kê để tạo dự đoán tối ưu.</p></div>
+        <div class="info-card"><h3>🧠 Logic AI Nâng Cao</h3><p><b>Mega 6/45:</b> Vùng tổng 120–180, cân bằng 3C:3L.<br><b>Power 6/55:</b> Vùng tổng 140–220.<br><b>Keno:</b> Cụm 10 số xác suất cao từ 80.<br><b>Max 3D:</b> Pattern 3 chữ số từ lịch sử.</p></div>
+        <div class="info-card"><h3>📊 Jackpot Meter</h3><p>Phân tích giá trị tích lũy + thời gian từ lần nổ cuối. Cảnh báo khi xác suất ≥ 80%.</p></div>
+        <div class="info-card"><h3>🎂 Thần Số Học</h3><p>Thuật toán Pythagorean dùng ngày/tháng/năm sinh tạo bộ số may mắn cá nhân hóa.</p></div>
+        <div class="disclaimer">⚠️ <b>Lưu ý:</b> Chỉ mang tính giải trí và tham khảo. Xổ số là may rủi. Không có phương pháp nào đảm bảo trúng giải.</div>
       </div>
     </div>
 
-    <!-- BINGO -->
-    <div class="game-panel" id="panel-bingo">
-      <div class="card">
-        <div class="card-title">🟢 Dự Đoán AI – Bingo 18</div>
-        <div class="balls-wrap" id="bingo-balls"></div>
-        <div class="ai-res" id="bingo-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="bingo-ai-txt"></div></div>
-      </div>
-      <button class="pbtn" id="btn-bingo" style="background:linear-gradient(135deg,#00FF88,#00CC66,#009944);color:#002010" onclick="predictGame('bingo')"><span class="bt">🟢 DỰ ĐOÁN BINGO AI</span><div class="bl"></div></button>
-      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,200,100,.25);background:rgba(0,200,100,.04)">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="bingo-bd"></select><select id="bingo-bm"></select><select id="bingo-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#00FF88,#00CC66);color:#002010" onclick="bdayPredict('bingo')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="balls-wrap" id="bingo-bb" style="min-height:0;margin-top:7px"></div>
-      </div>
-    </div>
-
-    <!-- LOTTO -->
-    <div class="game-panel" id="panel-lotto">
-      <!-- 1. Dự Đoán AI -->
-      <div class="card">
-        <div class="card-title">🤖 Dự Đoán AI – Lotto 5/35</div>
-        <div class="balls-wrap" id="lotto-balls"></div>
-        <div class="ai-res" id="lotto-ai" style="display:none"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="lotto-ai-txt"></div></div>
-      </div>
-      <!-- 2. Nút Dự Đoán -->
-      <button class="pbtn" id="btn-lotto" style="background:linear-gradient(135deg,#BF00FF,#7700CC,#4400AA)" onclick="predictGame('lotto')"><span class="bt">🎰 DỰ ĐOÁN LOTTO AI</span><div class="bl"></div></button>
-      <!-- 3. Ngày Sinh -->
-      <div class="bday-sec" style="margin-top:13px">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="lotto-bd"></select><select id="lotto-bm"></select><select id="lotto-by"></select></div>
-        <button class="bday-btn" onclick="bdayPredict('lotto')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="balls-wrap" id="lotto-bb" style="min-height:0;margin-top:7px"></div>
-      </div>
-      <!-- 4. Số Hot / Cold -->
-      <div class="card" style="margin-top:13px">
-        <div class="card-title">🔥 Số Hot / Cold – Lotto 5/35</div>
-        <div class="hot-cold"><div class="hot-list"><div class="hc-title ht">🔥 Số Nóng</div><div class="hc-balls" id="lotto-hot"></div></div><div class="cold-list"><div class="hc-title ct">❄️ Số Lạnh</div><div class="hc-balls" id="lotto-cold"></div></div></div>
-      </div>
-    </div>
-
-    <!-- MAX3D -->
-    <div class="game-panel" id="panel-max3d">
-      <div class="card">
-        <div class="card-title">🔵 Dự Đoán AI – Max 3D</div>
-        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 2 số 3 chữ số (000–999), hai số không trùng nhau</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3d-n1">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3d-n2">---</div></div>
+    <!-- VIEW SETTINGS -->
+    <div class="view" id="view-settings">
+      <div class="main">
+        <div class="card">
+          <div class="card-title">⚙️ Cài Đặt</div>
+          <div class="s-item">
+            <div><div class="s-lbl">🌓 Chế Độ Sáng / Tối</div><div class="s-sub">Chuyển đổi giao diện Light / Dark Mode</div></div>
+            <div class="toggle" id="tgl-theme" onclick="toggleTheme(this)"></div>
+          </div>
+          <div class="s-item">
+            <div><div class="s-lbl">🔊 Âm Thanh</div><div class="s-sub">Âm thanh khi nhấn và hiển thị kết quả</div></div>
+            <div class="toggle on" id="tgl-sound" onclick="toggleSetting(this,'sound')"></div>
+          </div>
+          <div class="s-item">
+            <div><div class="s-lbl">💥 Pháo Hoa</div><div class="s-sub">Hiệu ứng pháo hoa khi có kết quả</div></div>
+            <div class="toggle on" id="tgl-firework" onclick="toggleSetting(this,'firework')"></div>
+          </div>
+          <div class="s-item">
+            <div><div class="s-lbl">📳 Rung</div><div class="s-sub">Rung thiết bị khi có kết quả</div></div>
+            <div class="toggle on" id="tgl-vibrate" onclick="toggleSetting(this,'vibrate')"></div>
+          </div>
+          <div class="s-item">
+            <div><div class="s-lbl">🔔 Cảnh Báo Jackpot</div><div class="s-sub">Âm thanh khi bộ số Jackpot xác suất cao</div></div>
+            <div class="toggle on" id="tgl-jackpotalert" onclick="toggleSetting(this,'jackpotalert')"></div>
+          </div>
+          <div class="s-item" style="border-bottom:none">
+            <div><div class="s-lbl">🌐 Tự Động Cập Nhật</div><div class="s-sub">Cập nhật dữ liệu Vietlott định kỳ</div></div>
+            <div class="toggle on" id="tgl-autorefresh" onclick="toggleSetting(this,'autorefresh')"></div>
+          </div>
         </div>
-        <div class="ai-res" id="max3d-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3d-ai-txt"></div></div>
-      </div>
-      <button class="pbtn" id="btn-max3d" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="predictGame('max3d')"><span class="bt">🔵 DỰ ĐOÁN MAX 3D AI</span><div class="bl"></div></button>
-      <div class="bday-sec" style="margin-top:13px;border-color:rgba(0,180,255,.25);background:rgba(0,180,255,.04)">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="max3d-bd"></select><select id="max3d-bm"></select><select id="max3d-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#00E5FF,#0080FF)" onclick="bdayPredict('max3d')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="m3d-sets" id="max3d-bsets" style="margin-top:9px;display:none">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3d-b1" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3d-b2" style="background:linear-gradient(135deg,#BF00FF,#FF2D55);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
+        <div class="card" style="text-align:center">
+          <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--sub);margin-bottom:6px;letter-spacing:2px">PHIÊN BẢN</div>
+          <div style="font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:var(--gold)">VietlottAI v2.0</div>
+          <div style="font-size:11px;color:var(--sub);margin-top:5px">Powered by <b style="color:var(--gold)">Claude AI</b> · 2025</div>
+          <div style="margin-top:9px;font-size:11px;color:var(--sub)">Dữ liệu từ <span style="color:var(--blue)">vietlott.vn</span></div>
         </div>
       </div>
     </div>
-
-    <!-- MAX3D+ -->
-    <div class="game-panel" id="panel-max3dp">
-      <div class="card">
-        <div class="card-title">💗 Dự Đoán AI – Max 3D+</div>
-        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 1 bộ số gồm 3 số 3 chữ số (000–999), ba số không trùng nhau</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dp-n1" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dp-n2" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dp-n3" style="background:linear-gradient(135deg,#FF69B4,#CC0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-        <div class="ai-res" id="max3dp-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dp-ai-txt"></div></div>
-      </div>
-      <button class="pbtn" id="btn-max3dp" style="background:linear-gradient(135deg,#FF69B4,#CC0066,#990044)" onclick="predictGame('max3dp')"><span class="bt">💗 DỰ ĐOÁN MAX 3D+ AI</span><div class="bl"></div></button>
-      <div class="bday-sec" style="margin-top:13px;border-color:rgba(255,100,180,.25);background:rgba(255,100,180,.04)">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="max3dp-bd"></select><select id="max3dp-bm"></select><select id="max3dp-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#FF69B4,#CC0066)" onclick="bdayPredict('max3dp')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="m3d-sets" id="max3dp-bsets" style="margin-top:9px;display:none">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dp-b1" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dp-b2" style="background:linear-gradient(135deg,#FF69B4,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MAX3DPRO -->
-    <div class="game-panel" id="panel-max3dpro">
-      <div class="card">
-        <div class="card-title">👑 Dự Đoán AI – Max 3D Pro</div>
-        <div style="font-size:10px;color:var(--sub);margin-bottom:10px;letter-spacing:.5px">Chọn 4 cặp số, mỗi cặp gồm 2 số 3 chữ số (000–999) không trùng nhau</div>
-        <div style="font-size:10px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:1px">CẶP 1</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số A</div><div class="m3d-num" id="max3dpro-n1" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số B</div><div class="m3d-num" id="max3dpro-n2" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 2</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số C</div><div class="m3d-num" id="max3dpro-n3" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số D</div><div class="m3d-num" id="max3dpro-n4" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 3</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số E</div><div class="m3d-num" id="max3dpro-n5" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số F</div><div class="m3d-num" id="max3dpro-n6" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-        <div style="font-size:10px;font-weight:700;color:var(--gold);margin:8px 0 6px;letter-spacing:1px">CẶP 4</div>
-        <div class="m3d-sets">
-          <div class="m3d-set"><div class="m3d-lbl">Số G</div><div class="m3d-num" id="max3dpro-n7" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Số H</div><div class="m3d-num" id="max3dpro-n8" style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-        <div class="ai-res" id="max3dpro-ai" style="display:none;margin-top:10px"><div class="ai-res-title">🧠 Phân Tích Claude AI</div><div class="ai-res-text" id="max3dpro-ai-txt"></div></div>
-      </div>
-      <button class="pbtn" id="btn-max3dpro" style="background:linear-gradient(135deg,#FFD700,#FF8C00,#FF4500)" onclick="predictGame('max3dpro')"><span class="bt">👑 DỰ ĐOÁN MAX 3D PRO AI</span><div class="bl"></div></button>
-      <div class="bday-sec" style="margin-top:13px">
-        <div class="card-title" style="margin-bottom:9px">🎂 Dự Đoán Theo Ngày Sinh</div>
-        <div class="bday-inputs"><select id="max3dpro-bd"></select><select id="max3dpro-bm"></select><select id="max3dpro-by"></select></div>
-        <button class="bday-btn" style="background:linear-gradient(135deg,#FFD700,#FF8C00);color:#1a0000" onclick="bdayPredict('max3dpro')">🎂 Dự Đoán Ngày Sinh</button>
-        <div class="m3d-sets" id="max3dpro-bsets" style="margin-top:9px;display:none">
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 1</div><div class="m3d-num" id="max3dpro-b1" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-          <div class="m3d-set"><div class="m3d-lbl">Bộ 2</div><div class="m3d-num" id="max3dpro-b2" style="background:linear-gradient(135deg,#FFD700,#BF00FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent">---</div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- VIEW STATS -->
-<div class="view" id="view-stats">
-  <div class="main">
-    <div class="card"><div class="card-title">📈 Thống Kê Tổng Quan</div><div class="stats-grid"><div class="stat-box"><div class="stat-val" id="s-pred">0</div><div class="stat-lbl">Lần Dự Đoán</div></div><div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div><div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Game Jackpot</div></div><div class="stat-box"><div class="stat-val">AI</div><div class="stat-lbl">Claude Powered</div></div></div></div>
-    <div class="card"><div class="card-title">🔥 Tần Suất Số – Mega 6/45</div><div class="freq-list" id="freq-mega"></div></div>
-    <div class="card"><div class="card-title">⚡ Tần Suất Số – Power 6/55</div><div class="freq-list" id="freq-power"></div></div>
-  </div>
-</div>
-
-<!-- VIEW INFO -->
-<div class="view" id="view-info">
-  <div class="main">
-    <div class="info-hero"><div class="info-icon">🤖</div><div class="info-title">VietlottAI v2.0</div><div class="info-sub">Dự đoán xổ số Vietlott thông minh, kết nối thời gian thực từ vietlott.vn, phân tích bởi Claude AI</div></div>
-    <div class="info-card"><h3>🎯 Cách Hoạt Động</h3><p>AI phân tích tần suất số lịch sử, cân bằng chẵn/lẻ và các mẫu thống kê để tạo dự đoán tối ưu.</p></div>
-    <div class="info-card"><h3>🧠 Logic AI Nâng Cao</h3><p><b>Mega 6/45:</b> Vùng tổng 120–180, cân bằng 3C:3L.<br><b>Power 6/55:</b> Vùng tổng 140–220.<br><b>Keno:</b> Cụm 10 số xác suất cao từ 80.<br><b>Max 3D:</b> Pattern 3 chữ số từ lịch sử.</p></div>
-    <div class="info-card"><h3>📊 Jackpot Meter</h3><p>Phân tích giá trị tích lũy + thời gian từ lần nổ cuối. Cảnh báo khi xác suất ≥ 80%.</p></div>
-    <div class="info-card"><h3>🎂 Thần Số Học</h3><p>Thuật toán Pythagorean dùng ngày/tháng/năm sinh tạo bộ số may mắn cá nhân hóa.</p></div>
-    <div class="disclaimer">⚠️ <b>Lưu ý:</b> Chỉ mang tính giải trí và tham khảo. Xổ số là may rủi. Không có phương pháp nào đảm bảo trúng giải.</div>
-  </div>
-</div>
-
-<!-- VIEW SETTINGS -->
-<div class="view" id="view-settings">
-  <div class="main">
-    <div class="card">
-      <div class="card-title">⚙️ Cài Đặt</div>
-      <div class="s-item">
-        <div><div class="s-lbl">🌓 Chế Độ Sáng / Tối</div><div class="s-sub">Chuyển đổi giao diện Light / Dark Mode</div></div>
-        <div class="toggle" id="tgl-theme" onclick="toggleTheme(this)"></div>
-      </div>
-      <div class="s-item">
-        <div><div class="s-lbl">🔊 Âm Thanh</div><div class="s-sub">Âm thanh khi nhấn và hiển thị kết quả</div></div>
-        <div class="toggle on" id="tgl-sound" onclick="toggleSetting(this,'sound')"></div>
-      </div>
-      <div class="s-item">
-        <div><div class="s-lbl">💥 Pháo Hoa</div><div class="s-sub">Hiệu ứng pháo hoa khi có kết quả</div></div>
-        <div class="toggle on" id="tgl-firework" onclick="toggleSetting(this,'firework')"></div>
-      </div>
-      <div class="s-item">
-        <div><div class="s-lbl">📳 Rung</div><div class="s-sub">Rung thiết bị khi có kết quả</div></div>
-        <div class="toggle on" id="tgl-vibrate" onclick="toggleSetting(this,'vibrate')"></div>
-      </div>
-      <div class="s-item">
-        <div><div class="s-lbl">🔔 Cảnh Báo Jackpot</div><div class="s-sub">Âm thanh khi bộ số Jackpot xác suất cao</div></div>
-        <div class="toggle on" id="tgl-jackpotalert" onclick="toggleSetting(this,'jackpotalert')"></div>
-      </div>
-      <div class="s-item" style="border-bottom:none">
-        <div><div class="s-lbl">🌐 Tự Động Cập Nhật</div><div class="s-sub">Cập nhật dữ liệu Vietlott định kỳ</div></div>
-        <div class="toggle on" id="tgl-autorefresh" onclick="toggleSetting(this,'autorefresh')"></div>
-      </div>
-    </div>
-    <div class="card" style="text-align:center">
-      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--sub);margin-bottom:6px;letter-spacing:2px">PHIÊN BẢN</div>
-      <div style="font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:var(--gold)">VietlottAI v2.0</div>
-      <div style="font-size:11px;color:var(--sub);margin-top:5px">Powered by <b style="color:var(--gold)">Claude AI</b> · 2025</div>
-      <div style="margin-top:9px;font-size:11px;color:var(--sub)">Dữ liệu từ <span style="color:var(--blue)">vietlott.vn</span></div>
-    </div>
-  </div>
-</div>
-```
 
   </div><!-- scroll-area -->
 
@@ -874,12 +931,207 @@ function extractBigVND(txt){
 
 function fmtVND(n){ return n.toLocaleString('vi-VN')+' đ'; }
 
-function estimatePct(v){
-  const n=parseInt((v||'').replace(/\D/g,''));
-  if(!n||n<=0) return 65;
-  if(n>200e9) return 92; if(n>100e9) return 85;
-  if(n>50e9)  return 74; if(n>20e9)  return 62;
-  if(n>10e9)  return 55; return 48;
+// ── AI PROBABILITY ENGINE ──────────────────────────────
+// Jackpot % dựa trên: giá trị tích lũy + số tuần chưa nổ
+// Ngưỡng Mega 6/45: jackpot reset ~12-15 tỷ, trung bình nổ sau 8-12 tuần
+// Ngưỡng Power 6/55: jackpot reset ~45 tỷ (jackpot 1), nổ ít hơn
+function estimatePct(v, game){
+  const n = parseInt((v||'').replace(/\D/g,''));
+  if(!n||n<=0) return 48;
+  if(game==='mega'){
+    // Mega 6/45: xác suất 1/8.145.060 – jackpot tích lũy càng cao càng "nóng"
+    if(n > 80e9)  return 91; // >80 tỷ – cực nóng, đã lâu chưa nổ
+    if(n > 50e9)  return 82;
+    if(n > 30e9)  return 71;
+    if(n > 20e9)  return 62;
+    if(n > 15e9)  return 54;
+    if(n > 10e9)  return 47;
+    return 38; // vừa nổ – jackpot mới tích lũy
+  }
+  if(game==='power'){
+    // Power 6/55: xác suất 1/28.989.675 – khó hơn, jackpot lớn hơn
+    if(n > 200e9) return 93;
+    if(n > 100e9) return 85;
+    if(n > 70e9)  return 77;
+    if(n > 50e9)  return 68;
+    if(n > 30e9)  return 58;
+    if(n > 15e9)  return 48;
+    return 38;
+  }
+  // Fallback generic
+  if(n>100e9) return 85; if(n>50e9) return 74;
+  if(n>20e9)  return 62; if(n>10e9) return 55; return 48;
+}
+
+// ── GAME PROBABILITY: tính xác suất cho từng loại game ──
+// Trả về {pct, label, color, advice}
+function calcGameProbability(game, nums){
+  const cfg = G[game];
+  if(!cfg || !nums || !nums.length) return {pct:50, label:'50%', color:'mid', advice:'Đang tính...'};
+
+  let score = 0;
+  let reasons = [];
+
+  if(cfg.is3d){
+    // Max 3D / 3D+ / 3D Pro: phân tích pattern số 3 chữ số
+    const nums3d = nums.filter(n => typeof n === 'string' && n.length === 3);
+    if(!nums3d.length) return {pct:55, label:'55%', color:'mid', advice:'Bộ số hợp lệ'};
+
+    // Kiểm tra không trùng trong bộ (đã đảm bảo bởi gen3dSet)
+    const unique = new Set(nums3d).size === nums3d.length;
+    if(unique) score += 15;
+
+    // Pattern: tổng chữ số của mỗi số (số may mắn 0-27, tối ưu 9-18)
+    const digitSums = nums3d.map(n => n.split('').reduce((a,c)=>a+parseInt(c),0));
+    const goodDigitSums = digitSums.filter(s => s>=9 && s<=18).length;
+    score += goodDigitSums * 8; // mỗi số có tổng chữ số tốt +8
+
+    // Đa dạng hàng trăm (tránh cụm cùng phạm vi)
+    const hundreds = nums3d.map(n=>Math.floor(parseInt(n)/100));
+    const uniqueHundreds = new Set(hundreds).size;
+    score += uniqueHundreds * 5;
+
+    // Pattern chẵn lẻ trong từng số
+    const eoPatterns = nums3d.filter(n=>{
+      const d = n.split('').map(Number);
+      const ev = d.filter(x=>x%2===0).length;
+      return ev>=1 && ev<=2; // cân bằng
+    }).length;
+    score += eoPatterns * 5;
+
+    score = Math.min(95, Math.max(35, score + 35));
+    const color = score>=75?'high':score>=55?'mid':'low';
+    const advice = score>=75
+      ? '🔥 Pattern xuất sắc – Xác suất trúng cao!'
+      : score>=55
+        ? '⚡ Pattern tốt – Bộ số tiềm năng'
+        : '🌱 Pattern cơ bản – Có thể thử lại';
+    return {pct:score, label:score+'%', color, advice};
+  }
+
+  if(game==='keno'){
+    // Keno: 10 số từ 80 – phân tích phân bổ
+    score = 40;
+    const low  = nums.filter(n=>n<=20).length;  // 1-20
+    const mid  = nums.filter(n=>n>20&&n<=60).length; // 21-60
+    const high = nums.filter(n=>n>60).length;   // 61-80
+    // Phân bổ lý tưởng: 2-3 thấp, 4-5 giữa, 2-3 cao
+    if(low>=2&&low<=3)  score+=12;
+    if(mid>=4&&mid<=5)  score+=12;
+    if(high>=2&&high<=3)score+=12;
+    // Tổng lý tưởng Keno 10 số: 350-450
+    const sum = nums.reduce((a,b)=>a+b,0);
+    if(sum>=350&&sum<=450) score+=14;
+    // Không tập trung (span > 50)
+    const span = Math.max(...nums)-Math.min(...nums);
+    if(span>=50) score+=10;
+    score = Math.min(95, Math.max(30, score));
+    const color = score>=75?'high':score>=55?'mid':'low';
+    const advice = score>=75
+      ? '🔥 Phân bổ xuất sắc – Cụm số tối ưu!'
+      : score>=55
+        ? '⚡ Phân bổ tốt – Bộ số cân bằng'
+        : '🌱 Phân bổ chưa đều – Cân nhắc thử lại';
+    return {pct:score, label:score+'%', color, advice};
+  }
+
+  if(game==='bingo'){
+    // Bingo 18: 18 số từ 80
+    score = 40;
+    const q1=nums.filter(n=>n<=20).length;
+    const q2=nums.filter(n=>n>20&&n<=40).length;
+    const q3=nums.filter(n=>n>40&&n<=60).length;
+    const q4=nums.filter(n=>n>60).length;
+    // Lý tưởng: ~4-5 mỗi phần tư
+    const balance = [q1,q2,q3,q4].every(q=>q>=3&&q<=7);
+    if(balance) score+=20;
+    // Chẵn lẻ cân bằng (8-10 chẵn)
+    const evens=nums.filter(n=>n%2===0).length;
+    if(evens>=8&&evens<=10) score+=15;
+    // Tổng lý tưởng Bingo 18: 680-760
+    const sum=nums.reduce((a,b)=>a+b,0);
+    if(sum>=680&&sum<=760) score+=15;
+    score=Math.min(95,Math.max(30,score));
+    const color=score>=75?'high':score>=55?'mid':'low';
+    const advice=score>=75?'🔥 Phân bổ hoàn hảo!':score>=55?'⚡ Bộ số cân bằng':'🌱 Thử bộ số khác';
+    return {pct:score, label:score+'%', color, advice};
+  }
+
+  if(game==='lotto'){
+    // Lotto 5/35: 5 số từ 35 – vùng tổng tối ưu 45-80
+    score=40;
+    const sum=nums.reduce((a,b)=>a+b,0);
+    const evens=nums.filter(n=>n%2===0).length;
+    if(sum>=45&&sum<=80)      score+=22; // vùng vàng
+    else if(sum>=35&&sum<=90) score+=10;
+    if(evens>=2&&evens<=3)    score+=18; // cân bằng 2C:3L hoặc 3C:2L
+    // Số nóng Lotto
+    const hot=HC.lotto?.hot||[];
+    const hotCount=nums.filter(n=>hot.includes(n)).length;
+    score+=hotCount*5;
+    // Không tập trung (span >15)
+    const span=Math.max(...nums)-Math.min(...nums);
+    if(span>=15) score+=10;
+    score=Math.min(95,Math.max(30,score));
+    const color=score>=75?'high':score>=55?'mid':'low';
+    const advice=score>=75
+      ? '🔥 Bộ số xuất sắc – Tổng '+sum+' vùng vàng!'
+      : score>=55
+        ? '⚡ Bộ số tiềm năng – Tổng '+sum
+        : '🌱 Tổng '+sum+' – Thử vùng 45-80';
+    return {pct:score, label:score+'%', color, advice};
+  }
+
+  if(game==='mega'||game==='power'){
+    // Mega/Power: logic jackpot (đã có renderJP riêng)
+    // Trả về score cho AI card
+    const sum=nums.reduce((a,b)=>a+b,0);
+    const evens=nums.filter(n=>n%2===0).length;
+    score=50;
+    const sg=cfg.sumG;
+    if(sg&&sum>=sg[0]&&sum<=sg[1]) score+=20;
+    if(cfg.count===6&&evens>=2&&evens<=4) score+=15;
+    const hot=HC[game]?.hot||[];
+    score+=Math.min(nums.filter(n=>hot.includes(n)).length*3,10);
+    score+=Math.floor(Math.random()*11)-5;
+    score=Math.min(97,Math.max(42,score));
+    const color=score>=75?'high':score>=55?'mid':'low';
+    const advice=score>=75?'🔥 Bộ số xuất sắc!':score>=55?'⚡ Bộ số tiềm năng':'🌱 Bộ số cơ bản';
+    return {pct:score, label:score+'%', color, advice};
+  }
+
+  return {pct:55, label:'55%', color:'mid', advice:'Bộ số hợp lệ'};
+}
+
+// ── Render game meter (cho tất cả game khi nhấn dự đoán) ──
+function renderGameMeter(game, nums){
+  const el = document.getElementById(game+'-gmeter');
+  if(!el) return;
+  const {pct, color, advice} = calcGameProbability(game, nums);
+
+  const fill = el.querySelector('.gm-fill');
+  const pctEl= el.querySelector('.gm-pct');
+  const advEl = el.querySelector('.gm-adv');
+  if(!fill||!pctEl||!advEl) return;
+
+  // Màu fill theo level
+  const gradients = {
+    low:  'linear-gradient(90deg,#00FF88,#00CC66)',
+    mid:  'linear-gradient(90deg,#FFD700,#FF8C00)',
+    high: 'linear-gradient(90deg,#FF6B35,#FF2D55)',
+  };
+
+  fill.style.transition='none'; fill.style.width='0%';
+  void fill.offsetWidth;
+  setTimeout(()=>{
+    fill.style.transition='width 1.5s cubic-bezier(.4,0,.2,1)';
+    fill.style.width=pct+'%';
+    fill.style.background=gradients[color]||gradients.mid;
+    pctEl.textContent=pct+'%';
+    pctEl.style.color=color==='high'?'var(--red)':color==='mid'?'var(--gold)':'var(--green)';
+    advEl.className='gm-adv gm-'+color;
+    advEl.innerHTML=advice;
+  }, 80);
 }
 
 async function parseJPFromResponse(resp, game){
@@ -903,7 +1155,7 @@ async function parseJPFromResponse(resp, game){
     if(dateM){ JP[game].nextDate=dateM[1].replace(/\s+/g,' ')+', '+dateM[2]; FALLBACK_JP[game].nextDate=JP[game].nextDate; }
     else{ const dm=txt.match(/(\d{1,2}\/\d{2}\/\d{4})/); if(dm&&!JP[game].nextDate) JP[game].nextDate=dm[1]; }
   }catch(e){ if(JP[game].value==='Đang tải...') applyFallback(); }
-  JP.mega.pct=estimatePct(JP.mega.value); JP.power.pct=estimatePct(JP.power.value);
+  JP.mega.pct=estimatePct(JP.mega.value,"mega"); JP.power.pct=estimatePct(JP.power.value,"power");
   renderJP('mega'); renderJP('power');
   const real = JP[game].ts > 0;
   if(real) showToast('✅ Jackpot cập nhật từ Vietlott','',2000);
@@ -1046,7 +1298,7 @@ async function checkConnection(){
 function renderJP(g){
   const d = JP[g];
   // Ensure pct is always valid
-  if(!d.pct || d.pct <= 0) d.pct = estimatePct(d.value);
+  if(!d.pct || d.pct <= 0) d.pct = estimatePct(d.value, g);
 
   const jv = document.getElementById(g+'-jp');
   const jd = document.getElementById(g+'-draw');
@@ -1089,10 +1341,8 @@ function renderJP(g){
 // Called when user presses predict button – refreshes meter with slight variation
 function refreshJPMeter(game){
   if(!JP[game]) return;
-  // Add small random variation (±3%) to simulate live analysis feel
-  const base = JP[game].pct || estimatePct(JP[game].value);
-  const variation = Math.floor(Math.random()*7) - 3; // -3 to +3
-  JP[game].pct = Math.min(99, Math.max(10, base + variation));
+  // Recalculate from value with game-specific logic
+  JP[game].pct = estimatePct(JP[game].value, game);
   renderJP(game);
 }
 
@@ -1391,25 +1641,7 @@ async function predictGame(game){
     }
   }
 
-  // Calculate smart confidence based on number quality
-  function calcConfidence(nums, cfg){
-    if(cfg.is3d) return 55 + Math.floor(Math.random()*25);
-    const sum = nums.reduce((a,b)=>a+b,0);
-    const evens = nums.filter(n=>n%2===0).length;
-    let score = 50;
-    // Sum in golden zone = +20
-    if(cfg.sumG && sum>=cfg.sumG[0] && sum<=cfg.sumG[1]) score += 20;
-    // Balanced even/odd (2-4 for 6-ball, 2-3 for 5-ball) = +15
-    const ideal = cfg.count===6 ? (evens>=2&&evens<=4) : (evens>=1&&evens<=4);
-    if(ideal) score += 15;
-    // Hot numbers present = +10
-    const hot = (window.HC && HC[game]) ? HC[game].hot : [];
-    const hotCount = nums.filter(n=>hot.includes(n)).length;
-    score += Math.min(hotCount * 3, 10);
-    // Add small random variation ±5
-    score += Math.floor(Math.random()*11) - 5;
-    return Math.min(97, Math.max(42, score));
-  }
+  // Use global AI probability engine (calcGameProbability)
 
   try{
     const r=await fetch('https://api.anthropic.com/v1/messages',{
@@ -1424,9 +1656,11 @@ async function predictGame(game){
     const txt=(d.content||[]).map(b=>b.text||'').join('');
     const txEl=document.getElementById(game+'-ai-txt');
     if(txEl) txEl.textContent = txt || 'Bộ số được phân tích theo thuật toán nâng cao. Chúc may mắn! 🍀';
-    // Always set confidence (smart calculation)
-    const cf = calcConfidence(nums, cfg);
-    setConfidence(cf);
+    // Use global AI probability engine
+    const gpResult = calcGameProbability(game, nums);
+    setConfidence(gpResult.pct);
+    // Also update game meter
+    renderGameMeter(game, nums);
     if(cfg.isJP&&S.jackpotalert){
       const sum=nums.reduce((a,b)=>a+b,0), sg=cfg.sumG;
       if(sum>=sg[0]&&sum<=sg[1]&&nums.filter(n=>n%2===0).length===3){
@@ -1437,8 +1671,9 @@ async function predictGame(game){
     // API failed – still show result with calculated confidence
     const txEl=document.getElementById(game+'-ai-txt');
     if(txEl) txEl.textContent='Bộ số tối ưu theo thuật toán thống kê nâng cao. Chúc may mắn! 🍀';
-    const cf = calcConfidence(nums, cfg);
-    setConfidence(cf);
+    const gpResult = calcGameProbability(game, nums);
+    setConfidence(gpResult.pct);
+    renderGameMeter(game, nums);
   }
   if(btn) btn.classList.remove('loading');
 }
@@ -1565,6 +1800,5 @@ document.addEventListener('touchend', e=>{
   const now=Date.now(); if(now-lastTap<280) e.preventDefault(); lastTap=now;
 },{passive:false});
 </script>
-
 </body>
 </html>
