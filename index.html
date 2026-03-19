@@ -937,154 +937,140 @@ function extractBigVND(txt){
 
 function fmtVND(n){ return n.toLocaleString('vi-VN')+' đ'; }
 
-// ══════════════════════════════════════════════════════════
-// JACKPOT AI ENGINE – Real-time probability calculation
-// Yếu tố: (1) Giá trị tích lũy  (2) Thời gian  (3) Ngày quay
-// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
+// JACKPOT METER ENGINE v5 — Động, không kẹt, dựa trên bộ số
+// Hai tầng:
+//   Tầng 1 (Thước Đo Nhiệt): Xác suất jackpot nổ kỳ tới
+//   Tầng 2 (Chất Lượng Bộ Số): Bộ số AI vừa tạo có tốt không
+// ══════════════════════════════════════════════════════════════
 
-// Lịch quay Vietlott: Mega = Thứ 4 & Thứ 6 & CN / Power = Thứ 3 & Thứ 5 & Thứ 7
-const DRAW_DAYS = { mega:[0,3,5], power:[2,4,6] }; // 0=CN,1=T2...6=T7
+// Lịch quay thực tế Vietlott
+// Mega 6/45:  Thứ 4(3), Thứ 6(5), Chủ Nhật(0)
+// Power 6/55: Thứ 3(2), Thứ 5(4), Thứ 7(6)
+const DRAW_SCHEDULE = { mega:[0,3,5], power:[2,4,6] };
 
-// Tính số kỳ quay đã qua kể từ một ngày (ước tính)
-function estimateDrawsSinceReset(game, jackpotValue){
-  // Giá trị reset: Mega ~12-15 tỷ, Power ~45 tỷ
-  const resetVal = game==='mega' ? 12e9 : 45e9;
-  const n = parseInt((jackpotValue||'').replace(/\D/g,''));
-  if(!n||n<=resetVal) return 1;
-  // Tăng trung bình mỗi kỳ: Mega ~2-3 tỷ, Power ~3-5 tỷ
-  const avgPerDraw = game==='mega' ? 2.5e9 : 4e9;
-  return Math.max(1, Math.round((n - resetVal) / avgPerDraw));
-}
-
-// Lấy ngày quay tiếp theo
+// Lấy thông tin kỳ quay tiếp theo
 function getNextDrawDate(game){
-  const days = DRAW_DAYS[game] || [3,5];
-  const now = new Date();
-  const today = now.getDay(); // 0=CN
-  // Tìm ngày quay kế tiếp (bao gồm hôm nay nếu chưa quay)
-  const hour = now.getHours();
+  const days = DRAW_SCHEDULE[game]||[3,5];
+  const now  = new Date();
+  const dow  = now.getDay();
+  const h    = now.getHours();
+  const m    = now.getMinutes();
   for(let i=0; i<=7; i++){
-    const checkDay = (today + i) % 7;
-    if(days.includes(checkDay)){
-      // Nếu là hôm nay, chỉ tính nếu chưa đến 18:30 (giờ quay)
-      if(i===0 && hour >= 19) continue;
-      const next = new Date(now);
-      next.setDate(now.getDate() + i);
-      return {daysUntil: i, date: next, drawDay: checkDay};
+    const d = (dow+i)%7;
+    if(days.includes(d)){
+      if(i===0 && (h>18||(h===18&&m>=30))) continue; // đã qua giờ quay
+      const dt = new Date(now); dt.setDate(now.getDate()+i);
+      return {daysUntil:i, dow:d, date:dt};
     }
   }
-  return {daysUntil: 7, date: now, drawDay: today};
+  return {daysUntil:1, dow:(dow+1)%7, date:now};
 }
 
-// === CORE: Tính % jackpot meter với đầy đủ yếu tố ===
+// Ước tính số kỳ chưa nổ từ giá trị jackpot
+function estimateDrawsSinceReset(game, val){
+  const resetBase = game==='mega' ? 12e9 : 45e9;
+  const avgGrow   = game==='mega' ? 2.8e9 : 4.2e9;
+  const n = parseInt((val||'').replace(/\D/g,''));
+  if(!n || n<=resetBase) return 0;
+  return Math.max(0, Math.round((n-resetBase)/avgGrow));
+}
+
+// ── TẦNG 1: Thước đo nhiệt jackpot ──────────────────────────
+// Trả về giá trị THAY ĐỔI theo phút/giờ, không bao giờ kẹt
 function calcJackpotPct(game){
   const jp = JP[game];
-  if(!jp || jp.value==='Đang tải...') return game==='mega' ? 55 : 52;
+  if(!jp || jp.value==='Đang tải...') return game==='mega' ? 52 : 50;
 
   const n = parseInt((jp.value||'').replace(/\D/g,''));
-  if(!n || n <= 0) return game==='mega' ? 55 : 52;
+  if(!n||n<=0) return game==='mega' ? 52 : 50;
 
-  // ── Bước 1: Điểm cơ bản từ giá trị jackpot ──────────────
-  let base = 0;
-  if(game === 'mega'){
-    // Mega 6/45 – reset ~12 tỷ, thường nổ ở 30-80 tỷ
-    if     (n > 120e9) base = 90;
-    else if(n > 90e9)  base = 83;
-    else if(n > 60e9)  base = 76;
-    else if(n > 40e9)  base = 68;
-    else if(n > 27e9)  base = 61;
-    else if(n > 20e9)  base = 54;
-    else if(n > 14e9)  base = 46;
-    else               base = 36;
-  } else { // power
-    // Power 6/55 – reset ~45 tỷ, khó hơn nhiều
-    if     (n > 350e9) base = 91;
-    else if(n > 250e9) base = 84;
-    else if(n > 150e9) base = 77;
-    else if(n > 100e9) base = 70;
-    else if(n > 60e9)  base = 62;
-    else if(n > 40e9)  base = 54;
-    else if(n > 20e9)  base = 46;
-    else               base = 36;
+  // ── A. Điểm từ giá trị tích lũy ─────────────────────────
+  let base;
+  if(game==='mega'){
+    if     (n>120e9) base=88; else if(n>90e9) base=82;
+    else if (n>60e9) base=75; else if(n>40e9) base=67;
+    else if (n>27e9) base=60; else if(n>20e9) base=53;
+    else if (n>14e9) base=45; else            base=35;
+  } else {
+    if     (n>350e9) base=90; else if(n>250e9) base=83;
+    else if (n>150e9) base=76; else if(n>100e9) base=69;
+    else if (n>60e9)  base=61; else if(n>40e9)  base=53;
+    else if (n>20e9)  base=45; else              base=35;
   }
 
-  // ── Bước 2: Bonus từ số kỳ chưa nổ ──────────────────────
-  const draws = estimateDrawsSinceReset(game, jp.value);
-  // Mỗi kỳ chưa nổ = tích lũy thêm ~1.2% xác suất cảm nhận
-  const drawBonus = Math.min(Math.floor(draws * 1.2), 12);
+  // ── B. Bonus từ số kỳ chưa nổ (mỗi kỳ +1.3%, tối đa +13) ─
+  const draws     = estimateDrawsSinceReset(game, jp.value);
+  const drawBonus = Math.min(Math.floor(draws*1.3), 13);
 
-  // ── Bước 3: Điều chỉnh theo thời gian thực ───────────────
-  const nextDraw = getNextDrawDate(game);
+  // ── C. Điều chỉnh thời gian thực (thay đổi liên tục) ─────
+  const nd   = getNextDrawDate(game);
   const now  = new Date();
-  const hour = now.getHours();
+  const h    = now.getHours();
   const min  = now.getMinutes();
-  const dow  = now.getDay(); // 0=CN
+  const sec  = now.getSeconds();
+  const dow  = now.getDay();
 
   let timeBonus = 0;
-
-  if(nextDraw.daysUntil === 0){
-    // Ngày quay hôm nay – chưa đến giờ quay (18:30)
-    if(hour < 18 || (hour===18 && min<30)){
-      timeBonus += 8;                        // +8% ngày quay
-      if(hour >= 16) timeBonus += 4;         // +4% thêm nếu <= 2h trước quay
+  if(nd.daysUntil===0){
+    // Ngày quay – chưa đến 18:30
+    const minsLeft = (18*60+30) - (h*60+min);
+    if(minsLeft>0){
+      timeBonus += 7;
+      // Càng gần giờ quay → càng nóng (tuyến tính)
+      if(minsLeft<120) timeBonus += Math.floor((120-minsLeft)/12); // tối đa +10 khi còn 0'
     } else {
-      // Sau 18:30: kết quả đã xong → giảm xuống (chờ kỳ sau)
-      timeBonus -= 3;
+      timeBonus -= 4; // sau quay → giảm
     }
-  } else if(nextDraw.daysUntil === 1){
-    timeBonus += 4;                          // +4% ngày mai có quay
-  } else if(nextDraw.daysUntil === 2){
-    timeBonus += 2;                          // +2% sắp đến ngày quay
+  } else if(nd.daysUntil===1){
+    timeBonus += 4;
+  } else if(nd.daysUntil===2){
+    timeBonus += 2;
   }
+  if(dow===0||dow===5||dow===6) timeBonus += 2; // cuối tuần
 
-  // Cuối tuần: T6/T7/CN người mua nhiều hơn
-  if(dow === 0 || dow === 5 || dow === 6) timeBonus += 2;
+  // ── D. Vi động theo phút (tạo cảm giác "sống") ───────────
+  // Dùng phút trong giờ + kỳ quay làm seed → thay đổi mỗi 3 phút
+  const minuteSeed = Math.floor(min/3) + h*20 + dow*100 + draws*7;
+  const micro = ((Math.sin(minuteSeed*0.7371)*9999)%10 + 10)%10; // 0-9
+  const microBonus = Math.floor(micro) - 4; // -4 đến +5
 
-  // ── Tổng hợp ─────────────────────────────────────────────
-  const total = base + drawBonus + timeBonus;
+  const total = base + drawBonus + timeBonus + microBonus;
   return Math.min(99, Math.max(25, Math.round(total)));
 }
 
-// Tạo lời khuyên thông minh dựa trên % và thời gian thực
+// ── Lời khuyên thông minh ──────────────────────────────────
 function getJPAdvice(game, pct){
-  const nextDraw = getNextDrawDate(game);
-  const now  = new Date();
-  const hour = now.getHours();
-  const min  = now.getMinutes();
-  const isDrawDay    = nextDraw.daysUntil === 0;
-  const beforeDraw   = isDrawDay && (hour < 18 || (hour===18 && min<30));
-  const closeToDraw  = isDrawDay && hour >= 16 && hour < 18;
-  const drawTomorrow = nextDraw.daysUntil === 1;
+  const nd  = getNextDrawDate(game);
+  const now = new Date();
+  const h   = now.getHours(), m = now.getMinutes();
+  const beforeDraw  = nd.daysUntil===0 && (h<18||(h===18&&m<30));
+  const closeDraw   = beforeDraw && h>=16;
+  const tomorrow    = nd.daysUntil===1;
+  const minsLeft    = beforeDraw ? (18*60+30)-(h*60+m) : 0;
 
-  if(pct >= 85){
-    if(beforeDraw && closeToDraw)
-      return `🔥 <b>CỰC NÓNG! Còn ít giờ nữa quay!</b> – Đây là thời điểm vàng!`;
-    if(beforeDraw)
-      return `🔥 <b>JACKPOT CỰC NÓNG!</b> – Hôm nay có quay, đừng bỏ lỡ!`;
-    return `🔥 <b>JACKPOT CỰC NÓNG!</b> – Đây là thời điểm vàng để thử vận may!`;
+  if(pct>=88){
+    if(closeDraw) return `🔥 <b>CỰC NÓNG! Còn ~${minsLeft} phút!</b> – Đây là thời điểm vàng!`;
+    if(beforeDraw) return `🔥 <b>JACKPOT CỰC NÓNG!</b> – Hôm nay có quay! Đừng bỏ lỡ!`;
+    return `🔥 <b>JACKPOT CỰC NÓNG!</b> – Xác suất nổ rất cao, vào tiền ngay!`;
   }
-  if(pct >= 72){
-    if(beforeDraw)
-      return `🔥 <b>Jackpot rất nóng!</b> – <b>Hôm nay có quay!</b> Nên vào tiền trước 18:30`;
-    if(drawTomorrow)
-      return `🔥 <b>Jackpot rất nóng!</b> – Ngày mai có quay, chuẩn bị đặt cược`;
+  if(pct>=74){
+    if(beforeDraw) return `🔥 <b>Jackpot rất nóng!</b> – Hôm nay quay lúc 18:30, nên đặt cược!`;
+    if(tomorrow)   return `🔥 <b>Jackpot rất nóng!</b> – Ngày mai có quay, chuẩn bị đặt cược`;
     return `🔥 <b>Jackpot rất nóng!</b> – Cơ hội cao, nên đặt cược sớm`;
   }
-  if(pct >= 58){
-    if(beforeDraw)
-      return `⚡ Jackpot đang nóng – Quay <b>hôm nay</b>, cân nhắc đặt cược`;
-    if(drawTomorrow)
-      return `⚡ Jackpot đang nóng dần – Quay <b>ngày mai</b>, cân nhắc đặt cược`;
-    return `⚡ Jackpot đang tăng nhiệt – Cân nhắc đặt cược`;
+  if(pct>=60){
+    if(beforeDraw) return `⚡ Jackpot đang nóng – Quay <b>hôm nay</b> lúc 18:30`;
+    if(tomorrow)   return `⚡ Jackpot đang nóng dần – Quay <b>ngày mai</b>, cân nhắc đặt cược`;
+    return `⚡ Jackpot đang tăng nhiệt – Cân nhắc đặt cược kỳ tới`;
   }
-  if(pct >= 42){
+  if(pct>=44){
     return `🌱 Jackpot chưa nóng – Tiếp tục theo dõi thêm vài kỳ`;
   }
-  return `🌱 Jackpot vừa tích lũy – Chờ thêm để jackpot tăng cao`;
+  return `🌱 Jackpot vừa tích lũy – Chờ thêm vài kỳ để jackpot tăng cao`;
 }
 
 function estimatePct(v, game){
-  // Always use real-time AI engine
   return calcJackpotPct(game);
 }
 
@@ -1472,11 +1458,11 @@ function refreshJPMeter(game){
   renderJP(game); // calcJackpotPct called inside renderJP
 }
 
-// Auto-update meter every 60s (time changes → % changes dynamically)
+// Auto-update meter mỗi 10 giây — microBonus thay đổi theo phút → cảm giác "sống"
 setInterval(()=>{
-  if(JP.mega.value !== 'Đang tải...')  renderJP('mega');
+  if(JP.mega.value  !== 'Đang tải...') renderJP('mega');
   if(JP.power.value !== 'Đang tải...') renderJP('power');
-}, 60000);
+}, 10000);
 
 // Auto-refresh managed inside checkConnection()
 
