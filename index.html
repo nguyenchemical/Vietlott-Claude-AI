@@ -980,63 +980,85 @@ function estimateDrawsSinceReset(game, val){
 // Trả về giá trị THAY ĐỔI theo phút/giờ, không bao giờ kẹt
 function calcJackpotPct(game){
   const jp = JP[game];
-  if(!jp || jp.value==='Đang tải...') return game==='mega' ? 52 : 50;
+  if(!jp || jp.value==='Đang tải...') return game==='mega' ? 60 : 58;
 
   const n = parseInt((jp.value||'').replace(/\D/g,''));
-  if(!n||n<=0) return game==='mega' ? 52 : 50;
+  if(!n||n<=0) return game==='mega' ? 60 : 58;
 
   // ── A. Điểm từ giá trị tích lũy ─────────────────────────
+  // Ngưỡng điều chỉnh để phản ánh đúng mức độ "nóng" thực tế
+  // Mega 6/45: jackpot hiện 27.6B → đã tích lũy 6 kỳ → "nóng" thực sự
+  // Power 6/55: jackpot 46.6B → base phải đủ cao
   let base;
   if(game==='mega'){
-    if     (n>120e9) base=88; else if(n>90e9) base=82;
-    else if (n>60e9) base=75; else if(n>40e9) base=67;
-    else if (n>27e9) base=60; else if(n>20e9) base=53;
-    else if (n>14e9) base=45; else            base=35;
+    // Mega: xác suất 1/8.145.060 – quay 3 lần/tuần
+    // Mỗi kỳ không nổ = tăng thêm khoảng 12% "nợ" thống kê
+    if     (n>120e9) base=90;
+    else if(n>90e9)  base=86;
+    else if(n>70e9)  base=82;
+    else if(n>55e9)  base=78;
+    else if(n>40e9)  base=75;
+    else if(n>30e9)  base=72;  // 30-40B: đã khá nóng
+    else if(n>22e9)  base=68;  // 22-30B: nóng vừa
+    else if(n>16e9)  base=63;
+    else if(n>11e9)  base=56;
+    else             base=48;
   } else {
-    if     (n>350e9) base=90; else if(n>250e9) base=83;
-    else if (n>150e9) base=76; else if(n>100e9) base=69;
-    else if (n>60e9)  base=61; else if(n>40e9)  base=53;
-    else if (n>20e9)  base=45; else              base=35;
+    // Power 6/55: xác suất 1/28.989.675 – khó hơn 3.5 lần
+    // Jackpot thường nổ ở 30-150 tỷ (JP1), reset về 3-5 tỷ
+    if     (n>300e9) base=92;
+    else if(n>200e9) base=87;
+    else if(n>150e9) base=83;
+    else if(n>100e9) base=79;
+    else if(n>80e9)  base=76;
+    else if(n>60e9)  base=73;
+    else if(n>45e9)  base=68;  // 45-60B: nóng vừa
+    else if(n>30e9)  base=64;  // 30-45B: đang tăng
+    else if(n>15e9)  base=59;
+    else if(n>5e9)   base=52;
+    else             base=44;
   }
 
-  // ── B. Bonus từ số kỳ chưa nổ (mỗi kỳ +1.3%, tối đa +13) ─
-  const draws     = estimateDrawsSinceReset(game, jp.value);
-  const drawBonus = Math.min(Math.floor(draws*1.3), 13);
+  // ── B. Bonus từ số kỳ chưa nổ ─────────────────────────────
+  // Reset: cả 2 game về ~3 tỷ sau nổ
+  const resetBase  = 3e9;
+  const avgGrow    = game==='mega' ? 3.0e9 : 5.5e9; // Power tăng ~5.5B/kỳ
+  const rawDraws   = Math.max(0, Math.round((n - resetBase) / avgGrow));
+  // Mỗi kỳ +1.5%, tối đa +12%
+  const drawBonus  = Math.min(Math.floor(rawDraws * 1.5), 12);
 
-  // ── C. Điều chỉnh thời gian thực (thay đổi liên tục) ─────
+  // ── C. Điều chỉnh thời gian thực (thay đổi theo giờ) ──────
   const nd   = getNextDrawDate(game);
   const now  = new Date();
   const h    = now.getHours();
   const min  = now.getMinutes();
-  const sec  = now.getSeconds();
   const dow  = now.getDay();
 
   let timeBonus = 0;
   if(nd.daysUntil===0){
-    // Ngày quay – chưa đến 18:30
     const minsLeft = (18*60+30) - (h*60+min);
     if(minsLeft>0){
-      timeBonus += 7;
-      // Càng gần giờ quay → càng nóng (tuyến tính)
-      if(minsLeft<120) timeBonus += Math.floor((120-minsLeft)/12); // tối đa +10 khi còn 0'
+      timeBonus += 5;  // +5% ngày quay cơ bản
+      // Tuyến tính tăng dần: +10% thêm khi còn <2h trước quay
+      if(minsLeft<120) timeBonus += Math.floor((120-minsLeft)/12);
     } else {
-      timeBonus -= 4; // sau quay → giảm
+      timeBonus -= 5;  // sau khi quay xong → giảm
     }
   } else if(nd.daysUntil===1){
-    timeBonus += 4;
+    timeBonus += 3;
   } else if(nd.daysUntil===2){
-    timeBonus += 2;
+    timeBonus += 1;
   }
-  if(dow===0||dow===5||dow===6) timeBonus += 2; // cuối tuần
+  if(dow===0||dow===5||dow===6) timeBonus += 2;
 
-  // ── D. Vi động theo phút (tạo cảm giác "sống") ───────────
-  // Dùng phút trong giờ + kỳ quay làm seed → thay đổi mỗi 3 phút
-  const minuteSeed = Math.floor(min/3) + h*20 + dow*100 + draws*7;
-  const micro = ((Math.sin(minuteSeed*0.7371)*9999)%10 + 10)%10; // 0-9
-  const microBonus = Math.floor(micro) - 4; // -4 đến +5
+  // ── D. Vi động theo phút (không bao giờ kẹt) ──────────────
+  // Sin function với period ~18 phút → mỗi 3 phút một giá trị
+  const minuteSeed  = Math.floor(min/3) + h*20 + dow*100 + rawDraws*7;
+  const micro       = ((Math.sin(minuteSeed*0.7371)*9999)%10+10)%10;
+  const microBonus  = Math.floor(micro) - 4; // -4 đến +5 (biên độ ±4-5)
 
   const total = base + drawBonus + timeBonus + microBonus;
-  return Math.min(99, Math.max(25, Math.round(total)));
+  return Math.min(99, Math.max(30, Math.round(total)));
 }
 
 // ── Lời khuyên thông minh ──────────────────────────────────
