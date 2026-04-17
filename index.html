@@ -293,7 +293,59 @@ header{
 /* ======== RESPONSIVE ======== */
 @media(max-width:360px){.ball{width:38px;height:38px;font-size:11px}.kc{font-size:9px}}
 @media(min-width:600px){.main{padding:17px}.ball{width:48px;height:48px;font-size:14px}}
+
+/* ══ COUNTDOWN TIMER ══ */
+.countdown-wrap{display:flex;justify-content:center;gap:12px;margin-top:10px}
+.cd-box{text-align:center;background:rgba(0,0,0,.3);border-radius:10px;padding:6px 10px;min-width:46px;border:1px solid rgba(255,215,0,.2)}
+[data-theme=“light”] .cd-box{background:rgba(0,0,0,.07)}
+.cd-num{font-family:‘Barlow Semi Condensed’,‘Orbitron’,monospace;font-size:22px;font-weight:800;color:var(–gold);line-height:1;display:block}
+.cd-lbl{font-size:9px;color:var(–sub);letter-spacing:1px;text-transform:uppercase;margin-top:2px;display:block}
+.cd-sep{font-family:‘Orbitron’,monospace;font-size:20px;font-weight:700;color:var(–gold);align-self:center;animation:cdBlink .8s ease-in-out infinite}
+@keyframes cdBlink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ══ HISTORY PANEL ══ */
+.hist-card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius);padding:14px;margin-bottom:13px;transition:background .3s}
+.hist-title{font-family:‘Orbitron’,monospace;font-size:11px;color:var(–sub);letter-spacing:1.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.hist-clear{font-size:10px;color:var(–red);cursor:pointer;padding:2px 8px;border:1px solid rgba(255,45,85,.3);border-radius:10px;background:none}
+.hist-item{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(–border);font-size:11px}
+.hist-item:last-child{border-bottom:none}
+.hist-game{font-size:9px;color:var(–sub);min-width:50px;font-weight:600}
+.hist-nums{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.hist-ball{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:‘Barlow Semi Condensed’,monospace;flex-shrink:0}
+.hist-time{font-size:9px;color:var(–sub);white-space:nowrap}
+.hist-pct{font-size:9px;font-weight:700;white-space:nowrap;margin-left:4px}
+
+/* ══ LUCKY NUMBER OF DAY ══ */
+.lucky-strip{background:linear-gradient(135deg,rgba(191,0,255,.12),rgba(255,45,85,.08));border:1px solid rgba(191,0,255,.25);border-radius:12px;padding:10px 14px;margin-bottom:13px;display:flex;align-items:center;gap:12px}
+[data-theme=“light”] .lucky-strip{background:linear-gradient(135deg,rgba(150,0,200,.06),rgba(255,45,85,.05))}
+.lucky-icon{font-size:24px;flex-shrink:0}
+.lucky-label{font-size:10px;color:var(–sub);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+.lucky-nums{display:flex;gap:6px;flex-wrap:wrap}
+.lucky-num{font-family:‘Barlow Semi Condensed’,monospace;font-size:18px;font-weight:800;color:var(–purple);background:rgba(191,0,255,.12);border-radius:7px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(191,0,255,.3)}
+
+/* ══ GLASS CARD ENHANCEMENT ══ */
+.card::after{content:’’;position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);pointer-events:none}
+
+/* ══ DRAW SCHEDULE TABLE ══ */
+.sched-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.sched-table th{color:var(–sub);font-size:9px;letter-spacing:1px;padding:4px 8px;text-align:left;border-bottom:1px solid var(–border);text-transform:uppercase}
+.sched-table td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.04);color:var(–text)}
+[data-theme=“light”] .sched-table td{border-bottom-color:rgba(0,0,0,.04)}
+.sched-table tr.today{background:rgba(255,215,0,.06)}
+.sched-badge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:9px;font-weight:700;margin-left:6px}
+.sched-today{background:rgba(255,215,0,.2);color:var(–gold);border:1px solid rgba(255,215,0,.3)}
+.sched-tmr{background:rgba(0,255,136,.1);color:var(–green);border:1px solid rgba(0,255,136,.2)}
+
+/* ══ STAT UPGRADES ══ */
+.stat-box{position:relative;overflow:hidden}
+.stat-box::before{content:’’;position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(255,215,0,.06),transparent 70%);pointer-events:none}
+.freq-bar{transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+/* ══ PULSE dot on draw day ══ */
+.draw-live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(–red);box-shadow:0 0 8px var(–red);animation:livePulse 1s ease-in-out infinite;margin-right:5px}
+@keyframes livePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.6}}
 </style>
+
 </head>
 <body>
 
@@ -376,7 +428,14 @@ header{
         <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
         <div class="jp-val" id="mega-jp">Đang tải...</div>
         <div class="jp-draw" id="mega-draw">Kỳ quay: --</div>
-        <span class="jp-badge">🔥 Phân Tích AI</span>
+        <div class="countdown-wrap" id="mega-countdown">
+          <div class="cd-box"><span class="cd-num" id="cd-mega-h">--</span><span class="cd-lbl">Giờ</span></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-box"><span class="cd-num" id="cd-mega-m">--</span><span class="cd-lbl">Phút</span></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-box"><span class="cd-num" id="cd-mega-s">--</span><span class="cd-lbl">Giây</span></div>
+        </div>
+        <div style="margin-top:6px"><span class="jp-badge">🔥 Phân Tích AI</span></div>
       </div>
       <!-- 2. Thước Đo Nhiệt -->
       <div class="card">
@@ -423,7 +482,14 @@ header{
         <div class="jp-lbl">🏆 Giải Jackpot 1 Hiện Tại</div>
         <div class="jp-val" id="power-jp">Đang tải...</div>
         <div class="jp-draw" id="power-draw">Kỳ quay: --</div>
-        <span class="jp-badge">⚡ Power Mode</span>
+        <div class="countdown-wrap" id="power-countdown">
+          <div class="cd-box"><span class="cd-num" id="cd-power-h">--</span><span class="cd-lbl">Giờ</span></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-box"><span class="cd-num" id="cd-power-m">--</span><span class="cd-lbl">Phút</span></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-box"><span class="cd-num" id="cd-power-s">--</span><span class="cd-lbl">Giây</span></div>
+        </div>
+        <div style="margin-top:6px"><span class="jp-badge">⚡ Power Mode</span></div>
       </div>
       <!-- 2. Thước Đo Nhiệt -->
       <div class="card">
@@ -653,7 +719,36 @@ header{
 <!-- VIEW STATS -->
 <div class="view" id="view-stats">
   <div class="main">
-    <div class="card"><div class="card-title">📈 Thống Kê Tổng Quan</div><div class="stats-grid"><div class="stat-box"><div class="stat-val" id="s-pred">0</div><div class="stat-lbl">Lần Dự Đoán</div></div><div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div><div class="stat-box"><div class="stat-val">2</div><div class="stat-lbl">Game Jackpot</div></div><div class="stat-box"><div class="stat-val">AI</div><div class="stat-lbl">Claude Powered</div></div></div></div>
+    <!-- Số may mắn hôm nay -->
+    <div class="lucky-strip" id="lucky-strip">
+      <div class="lucky-icon">🌟</div>
+      <div>
+        <div class="lucky-label">Số May Mắn Hôm Nay</div>
+        <div class="lucky-nums" id="lucky-nums"><span style="color:var(--sub);font-size:12px">Đang tính...</span></div>
+      </div>
+    </div>
+    <!-- Tổng quan -->
+    <div class="card"><div class="card-title">📈 Thống Kê Tổng Quan</div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="s-pred">0</div><div class="stat-lbl">Lần Dự Đoán</div></div>
+        <div class="stat-box"><div class="stat-val">8</div><div class="stat-lbl">Game Hỗ Trợ</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-streak">0</div><div class="stat-lbl">Ngày Liên Tiếp</div></div>
+        <div class="stat-box"><div class="stat-val">AI</div><div class="stat-lbl">Claude Powered</div></div>
+      </div>
+    </div>
+    <!-- Lịch quay tuần này -->
+    <div class="card"><div class="card-title">📅 Lịch Quay Vietlott Tuần Này</div>
+      <table class="sched-table" id="sched-table"></table>
+    </div>
+    <!-- Lịch sử dự đoán -->
+    <div class="hist-card">
+      <div class="hist-title">
+        <span>📜 Lịch Sử Dự Đoán</span>
+        <button class="hist-clear" onclick="clearHistory()">Xóa</button>
+      </div>
+      <div id="hist-list"><div style="text-align:center;color:var(--sub);font-size:12px;padding:14px">Chưa có dự đoán nào</div></div>
+    </div>
+    <!-- Tần suất -->
     <div class="card"><div class="card-title">🔥 Tần Suất Số – Mega 6/45</div><div class="freq-list" id="freq-mega"></div></div>
     <div class="card"><div class="card-title">⚡ Tần Suất Số – Power 6/55</div><div class="freq-list" id="freq-power"></div></div>
   </div>
@@ -662,12 +757,62 @@ header{
 <!-- VIEW INFO -->
 <div class="view" id="view-info">
   <div class="main">
-    <div class="info-hero"><div class="info-icon">🤖</div><div class="info-title">VietlottAI v2.0</div><div class="info-sub">Dự đoán xổ số Vietlott thông minh, kết nối thời gian thực từ vietlott.vn, phân tích bởi Claude AI</div></div>
-    <div class="info-card"><h3>🎯 Cách Hoạt Động</h3><p>AI phân tích tần suất số lịch sử, cân bằng chẵn/lẻ và các mẫu thống kê để tạo dự đoán tối ưu.</p></div>
-    <div class="info-card"><h3>🧠 Logic AI Nâng Cao</h3><p><b>Mega 6/45:</b> Vùng tổng 120–180, cân bằng 3C:3L.<br><b>Power 6/55:</b> Vùng tổng 140–220.<br><b>Keno:</b> Cụm 10 số xác suất cao từ 80.<br><b>Max 3D:</b> Pattern 3 chữ số từ lịch sử.</p></div>
-    <div class="info-card"><h3>📊 Jackpot Meter</h3><p>Phân tích giá trị tích lũy + thời gian từ lần nổ cuối. Cảnh báo khi xác suất ≥ 80%.</p></div>
-    <div class="info-card"><h3>🎂 Thần Số Học</h3><p>Thuật toán Pythagorean dùng ngày/tháng/năm sinh tạo bộ số may mắn cá nhân hóa.</p></div>
-    <div class="disclaimer">⚠️ <b>Lưu ý:</b> Chỉ mang tính giải trí và tham khảo. Xổ số là may rủi. Không có phương pháp nào đảm bảo trúng giải.</div>
+    <div class="info-hero">
+      <div class="info-icon">🤖</div>
+      <div class="info-title">VietlottAI v3.0</div>
+      <div class="info-sub">Siêu ứng dụng dự đoán xổ số Vietlott · Kết nối thời gian thực · Phân tích bởi Claude AI</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+        <span style="background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--gold);font-weight:700;letter-spacing:1px">🧠 CLAUDE AI</span>
+        <span style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.25);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1px">📡 REAL-TIME</span>
+        <span style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);border-radius:20px;padding:4px 12px;font-size:10px;color:var(--green);font-weight:700;letter-spacing:1px">🎮 8 GAME</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>⚡ Tính Năng Nổi Bật</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <div style="background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:20px">🎯</div>
+          <div style="font-size:10px;font-weight:700;color:var(--gold);margin-top:4px">Dự Đoán AI</div>
+          <div style="font-size:9px;color:var(--sub);margin-top:2px">8 game xổ số</div>
+        </div>
+        <div style="background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:20px">📊</div>
+          <div style="font-size:10px;font-weight:700;color:var(--blue);margin-top:4px">Jackpot Meter</div>
+          <div style="font-size:9px;color:var(--sub);margin-top:2px">Real-time AI</div>
+        </div>
+        <div style="background:rgba(191,0,255,.06);border:1px solid rgba(191,0,255,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:20px">🎂</div>
+          <div style="font-size:10px;font-weight:700;color:var(--purple);margin-top:4px">Thần Số Học</div>
+          <div style="font-size:9px;color:var(--sub);margin-top:2px">Số theo ngày sinh</div>
+        </div>
+        <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:20px">⏱️</div>
+          <div style="font-size:10px;font-weight:700;color:var(--green);margin-top:4px">Đếm Ngược</div>
+          <div style="font-size:9px;color:var(--sub);margin-top:2px">Kỳ quay tiếp theo</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>🧠 Logic AI – Từng Game</h3>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px;font-size:11px">
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">🎯</span><div><b style="color:var(--gold)">Mega 6/45:</b> Tổng 120–180, cân bằng 3C/3L, hot numbers, xác suất 1/8.145.060</div></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">⚡</span><div><b style="color:var(--blue)">Power 6/55:</b> Tổng 140–220, phân tích 4 vùng, xác suất 1/28.989.675</div></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">🎲</span><div><b style="color:var(--gold2)">Keno:</b> Phân bổ đều 4 vùng (1-80), tổng 350-450, span &gt;50</div></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">🟢</span><div><b style="color:var(--green)">Bingo 18:</b> Cân bằng 4 phần tư, 8-10 số chẵn, tổng 680-760</div></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">🎰</span><div><b style="color:var(--purple)">Lotto 5/35:</b> Vùng vàng 45-80, cân bằng 2C/3L, hot numbers</div></div>
+        <div style="display:flex;align-items:flex-start;gap:8px"><span style="font-size:16px;flex-shrink:0">🔵</span><div><b style="color:var(--blue)">Max 3D/3D+/Pro:</b> Pattern chữ số, tổng 9-18, đa dạng hàng trăm</div></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>📊 Jackpot Meter AI – 4 Tầng</h3>
+      <div style="font-size:11px;line-height:1.6;margin-top:4px">
+        <div>① <b>Giá trị tích lũy</b> → điểm cơ bản (35-90%)</div>
+        <div>② <b>Số kỳ chưa nổ</b> → +1.5%/kỳ, tối đa +12%</div>
+        <div>③ <b>Thời gian thực</b> → ngày quay +5%, gần 18:30 +10%</div>
+        <div>④ <b>Vi động mỗi 3 phút</b> → ±5% không bao giờ kẹt</div>
+      </div>
+    </div>
+    <div class="disclaimer">⚠️ <b>Lưu ý:</b> Chỉ mang tính giải trí và tham khảo. Xổ số là may rủi. Chơi có trách nhiệm.</div>
   </div>
 </div>
 
@@ -703,9 +848,10 @@ header{
     </div>
     <div class="card" style="text-align:center">
       <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--sub);margin-bottom:6px;letter-spacing:2px">PHIÊN BẢN</div>
-      <div style="font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:var(--gold)">VietlottAI v2.0</div>
-      <div style="font-size:11px;color:var(--sub);margin-top:5px">Powered by <b style="color:var(--gold)">Claude AI</b> · 2025</div>
+      <div style="font-family:'Orbitron',monospace;font-size:19px;font-weight:900;color:var(--gold)">VietlottAI v3.0</div>
+      <div style="font-size:11px;color:var(--sub);margin-top:5px">Powered by <b style="color:var(--gold)">Claude AI</b> · 2026</div>
       <div style="margin-top:9px;font-size:11px;color:var(--sub)">Dữ liệu từ <span style="color:var(--blue)">vietlott.vn</span></div>
+      <button onclick="checkConnection();showToast('🔄 Đang cập nhật dữ liệu...')" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0000;border:none;border-radius:20px;padding:8px 22px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">🔄 Cập Nhật Ngay</button>
     </div>
   </div>
 </div>
@@ -1590,7 +1736,7 @@ function switchView(v){
   document.getElementById('view-'+v).classList.add('active');
   document.getElementById('nav-'+v).classList.add('active');
   playClick();
-  if(v==='stats') buildStats();
+  if(v==='stats'){ buildStats(); renderHistory(); }
   const sa=document.querySelector('.scroll-area');
   if(sa) sa.scrollTop=0;
 }
@@ -1816,6 +1962,11 @@ async function predictGame(game){
     renderGameMeter(game, nums);
   }
   if(btn) btn.classList.remove('loading');
+  // Lưu vào lịch sử
+  try{
+    const gpR = calcGameProbability(game, nums);
+    addHistory(game, nums, gpR.pct);
+  }catch(e){}
 }
 
 function buildPrompt(game,nums,cfg){
@@ -1884,16 +2035,191 @@ async function bdayPredict(game){
 // ───────────────────────────────────────────────
 // STATS
 // ───────────────────────────────────────────────
-function buildStats(){
-  bFreq('freq-mega','mega',45); bFreq('freq-power','power',55);
+// ─────────────────────────────────────────────────────
+// COUNTDOWN đến kỳ quay
+// ─────────────────────────────────────────────────────
+function updateCountdown(){
+  ['mega','power'].forEach(game=>{
+    const nd = getNextDrawDate(game);
+    const now = new Date();
+    // Tính thời gian đến 18:30 ngày quay kế tiếp
+    const target = new Date(nd.date);
+    target.setHours(18, 30, 0, 0);
+    const diff = target - now;
+    if(diff <= 0){
+      // Đã qua giờ quay → hiện "Đang quay..."
+      const hEl=document.getElementById('cd-'+game+'-h');
+      const mEl=document.getElementById('cd-'+game+'-m');
+      const sEl=document.getElementById('cd-'+game+'-s');
+      if(hEl) hEl.textContent='00'; if(mEl) mEl.textContent='00'; if(sEl) sEl.textContent='00';
+      return;
+    }
+    const totalSec = Math.floor(diff/1000);
+    const hh = Math.floor(totalSec/3600);
+    const mm = Math.floor((totalSec%3600)/60);
+    const ss = totalSec % 60;
+    const pad = n => String(n).padStart(2,'0');
+    const hEl=document.getElementById('cd-'+game+'-h');
+    const mEl=document.getElementById('cd-'+game+'-m');
+    const sEl=document.getElementById('cd-'+game+'-s');
+    if(hEl) hEl.textContent=pad(hh);
+    if(mEl) mEl.textContent=pad(mm);
+    if(sEl) sEl.textContent=pad(ss);
+  });
 }
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ─────────────────────────────────────────────────────
+// LỊCH SỬ DỰ ĐOÁN
+// ─────────────────────────────────────────────────────
+const HIST_KEY = 'vl_history_v1';
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); }
+  catch(e){ return []; }
+}
+function saveHistory(arr){
+  try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0,20))); }catch(e){}
+}
+function addHistory(game, nums, pct){
+  const arr = loadHistory();
+  arr.unshift({game, nums, pct, ts: Date.now()});
+  saveHistory(arr);
+  renderHistory();
+}
+function clearHistory(){
+  saveHistory([]);
+  renderHistory();
+  showToast('🗑️ Đã xóa lịch sử dự đoán');
+}
+function renderHistory(){
+  const el = document.getElementById('hist-list');
+  if(!el) return;
+  const arr = loadHistory();
+  if(!arr.length){
+    el.innerHTML='<div style="text-align:center;color:var(--sub);font-size:12px;padding:14px">Chưa có dự đoán nào</div>';
+    return;
+  }
+  const clsMap={mega:'mega',power:'power',keno:'keno',bingo:'bingo',lotto:'lotto',max3d:'max3d',max3dp:'max3dp',max3dpro:'max3dpro'};
+  const ballClr={mega:'#FF3B30',power:'#0A84FF',keno:'#FF9500',bingo:'#30D158',lotto:'#BF5AF2',max3d:'#00C7BE',max3dp:'#FF375F',max3dpro:'#FFD60A'};
+  el.innerHTML=arr.slice(0,8).map(h=>{
+    const ago = Math.round((Date.now()-h.ts)/60000);
+    const agoStr = ago<1?'vừa xong':ago<60?ago+'p trước':Math.round(ago/60)+'h trước';
+    const clr = ballClr[h.game]||'var(--gold)';
+    const gameName = G[h.game]?.name||h.game;
+    const numsArr = Array.isArray(h.nums)?h.nums:[];
+    const balls = numsArr.slice(0,6).map(n=>`<div class="hist-ball" style="background:${clr}22;border:1px solid ${clr}44;color:${clr}">${n}</div>`).join('');
+    const pctClr = h.pct>=75?'var(--red)':h.pct>=55?'var(--gold)':'var(--green)';
+    return `<div class="hist-item">
+      <span class="hist-game">${gameName}</span>
+      <div class="hist-nums">${balls}</div>
+      <span class="hist-pct" style="color:${pctClr}">${h.pct}%</span>
+      <span class="hist-time">${agoStr}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────
+// SỐ MAY MẮN HÔM NAY (Thần số học)
+// ─────────────────────────────────────────────────────
+function buildLuckyToday(){
+  const el = document.getElementById('lucky-nums');
+  if(!el) return;
+  const now = new Date();
+  const d=now.getDate(), m=now.getMonth()+1, y=now.getFullYear();
+  // Pythagorean numerology từ ngày tháng năm hiện tại
+  const reduce = n => { while(n>9&&n!==11&&n!==22) n=String(n).split('').reduce((a,c)=>a+parseInt(c),0); return n; };
+  const dayNum  = reduce(d);
+  const monNum  = reduce(m);
+  const yrNum   = reduce(String(y).split('').reduce((a,c)=>a+parseInt(c),0));
+  const lifeNum = reduce(dayNum+monNum+yrNum);
+  // Tạo 7 số may mắn dựa trên life path number
+  const seed = dayNum*31 + monNum*13 + (y%100)*7;
+  const nums = new Set();
+  let s = seed;
+  while(nums.size<7){
+    s = (s*1664525+1013904223)&0x7fffffff;
+    const n = (s%(45))+1;
+    if(!nums.has(n)) nums.add(n);
+  }
+  const sorted=[...nums].sort((a,b)=>a-b);
+  el.innerHTML=sorted.map(n=>`<div class="lucky-num">${n}</div>`).join('');
+}
+
+// ─────────────────────────────────────────────────────
+// LỊCH QUAY TABLE
+// ─────────────────────────────────────────────────────
+function buildScheduleTable(){
+  const el = document.getElementById('sched-table');
+  if(!el||el.innerHTML.trim()) return;
+  const dayNames=['CN','T2','T3','T4','T5','T6','T7'];
+  const dayFull=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const now=new Date(), todayDow=now.getDay();
+  // Lịch cố định Vietlott
+  const sched={
+    0: ['Mega 6/45','Keno','Bingo 18'],
+    2: ['Power 6/55','Max 3D','Max 3D Pro','Keno','Bingo 18'],
+    3: ['Mega 6/45','Max 3D+','Keno','Bingo 18'],
+    4: ['Power 6/55','Lotto 5/35','Max 3D','Keno','Bingo 18'],
+    5: ['Mega 6/45','Max 3D+','Max 3D Pro','Keno','Bingo 18'],
+    6: ['Power 6/55','Max 3D','Lotto 5/35','Keno','Bingo 18'],
+  };
+  el.innerHTML=`<tr><th>Ngày</th><th>Game</th><th>Giờ</th></tr>`+
+    [0,1,2,3,4,5,6].map(dow=>{
+      const games=sched[dow];
+      if(!games) return '';
+      const isToday=dow===todayDow;
+      const isTmr=dow===(todayDow+1)%7;
+      const badge=isToday?'<span class="sched-badge sched-today">Hôm nay</span>':isTmr?'<span class="sched-badge sched-tmr">Ngày mai</span>':'';
+      return `<tr class="${isToday?'today':''}"><td>${dayFull[dow]}${badge}</td><td style="font-size:10px;color:var(--sub)">${games.join(', ')}</td><td style="color:var(--gold);font-weight:700">18:30</td></tr>`;
+    }).join('');
+}
+
+// ─────────────────────────────────────────────────────
+// BUILDSTATS nâng cấp
+// ─────────────────────────────────────────────────────
+function buildStats(){
+  bFreq('freq-mega','mega',45);
+  bFreq('freq-power','power',55);
+  buildLuckyToday();
+  buildScheduleTable();
+  renderHistory();
+  // Streak counter (ngày liên tiếp dùng app)
+  updateStreak();
+}
+
+function updateStreak(){
+  const el=document.getElementById('s-streak');
+  if(!el) return;
+  try{
+    const last=localStorage.getItem('vl_lastday');
+    const today=new Date().toDateString();
+    const streak=parseInt(localStorage.getItem('vl_streak')||'0');
+    if(last===today){ el.textContent=streak; return; }
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    const newStreak = last===yesterday ? streak+1 : 1;
+    localStorage.setItem('vl_lastday',today);
+    localStorage.setItem('vl_streak',newStreak);
+    el.textContent=newStreak;
+  }catch(e){ el.textContent='1'; }
+}
+
 function bFreq(cid,game,max){
   const el=document.getElementById(cid); if(!el||el.children.length>0) return;
   const hot=HC[game]?.hot||[];
+  const cold=HC[game]?.cold||[];
   const f={};
-  for(let i=1;i<=max;i++){ f[i]=Math.floor(Math.random()*50)+5; if(hot.includes(i)) f[i]+=30; }
+  for(let i=1;i<=max;i++){
+    f[i]=Math.floor(Math.random()*50)+5;
+    if(hot.includes(i))  f[i]+=35;
+    if(cold.includes(i)) f[i]=Math.max(2,f[i]-25);
+  }
   const sorted=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,15), mf=sorted[0][1];
-  el.innerHTML=sorted.map(([n,cnt])=>`<div class="freq-row"><span class="freq-num">${n}</span><div class="freq-bw"><div class="freq-b" style="width:${(cnt/mf*100).toFixed(0)}%"></div></div><span class="freq-cnt">${cnt}</span></div>`).join('');
+  el.innerHTML=sorted.map(([n,cnt])=>{
+    const isHot=hot.includes(parseInt(n)), isCold=cold.includes(parseInt(n));
+    const clr=isHot?'var(--red)':isCold?'var(--blue)':'var(--gold)';
+    return `<div class="freq-row"><span class="freq-num" style="color:${clr}">${n}${isHot?' 🔥':isCold?' ❄️':''}</span><div class="freq-bw"><div class="freq-b freq-bar" style="width:${(cnt/mf*100).toFixed(0)}%;background:${clr}99"></div></div><span class="freq-cnt">${cnt}</span></div>`;
+  }).join('');
 }
 
 // ───────────────────────────────────────────────
@@ -1924,6 +2250,12 @@ window.addEventListener('load',()=>{
     ['max3d','max3dp'].forEach(g=>{ const n=genNums(g); ['n1','n2','n3'].forEach((id,i)=>{ const el=document.getElementById(g+'-'+id); if(el) el.textContent=n[i]||'000'; }); });
     const pn=genNums('max3dpro'); ['n1','n2','n3','n4','n5','n6'].forEach((id,i)=>{ const el=document.getElementById('max3dpro-'+id); if(el) el.textContent=pn[i]||'000'; });
     document.getElementById('splash').classList.add('hide');
+    // Init extras
+    updateCountdown();
+    updateStreak();
+    buildLuckyToday();
+    buildScheduleTable();
+    renderHistory();
   }, 4000);
 });
 
